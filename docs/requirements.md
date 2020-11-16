@@ -4,43 +4,44 @@
 
 ### Must Haves
 
-1. Lecture rooms/halls
-    1. admin creates/edits/deletes rooms
-    2. each room has
-        1. a capacity (#seats)
-        2. a minimum period of time required between consecutive lectures (per room or the same for all rooms?)
-        3. restrictions (rules) concerning Covid-19 (max. allowed operation capacity - 20% for rooms with at most 200 seats, 30% otherwise)
-        4. a room ID, name (or any other information associated with a room?)
-2. Courses
-    1. Teachers create/edit/delete their courses?
-    2. Start/End period?
-    3. Each course has a number of lectures
-3. Lectures
-    1. Teachers create/edit/delete lectures (what information should be included for each lecture)?
-    2. Does the teacher include the time slots for each lecture of his/her courses or does the system have to allocate slots for every lecture?
-        1. the biggest room should be allocated for lectures of courses with many enrolled students?
-    3. number of lectures per week, duration of each lecture, added by the teacher?
-4. Students
-    1. Who creates/edits/deletes students (sth was mentioned about 500 1st year students, 350 2nd-3rd)?
-    2. Enrolled for courses
-    3. Year 1/Year 2/Year 3 (why do we need this information?)
-    4. Each student decides if they want to participate for on-campus lectures (for each course or overall?)
-        1. For those who do want to participate:
-            1. Allocate time slot (at least one allocation per two weeks - at least 2 per month) and invite
-            2. The student can accept or decline the invitation (leave empty spot in case of refusal)
-5. Teachers
-    1. each teacher is responsible for a set of courses
+1. Admins shall be able to create, edit and delete rooms
+2. Admins shall be able to create, edit and delete courses
+3. Admins shall be able to create, edit and delete students
+4. Rooms shall only be able to use a percentage of their original capacity (#seats)
+    1. For rooms with at most 200 seats, this percentage is 20%
+    2. For rooms with 200 seats or more, this percentage is 30%
+5. Rooms shall have a grace period of 45 minutes
+6. Teachers shall be able to create, edit and delete their courses
+7. Teachers shall be able to create, edit and delete lectures for their courses
+    1. Lectures shall be given on the day of the week that the teacher specifies
+    2. Lectures shall take as many timeslots as the teacher specifies
+8. Teachers shall be able to inform that they have symptoms
+    1. The lecture will be held online, the on-campus lecture will be canceled
+9. Lectures from courses from the same year shall not overlap
+10. Lectures shall be scheduled by the system depending on
+    1. The day of the week
+    2. The number of timeslots the lecture occupies
+    3. How many students will be attending the lecture on campus
+11. Users can authenticate themselves (using their netID)
+12. Students shall be able to enroll/unenroll for courses
+13. Students shall be able to specify per lecture whether they want to attend the lecture on campus or not
+14. Students shall have at least one lecture per two weeks on campus
+15. Students shall be able to accept or decline an invitation for an on-campus lecture
 
 ### Should Haves
 
-1. TBD
+1. Students shall be able to globally specify whether they prefer online or on-campus lectures
 
 ### Could Haves
 
-1. TBD
+1. Users shall see how many students are attending a certain lecture, and how many of them are coming to campus
+2. Students shall get notified about upcoming lectures
+    1. If they were schedules for an on-campus lecture, they can decline
+3. Canceled lectures (for example due to the teacher having symptoms) shall be disregarded from the students' on-campus lectures
 
 ## Non-functional Requirements
 
 1. The microservice shall be implemented in Java
-2. Backend only
-3. REST API via Spring Boot Server
+2. The microservice shall have a backend only
+3. The microservice shall consist of a REST API via Spring Boot Server
+4. The authentication shall be done using Spring Security
