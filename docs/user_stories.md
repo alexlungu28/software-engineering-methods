@@ -1,0 +1,5 @@
+-   As a teacher I want to add a course before the beginning of a quarter so that it can be scheduled.
+-   As a teacher I want to be able see my upcoming lectures.
+-   As a teacher I want to be able to cancel an on-campus lecture so that my lecture can move to online in case I have symptons.
+-   As a student I want to be able to see when my lectures for my courses are scheduled and for which of those I can go to campus.
+-   As a student I want to be able to visit campus at least once every two weeks.
