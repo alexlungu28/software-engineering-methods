@@ -36,13 +36,14 @@
 4. Students shall be able to accept or decline an invitation for an on-campus lecture
 5. The system shall have a configuration table in the database containing:
     1. Timeslot duration
+    2. Percentage of students allowed for the total room capacity
 6. The scheduler shall prevent overlap of courses from the same bachelor
 
 ### Could Haves
 
 1. Users shall see how many students are attending a certain lecture, and how many of them are coming to campus
 2. Students shall get notified about upcoming lectures
-    1. If they were schedules for an on-campus lecture, they can decline
+    1. If they were scheduled for an on-campus lecture, they can decline
 3. Canceled lectures (for example due to the teacher having symptoms) shall be disregarded from the students' on-campus lectures
 4. Admins shall be able to create, edit and delete rooms
 5. Admins shall be able to create, edit and delete courses
@@ -56,8 +57,8 @@
 3. The microservice shall consist of a REST API via Spring Boot Server
 4. The authentication shall be done using Spring Security
 5. The PostgreSQL database shall be used
-6. Code quality shall be ensured by having at least 80% of branch-coverage using Jacocco
-7. Gradle
+6. Code quality shall be ensured by having at least 80% of branch-coverage using Jacoco
+7. Gradle will be used for CI/CD as well as managing the dependencies and building the project
 8. Checkstyle will be used to ensure code style
 9. GitLab will be used for CI/CD and version management
 10. Postgres JDBC driver for connecting the database
