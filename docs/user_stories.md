@@ -10,6 +10,7 @@ As a student I can:
     3. The room name the activity is in
 - Choose to participate in physical activities on campus or not 
 - Choose to decline an invitation to a physical activity
+- Go to campus at least once every two weeks
 
 
 ##Teacher
