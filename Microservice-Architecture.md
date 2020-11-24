@@ -20,7 +20,7 @@
 |Room service|<p>POST /createRoom</p><p>{ name: string, capacity: int }</p>|Return the created room|
 ||DELETE /deleteRoom<br>{ roomId: int }||
 ||POST /modifyRoom<br>{ roomId: int, name?: string, capacity?: int }|Update the room with the given id|
-|Student Assignment service|POST /assignStudentsUntil<br>{ date: string }||
+|Student service|POST /assignStudentsUntil<br>{ date: string }||
 ||GET /allMyLectures|<p>[</p><p>` `{ lectureId: int,</p><p>courseName: String,</p><p>roomName: String,</p><p>onCampus: boolean</p><p>` `},</p><p>` `....</p><p>]</p>|
 ||GET /allMyCourses|<p>[</p><p>{ courseName: string,</p><p>`  `yearOfStudy: integer</p><p>}</p><p>]</p>|
 ||<p>POST /declineOnCampusOffer</p><p>{ lectureId: int }</p>||
