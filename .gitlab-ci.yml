@@ -8,7 +8,7 @@ stages:
 build:
   stage: build
   script:
-    gradle build
+    - gradle :authentication:build :courses:build :room-scheduler:build :rooms:build :student:build
 
 checkStyle:
   stage: staticAnalysis
