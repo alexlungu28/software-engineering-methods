@@ -4,15 +4,30 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity(name = "Student")
 public class Student {
 
-    @Id
+	@Id
+	@Column(name = "net_id", nullable = false, length = 64)
     private String netID;
 
-    private LocalDateTime last_visited;
+    private LocalDateTime lastVisited;
     private boolean wantsToGo;
 
+	public String getNetID() {
+		return this.netID;
+	}
+
+	public LocalDateTime getLastVisited() {
+		return this.lastVisited;
+	}
+
+	public void setLastVisited(LocalDateTime date) {
+		this.lastVisited = date;
+	}
+
+	public boolean getWantsToGo() {
+		return this.wantsToGo;
+	}
 }
