@@ -16,7 +16,7 @@
 |Room Schedule service|<p>POST /scheduleLecturesUntil</p><p>{</p><p>` `date: string<br>}</p>|A JSON with all the scheduled lectures to rooms, including the time|
 ||<p>POST</p><p>/scheduleLecture</p><p>{ lectureId: int }</p>||
 ||<p>DELETE /cancelLecture</p><p>{ lectureId: int }</p>||
-||GET /getSchedule|[ {roomSlotId: int, lectureId: int}, … ]|
+||GET /getSchedule|[ {startTime: string, endTime: string, lectureId: int, roomId: int }, … ]|
 |Room service|<p>POST /createRoom</p><p>{ name: string, capacity: int }</p>|Return the created room|
 ||DELETE /deleteRoom<br>{ roomId: int }||
 ||POST /modifyRoom<br>{ roomId: int, name?: string, capacity?: int }|Update the room with the given id|
