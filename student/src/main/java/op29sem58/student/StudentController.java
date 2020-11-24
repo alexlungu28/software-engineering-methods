@@ -3,6 +3,7 @@ package op29sem58.student;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -33,16 +34,10 @@ public class StudentController {
 
 	private Map<Integer, Integer> lectureIdToCourseId;
 
-	// @GetMapping(path = "/test")
-	// public List<Student> test() {
-	// 	return this.students.findAllByOrderByLastVisitedAsc();
-	// }
-
 	@PostMapping(path = "/assignStudentsUntil")
 	public void assignStudentsUntil(@RequestBody AssignUntilOptions options) {
 		// initialize all courses
 		this.initializeCourses();
-
 
 		// get all lectures to assign students to, sorted by their starttime
 		final List<Lecture> lectures = this.getAllScheduledSortedLecturesUntil(options.date);
@@ -53,22 +48,30 @@ public class StudentController {
 		// assign students to lectures
 		final List<StudentBooking> studentSchedule = new ArrayList<StudentBooking>();
 		for (final Lecture lecture : lectures) {
+			final StudentBooking studentBooking = new StudentBooking(new HashSet<Student>(), lecture.getRoomSchedule().getId());
+			int assignedStudents = 0;
+			final int allowedStudents = this.getAllowedNumberOfStudentsForLecture(lecture);
 			for (int i = 0; i < students.size(); i++) {
 				final Student student = students.get(i);
 				if (this.studentIsEnrolledFor(student, lecture)) {
-					studentSchedule.add(new StudentBooking(lecture.getRoomSchedule().getId()));
+					studentBooking.addStudent(student);
 					student.setLastVisited(lecture.getRoomSchedule().getStartTime());
 					this.students.save(student);
 					students.remove(i);
 					students.add(student);
-					break;
+					if (++assignedStudents >= allowedStudents) break;
 				}
 			}
+			studentSchedule.add(studentBooking);
 		}
 
 		// save in database
 		this.studentBookings.saveAll(studentSchedule);
 		this.studentBookings.flush();
+	}
+
+	private int getAllowedNumberOfStudentsForLecture(Lecture lecture) {
+		return 1;
 	}
 
 	private void initializeCourses() {
