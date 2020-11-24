@@ -1,1 +1,9 @@
-rootProject.name = 'template'
+rootProject.name = 'op29-sem58'
+
+include 'courses'
+include 'student'
+include 'rooms'
+include 'authentication'
+include 'courses'
+include 'room-scheduler'
+
