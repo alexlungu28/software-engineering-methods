@@ -1,6 +1,8 @@
 package op29sem58.student;
 
+
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -65,6 +67,7 @@ public class StudentController {
 			studentSchedule.add(roomSchedule);
 		}
 
+		System.out.println("Assigning successful!");
 		// save in database
 		this.studentBookings.saveAll(studentSchedule);
 		this.studentBookings.flush();
@@ -74,9 +77,22 @@ public class StudentController {
 		return 1;
 	}
 
+	//for now it is just an example should retrieve the lectures via /getAllLectures endpoint
+	private ArrayList<CourseLectures> retrieveLectures() {
+		ArrayList<CourseLectures> courseLecturesList = new ArrayList<CourseLectures>();
+		int[] exampleArray = new int[]{1, 2};
+		int[] exampleArray2 = new int[]{3, 4};
+		CourseLectures example1 = new CourseLectures(1, exampleArray);
+		CourseLectures example2 = new CourseLectures(2, exampleArray2);
+		courseLecturesList.add(example1);
+		courseLecturesList.add(example2);
+
+		return courseLecturesList;
+	}
+
 	private void initializeCourses() {
 		// get all lectures via /getAllLectures endpoint
-		final List<CourseLectures> courseLecturesList = new ArrayList<CourseLectures>();
+		List<CourseLectures> courseLecturesList = retrieveLectures();
 
 		// fill map
 		this.lectureIdToCourseId = new HashMap<Integer, Integer>();
@@ -101,6 +117,12 @@ public class StudentController {
 	private List<Lecture> getAllScheduledSortedLecturesUntil(LocalDateTime date) {
 		// get the schedule via getSchedule endpoint
 		final List<op29sem58.student.RoomSchedule> schedule = new ArrayList<op29sem58.student.RoomSchedule>();
+		LocalDateTime exampleDate = LocalDateTime.of(2020,
+				Month.NOVEMBER, 29, 8, 45, 00);
+		LocalDateTime enDate = LocalDateTime.of(2020,
+				Month.NOVEMBER, 29, 10, 30, 00);
+		op29sem58.student.RoomSchedule example = new op29sem58.student.RoomSchedule(exampleDate, enDate, 0, 1, 1);
+		schedule.add(example);
 
 		// sort the lectures by their start time
 		schedule.sort((a, b) -> a.getStartTime().compareTo(b.getStartTime()));

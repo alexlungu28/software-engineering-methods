@@ -18,6 +18,9 @@ public class RoomSchedule {
 		this.roomScheduleId = roomScheduleId;
 	}
 
+	public RoomSchedule() {
+	}
+
 	public Set<Student> getStudents() {
 		return this.students;
 	}

@@ -9,6 +9,14 @@ public class RoomSchedule {
 	private int lectureId;
 	private int roomId;
 
+	public RoomSchedule(LocalDateTime startTime, LocalDateTime endTime, int id, int lectureId, int roomId) {
+		this.startTime = startTime;
+		this.endTime = endTime;
+		this.id = id;
+		this.lectureId = lectureId;
+		this.roomId = roomId;
+	}
+
 
 	public LocalDateTime getStartTime() {
 		return this.startTime;
