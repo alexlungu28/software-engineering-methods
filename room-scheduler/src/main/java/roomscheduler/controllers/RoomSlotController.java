@@ -5,7 +5,10 @@ import roomscheduler.repositories.RoomSlotRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 import java.util.Optional;
+import roomscheduler.communication.RoomSlotCommunication;
 
 
 /**
@@ -26,14 +29,23 @@ public class RoomSlotController {
         this.roomSlotRepository = roomSlotRepository;
     }
 
-
-    @PostMapping(path = "/addroomslot") // Map ONLY POST Requests
-    public @ResponseBody
-    String addNewRoomSlot(@RequestBody RoomSlot r) {
-        roomSlotRepository.saveAndFlush(r);
-
-        return "Saved room slot";
-    }
+//TODO
+//    @PostMapping(path = "/addroomslot") // Map ONLY POST Requests
+//    public @ResponseBody
+//    String addNewRoomSlot(@RequestBody RoomSlot r){
+//        try {
+//            Object a = RoomSlotCommunication.getRoom(r.getId());
+//            if(a == null){
+//                return null;
+//            }else{
+//                roomSlotRepository.saveAndFlush(r);
+//                return "Saved room slot";
+//            }
+//        }catch (IOException ex) {
+//            return null;
+//        }
+//
+//    }
 
 
     /**

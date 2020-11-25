@@ -18,6 +18,9 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'mysql:mysql-connector-java'
+    implementation 'org.apache.httpcomponents:httpclient'
+    implementation 'commons-logging:commons-logging'
+    implementation 'com.google.code.gson:gson'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
