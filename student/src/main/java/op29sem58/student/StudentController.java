@@ -1,4 +1,4 @@
-package op29sem58.student.controllers;
+package op29sem58.student;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -9,16 +9,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import op29sem58.student.AssignUntilOptions;
-import op29sem58.student.CourseLectures;
-import op29sem58.student.Lecture;
-import op29sem58.student.RoomSchedule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import op29sem58.student.database.entities.Student;
+import op29sem58.student.database.entities.RoomSchedule;
 import op29sem58.student.database.entities.StudentEnrollment;
 import op29sem58.student.database.repos.StudentBookingRepo;
 import op29sem58.student.database.repos.StudentEnrollmentRepo;
@@ -51,13 +48,13 @@ public class StudentController {
 		// assign students to lectures
 		final List<RoomSchedule> studentSchedule = new ArrayList<RoomSchedule>();
 		for (final Lecture lecture : lectures) {
-			final RoomSchedule studentBooking = new RoomSchedule(new ArrayList<>(), lecture.getRoomSchedule().getId());
+			final RoomSchedule roomSchedule = new RoomSchedule(new HashSet<Student>(), lecture.getRoomSchedule().getId());
 			int assignedStudents = 0;
 			final int allowedStudents = this.getAllowedNumberOfStudentsForLecture(lecture);
 			for (int i = 0; i < students.size(); i++) {
 				final Student student = students.get(i);
 				if (this.studentIsEnrolledFor(student, lecture)) {
-					studentBooking.addStudent(student);
+					roomSchedule.addStudent(student);
 					student.setLastVisited(lecture.getRoomSchedule().getStartTime());
 					this.students.save(student);
 					students.remove(i);
@@ -65,7 +62,7 @@ public class StudentController {
 					if (++assignedStudents >= allowedStudents) break;
 				}
 			}
-			studentSchedule.add(studentBooking);
+			studentSchedule.add(roomSchedule);
 		}
 
 		// save in database
@@ -103,7 +100,7 @@ public class StudentController {
 
 	private List<Lecture> getAllScheduledSortedLecturesUntil(LocalDateTime date) {
 		// get the schedule via getSchedule endpoint
-		final List<RoomSchedule> schedule = new ArrayList<RoomSchedule>();
+		final List<op29sem58.student.RoomSchedule> schedule = new ArrayList<op29sem58.student.RoomSchedule>();
 
 		// sort the lectures by their start time
 		schedule.sort((a, b) -> a.getStartTime().compareTo(b.getStartTime()));

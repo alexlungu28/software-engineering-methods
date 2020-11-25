@@ -1,7 +1,5 @@
 package op29sem58.student.database.entities;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.*;
@@ -12,15 +10,15 @@ public class RoomSchedule {
     @Column(unique=true, nullable=false)
 	private Integer roomScheduleId;
 
-	@ManyToMany
-	private List<Student> students;
+	@ManyToMany()
+	private Set<Student> students;
 
-	public RoomSchedule(List<Student> students, int roomScheduleId) {
+	public RoomSchedule(Set<Student> students, int roomScheduleId) {
 		this.students = students;
 		this.roomScheduleId = roomScheduleId;
 	}
 
-	public List<Student> getStudents() {
+	public Set<Student> getStudents() {
 		return this.students;
 	}
 
