@@ -7,7 +7,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 class RoomApplicationTests {
 
 	@Test
-	void contextLoads() {
+	public void test1(){
+		System.out.println("ok");
 	}
+
 
 }
