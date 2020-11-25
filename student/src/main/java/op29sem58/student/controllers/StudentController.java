@@ -1,4 +1,4 @@
-package op29sem58.student;
+package op29sem58.student.controllers;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -9,13 +9,16 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import op29sem58.student.AssignUntilOptions;
+import op29sem58.student.CourseLectures;
+import op29sem58.student.Lecture;
+import op29sem58.student.RoomSchedule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import op29sem58.student.database.entities.Student;
-import op29sem58.student.database.entities.StudentBooking;
 import op29sem58.student.database.entities.StudentEnrollment;
 import op29sem58.student.database.repos.StudentBookingRepo;
 import op29sem58.student.database.repos.StudentEnrollmentRepo;
@@ -46,9 +49,9 @@ public class StudentController {
 		final List<Student> students = this.students.findAllByOrderByLastVisitedAsc();
 
 		// assign students to lectures
-		final List<StudentBooking> studentSchedule = new ArrayList<StudentBooking>();
+		final List<RoomSchedule> studentSchedule = new ArrayList<RoomSchedule>();
 		for (final Lecture lecture : lectures) {
-			final StudentBooking studentBooking = new StudentBooking(new HashSet<Student>(), lecture.getRoomSchedule().getId());
+			final RoomSchedule studentBooking = new RoomSchedule(new ArrayList<>(), lecture.getRoomSchedule().getId());
 			int assignedStudents = 0;
 			final int allowedStudents = this.getAllowedNumberOfStudentsForLecture(lecture);
 			for (int i = 0; i < students.size(); i++) {

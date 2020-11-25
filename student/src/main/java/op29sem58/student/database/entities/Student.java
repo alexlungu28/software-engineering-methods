@@ -1,8 +1,6 @@
 package op29sem58.student.database.entities;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity(name = "Student")
