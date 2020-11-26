@@ -23,7 +23,7 @@ public class RoomController {
         this.roomRepository = roomRepository;
     }
 
-    @PostMapping(path = "/addroom") // Map ONLY POST Requests
+    @PostMapping(path = "/createRoom") // Map ONLY POST Requests
     public @ResponseBody
     String addNewRoom(@RequestBody Room r) {
         roomRepository.saveAndFlush(r);
@@ -53,6 +53,44 @@ public class RoomController {
         Optional<Room> room = roomRepository.findById(id);
         if (room.isPresent()) {
             return room.get();
+        } else {
+            throw new RuntimeException("Room not found for the id " + id);
+        }
+    }
+
+    /**
+     * Method for editing a Room.
+     *
+     * @param r Room to be edited
+     * @return update message
+     */
+    @PutMapping(path = "/modifyRoom")
+    public @ResponseBody
+    String editRoom(@RequestBody Room r) {
+        Optional<Room> room = roomRepository.findById(r.getId());
+        if(room.isPresent()){
+            room.get().setName(r.getName());
+            room.get().setCapacity(r.getCapacity());
+            roomRepository.saveAndFlush(room.get());
+            return "Changed Room";
+        }else{
+            throw new RuntimeException("Room not found for the id " + r.getId());
+        }
+    }
+
+    /**
+     * Method for deleting a Room.
+     *
+     * @param id id of the Room to be deleted
+     * @return Room with id 'id'
+     */
+    @DeleteMapping(path = "/deleteRoom/{id}")
+    public @ResponseBody
+    String deleteRoom(@PathVariable int id) {
+        Optional<Room> room = roomRepository.findById(id);
+        if (room.isPresent()) {
+            roomRepository.deleteById(id);
+            return "Deleted Room";
         } else {
             throw new RuntimeException("Room not found for the id " + id);
         }
