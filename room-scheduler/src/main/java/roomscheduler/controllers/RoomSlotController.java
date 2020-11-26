@@ -29,23 +29,17 @@ public class RoomSlotController {
         this.roomSlotRepository = roomSlotRepository;
     }
 
-//TODO
-//    @PostMapping(path = "/addroomslot") // Map ONLY POST Requests
-//    public @ResponseBody
-//    String addNewRoomSlot(@RequestBody RoomSlot r){
-//        try {
-//            Object a = RoomSlotCommunication.getRoom(r.getId());
-//            if(a == null){
-//                return null;
-//            }else{
-//                roomSlotRepository.saveAndFlush(r);
-//                return "Saved room slot";
-//            }
-//        }catch (IOException ex) {
-//            return null;
-//        }
-//
-//    }
+    @PostMapping(path = "/addroomslot") // Map ONLY POST Requests
+    public @ResponseBody
+    String addNewRoomSlot(@RequestBody RoomSlot r) throws IOException {
+        Object a = RoomSlotCommunication.getRoom(r.getRooms_id());
+        if(a.toString().equals("not found")){
+            return "There is no room with the id of the Room Slot entered!";
+        }else{
+            roomSlotRepository.saveAndFlush(r);
+            return "Saved room slot";
+        }
+    }
 
 
     /**
