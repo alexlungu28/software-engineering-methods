@@ -63,8 +63,8 @@ public class RoomSlotController {
             rules.put(r.getName(), Integer.parseInt(r.getValue()));
         }
         int breakSlot = rules.get("lunch slot");
-        int timeBetweenSlotsInHours = (rules.get("buffer time") + rules.get("break time")) / 60;
-        int timeBetweenSlotsInMin = (rules.get("buffer time") + rules.get("break time")) % 60;
+        int timeBetweenSlotsInHours = (rules.get("slot duration") + rules.get("break time")) / 60;
+        int timeBetweenSlotsInMin = (rules.get("slot duration") + rules.get("break time")) % 60;
         int slots_per_day = rules.get("slots per day");
         DateTimeFormatter formatter = org.joda.time.format.DateTimeFormat.forPattern("HH:mm:ss");
         String s = "";
