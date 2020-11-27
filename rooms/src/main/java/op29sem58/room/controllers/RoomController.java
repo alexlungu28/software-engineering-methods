@@ -41,6 +41,13 @@ public class RoomController {
         return roomRepository.findAll();
     }
 
+
+    @PutMapping(path = "/generateRooms")
+    public @ResponseBody String generateRooms() {
+        return roomRepository.createInitialRooms();
+    }
+
+
     /**
      * Method for getting a Room.
      *
@@ -56,6 +63,12 @@ public class RoomController {
         } else {
             throw new RuntimeException("Room not found for the id " + id);
         }
+    }
+
+    @GetMapping(path = "/countRooms")
+    public @ResponseBody
+    Long getNumberOfRooms(){
+        return roomRepository.count();
     }
 
     /**

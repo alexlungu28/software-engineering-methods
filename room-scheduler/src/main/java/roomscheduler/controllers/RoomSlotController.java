@@ -1,13 +1,17 @@
 package roomscheduler.controllers;
 
+import org.joda.time.DateTime;
 import roomscheduler.entities.RoomSlot;
+import roomscheduler.entities.Rule;
 import roomscheduler.repositories.RoomSlotRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
 import java.io.IOException;
-import java.util.Optional;
+import org.joda.time.format.DateTimeFormatter;
+
+import java.util.*;
+
 import roomscheduler.communication.RoomSlotCommunication;
 
 
@@ -39,6 +43,38 @@ public class RoomSlotController {
             roomSlotRepository.saveAndFlush(r);
             return "Saved room slot";
         }
+    }
+
+    @GetMapping(path = "/countRooms") // Map ONLY POST Requests
+    public @ResponseBody
+    Long getNumberOfRooms() throws IOException {
+        Long count = RoomSlotCommunication.numberOfRooms();
+        return count;
+    }
+
+    @PutMapping(path = "/generateRoomSlots/{numDays}/{firstSlotDateTime}")
+    public @ResponseBody String generateRoomSlots(@PathVariable int numDays,
+                                                  @PathVariable
+                                                          String firstSlotDateTime) throws IOException {
+        Long numberOfRooms = RoomSlotCommunication.numberOfRooms();
+        List<Rule> allRules = RoomSlotCommunication.getRules();
+        HashMap<String, Integer> rules = new HashMap<>();
+        for(Rule r : allRules){
+            rules.put(r.getName(), Integer.parseInt(r.getValue()));
+        }
+        int breakSlot = rules.get("lunch slot");
+        int timeBetweenSlotsInHours = (rules.get("buffer time") + rules.get("break time")) / 60;
+        int timeBetweenSlotsInMin = (rules.get("buffer time") + rules.get("break time")) % 60;
+        int slots_per_day = rules.get("slots per day");
+        DateTimeFormatter formatter = org.joda.time.format.DateTimeFormat.forPattern("HH:mm:ss");
+        String s = "";
+        if (timeBetweenSlotsInMin / 10 == 0) s = "0";
+        DateTime t = DateTime.parse(timeBetweenSlotsInHours+ ":" + s + timeBetweenSlotsInMin
+                + ":00", formatter);
+        String timeBetweenSlotsTime = formatter.print(t);
+
+        return roomSlotRepository.createRoomSlots(slots_per_day, numDays, firstSlotDateTime, timeBetweenSlotsTime,
+                breakSlot, numberOfRooms);
     }
 
 
