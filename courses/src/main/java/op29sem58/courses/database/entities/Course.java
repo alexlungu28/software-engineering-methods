@@ -8,14 +8,16 @@ public class Course {
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
-    @Column(unique=true, nullable=false)
+    @ManyToOne(targetEntity = Lecture.class)
     private int id;
 
     private String name;
+    private String code;
     private int yearOfStudy;
 
-    public Course(String name, int yearOfStudy){
+    public Course(String name, String code, int yearOfStudy){
         this.name = name;
+        this.code = code;
         this.yearOfStudy = yearOfStudy;
     }
 
@@ -30,6 +32,10 @@ public class Course {
     public void setName(String name) {
         this.name = name;
     }
+
+    public String getCode() { return code; }
+
+    public void setCode(String code) { this.code = code; }
 
     public int getYearOfStudy() {
         return yearOfStudy;

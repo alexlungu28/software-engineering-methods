@@ -1,35 +1,35 @@
 package op29sem58.courses.database.entities;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@IdClass(PK.class)
-public class CourseHasTeachers {
+public class CourseHasTeachers{
 
     @Id
-    @OneToMany()
-    private Set<Integer> coursesId;
-    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
+
+    @OneToMany
+    private Set<Course> coursesId;
+
+    @ManyToOne(targetEntity = Lecture.class)
     private String userNetId;
     private String comments;
 
-    public CourseHasTeachers(Set<Integer> coursesId, String userNetId, String comments){
+    public CourseHasTeachers(Set<Course> coursesId, String userNetId, String comments){
         this.coursesId = coursesId;
         this.userNetId = userNetId;
         this.comments = comments;
     }
 
-    public Set<Integer> getCoursesId() {
+    public Set<Course> getCoursesId() {
         return coursesId;
     }
 
-    public void setCoursesId(Set<Integer> coursesId) {
+    public void setCoursesId(Set<Course> coursesId) {
         this.coursesId = coursesId;
     }
 
@@ -50,6 +50,7 @@ public class CourseHasTeachers {
     }
 }
 
+/*
 class PK {
     private List<Integer> coursesId;
     private String userNetId;
@@ -88,4 +89,4 @@ class PK {
     public int hashCode() {
         return Objects.hash(coursesId, userNetId);
     }
-}
+}*/
