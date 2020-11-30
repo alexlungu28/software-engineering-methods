@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import op29sem58.student.database.entities.Student;
+import op29sem58.student.communication.ServerCommunication;
 import op29sem58.student.database.entities.RoomSchedule;
 import op29sem58.student.database.entities.StudentEnrollment;
 import op29sem58.student.database.repos.StudentBookingRepo;
@@ -34,6 +35,8 @@ public class StudentController {
 
 	private Map<Integer, Integer> lectureIdToCourseId;
 
+	private ServerCommunication serverCommunication = new ServerCommunication();
+
 	@PostMapping(path = "/assignStudentsUntil")
 	public void assignStudentsUntil(@RequestBody AssignUntilOptions options) {
 		// initialize all courses
@@ -43,7 +46,7 @@ public class StudentController {
 		final List<Lecture> lectures = this.getAllScheduledSortedLecturesUntil(options.date);
 
 		// get all students, where the highest priority students are at the start
-		final List<Student> students = this.students.findAllByOrderByLastVisitedAsc();
+		final List<Student> students = this.students.findByWantsToGoTrueOrderByLastVisitedAsc();
 
 		// assign students to lectures
 		final List<RoomSchedule> studentSchedule = new ArrayList<RoomSchedule>();
@@ -59,6 +62,7 @@ public class StudentController {
 					this.students.save(student);
 					students.remove(i);
 					students.add(student);
+					i--;
 					if (++assignedStudents >= allowedStudents) break;
 				}
 			}
@@ -71,12 +75,12 @@ public class StudentController {
 	}
 
 	private int getAllowedNumberOfStudentsForLecture(Lecture lecture) {
-		return 1;
+		return 2;
 	}
 
 	private void initializeCourses() {
 		// get all lectures via /getAllLectures endpoint
-		final List<CourseLectures> courseLecturesList = new ArrayList<CourseLectures>();
+		final List<CourseLectures> courseLecturesList = this.serverCommunication.getAllLectures();
 
 		// fill map
 		this.lectureIdToCourseId = new HashMap<Integer, Integer>();
@@ -100,12 +104,15 @@ public class StudentController {
 
 	private List<Lecture> getAllScheduledSortedLecturesUntil(LocalDateTime date) {
 		// get the schedule via getSchedule endpoint
-		final List<op29sem58.student.RoomSchedule> schedule = new ArrayList<op29sem58.student.RoomSchedule>();
+		final List<op29sem58.student.RoomSchedule> schedule = this.serverCommunication.getSchedule();
 
 		// sort the lectures by their start time
 		schedule.sort((a, b) -> a.getStartTime().compareTo(b.getStartTime()));
 
 		// collect lectures that matter
-		return schedule.stream().filter(roomSchedule -> roomSchedule.getStartTime().isBefore(date)).map(roomSchedule -> new Lecture(roomSchedule.getLectureId(), roomSchedule)).collect(Collectors.toList());
+		return schedule.stream()
+			.filter(roomSchedule -> roomSchedule.getStartTime().isBefore(date))
+			.map(roomSchedule -> new Lecture(roomSchedule.getLectureId(), roomSchedule))
+			.collect(Collectors.toList());
 	}
 }

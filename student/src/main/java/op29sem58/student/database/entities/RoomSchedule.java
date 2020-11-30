@@ -1,5 +1,6 @@
 package op29sem58.student.database.entities;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.*;
@@ -12,6 +13,10 @@ public class RoomSchedule {
 
 	@ManyToMany()
 	private Set<Student> students;
+
+	public RoomSchedule() {
+		this.students = new HashSet<Student>();
+	}
 
 	public RoomSchedule(Set<Student> students, int roomScheduleId) {
 		this.students = students;
