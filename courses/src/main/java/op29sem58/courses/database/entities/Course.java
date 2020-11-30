@@ -1,21 +1,27 @@
 package op29sem58.courses.database.entities;
 
+import org.springframework.jmx.export.annotation.ManagedNotification;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 public class Course {
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
-    @ManyToOne(targetEntity = Lecture.class)
     private int id;
 
+    private String teacherNetId;
     private String name;
     private String code;
     private int yearOfStudy;
 
-    public Course(String name, String code, int yearOfStudy){
+    public Course(){}
+
+    public Course(String teacherNetId, String name, String code, int yearOfStudy){
+        this.teacherNetId = teacherNetId;
         this.name = name;
         this.code = code;
         this.yearOfStudy = yearOfStudy;

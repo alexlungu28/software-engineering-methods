@@ -2,18 +2,21 @@ package op29sem58.courses;
 
 public class CourseInfo {
     private int id;
+    private String teacherNetId;
     private String name;
     private String code;
     private int yearOfStudy;
 
-    public CourseInfo(String name, String code, int yearOfStudy) {
+    public CourseInfo(String teacherNetId, String name, String code, int yearOfStudy) {
+        this.teacherNetId = teacherNetId;
         this.name = name;
         this.code = code;
         this.yearOfStudy = yearOfStudy;
     }
 
-    public CourseInfo(int id, String name, String code, int yearOfStudy) {
+    public CourseInfo(int id, String teacherNetId, String name, String code, int yearOfStudy) {
         this.id = id;
+        this.teacherNetId = teacherNetId;
         this.name = name;
         this.code = code;
         this.yearOfStudy = yearOfStudy;
@@ -25,6 +28,14 @@ public class CourseInfo {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getTeacherNetId() {
+        return teacherNetId;
+    }
+
+    public void setTeacherNetId(String teacherNetId) {
+        this.teacherNetId = teacherNetId;
     }
 
     public String getName() {

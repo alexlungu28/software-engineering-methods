@@ -2,14 +2,11 @@ package op29sem58.courses;
 
 import op29sem58.courses.database.entities.Course;
 import op29sem58.courses.database.entities.Lecture;
-import op29sem58.courses.database.repos.CoursesHasTeachersRepo;
 import op29sem58.courses.database.repos.CoursesRepo;
 import op29sem58.courses.database.repos.LecturesRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @Controller
 public class CoursesController {
@@ -18,8 +15,6 @@ public class CoursesController {
     private CoursesRepo coursesRepo;
     @Autowired
     private LecturesRepo lecturesRepo;
-    @Autowired
-    private CoursesHasTeachersRepo coursesHasTeachersRepo;
 
     @GetMapping(path = "/getAllCourses")
     public @ResponseBody Iterable<Course> getAllCourses(){
@@ -33,7 +28,7 @@ public class CoursesController {
 
     @PostMapping(path = "/createCourse")
     public @ResponseBody String createCourse(@RequestBody CourseInfo c){
-        coursesRepo.saveAndFlush(new Course(c.getName(), c.getCode(), c.getYearOfStudy()));
+        coursesRepo.saveAndFlush(new Course(c.getTeacherNetId(), c.getName(), c.getCode(), c.getYearOfStudy()));
         return "Course saved succesfully";
     }
 

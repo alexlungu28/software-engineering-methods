@@ -5,26 +5,14 @@ import java.time.LocalDate;
 import java.util.Set;
 
 public class LectureInfo {
-    private String name;
     private int coursesId;
-    private String coursesHasTeachersNetId;
     private LocalDate date;
     private int nSlots;
 
-    public LectureInfo(String name, int coursesId, String coursesHasTeachersNetId, LocalDate date, int nSlots){
-        this.name = name;
+    public LectureInfo(int coursesId, LocalDate date, int nSlots){
         this.coursesId = coursesId;
-        this.coursesHasTeachersNetId = coursesHasTeachersNetId;
         this.date = date;
         this.nSlots = nSlots;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public int getCoursesId() {
@@ -33,14 +21,6 @@ public class LectureInfo {
 
     public void setCoursesId(int coursesId) {
         this.coursesId = coursesId;
-    }
-
-    public String getCoursesHasTeachersNetId() {
-        return coursesHasTeachersNetId;
-    }
-
-    public void setCoursesHasTeachersNetId(String coursesHasTeachersNetId) {
-        this.coursesHasTeachersNetId = coursesHasTeachersNetId;
     }
 
     public LocalDate getDate() {

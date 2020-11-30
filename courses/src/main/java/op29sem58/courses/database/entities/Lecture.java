@@ -11,21 +11,15 @@ public class Lecture {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    private String name;
-
     @OneToMany
-    private Set<Course> coursesId;
-
-    @OneToMany
-    private Set<CourseHasTeachers> coursesHasTeachersNetId;
-
+    private Set<Course> courses;
     private LocalDate date;
     private int nSlots;
 
-    public Lecture(String name, Set<Course> coursesId, Set<CourseHasTeachers> coursesHasTeachersNetId, LocalDate date, int nSlots){
-        this.name = name;
-        this.coursesId = coursesId;
-        this.coursesHasTeachersNetId = coursesHasTeachersNetId;
+    public Lecture(){}
+
+    public Lecture(Set<Course> courses, LocalDate date, int nSlots){
+        this.courses = courses;
         this.date = date;
         this.nSlots = nSlots;
     }
@@ -34,28 +28,12 @@ public class Lecture {
         return id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public Set<Course> getCoursesId() {
-        return coursesId;
+        return courses;
     }
 
     public void setCoursesId(Set<Course> coursesId) {
-        this.coursesId = coursesId;
-    }
-
-    public Set<CourseHasTeachers> getCoursesHasTeachersNetId() {
-        return coursesHasTeachersNetId;
-    }
-
-    public void setCoursesHasTeachersNetId(Set<CourseHasTeachers> coursesHasTeachersNetId) {
-        this.coursesHasTeachersNetId = coursesHasTeachersNetId;
+        this.courses = coursesId;
     }
 
     public LocalDate getDate() {
