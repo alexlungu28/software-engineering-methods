@@ -9,9 +9,9 @@ import javax.persistence.*;
 
 @Entity(name = "RoomSchedule")
 public class RoomSchedule {
-    @Id
+	@Id
     @Column(unique=true, nullable=false)
-	private Integer roomScheduleId;
+	private int id;
 
 	@ManyToMany()
 	private Set<Student> students;
@@ -27,10 +27,10 @@ public class RoomSchedule {
 	@Transient
 	private int coronaCapacity;
 
-	public RoomSchedule(LocalDateTime startTime, LocalDateTime endTime, int id, int lectureId, int roomId, int coronaCapacity) {
+	public RoomSchedule(int id, int lectureId, int roomId,  LocalDateTime startTime, LocalDateTime endTime, int coronaCapacity) {
 		this.startTime = startTime;
 		this.endTime = endTime;
-		this.roomScheduleId = id;
+		this.id = id;
 		this.lectureId = lectureId;
 		this.roomId = roomId;
 		this.coronaCapacity = coronaCapacity;
@@ -38,6 +38,10 @@ public class RoomSchedule {
 
 	public RoomSchedule() {
 		this.students = new HashSet<Student>();
+	}
+
+	public int getId() {
+		return id;
 	}
 
 	public int getCoronaCapacity() {
@@ -55,20 +59,12 @@ public class RoomSchedule {
 		this.students.add(student);
 	}
 
-	public Integer getRoomScheduleId() {
-		return this.roomScheduleId;
-	}
-
 	public LocalDateTime getStartTime() {
 		return this.startTime;
 	}
 
 	public LocalDateTime getEndTime() {
 		return this.endTime;
-	}
-
-	public int getId() {
-		return this.roomScheduleId;
 	}
 
 	public int getLectureId() {
