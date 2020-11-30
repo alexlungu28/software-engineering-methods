@@ -1,4 +1,4 @@
-package op29sem58.student;
+package op29sem58.student.controllers;
 
 
 import java.time.LocalDateTime;
@@ -11,6 +11,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import op29sem58.student.AssignUntilOptions;
+import op29sem58.student.CourseLectures;
+import op29sem58.student.Lecture;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -48,11 +51,12 @@ public class StudentController {
 		final List<Student> students = this.students.findAllByOrderByLastVisitedAsc();
 
 		// assign students to lectures
-		final List<RoomSchedule> studentSchedule = new ArrayList<RoomSchedule>();
+		final List<RoomSchedule> studentSchedule = new ArrayList<>();
 		for (final Lecture lecture : lectures) {
-			final RoomSchedule roomSchedule = new RoomSchedule(new HashSet<Student>(), lecture.getRoomSchedule().getId());
+			final RoomSchedule roomSchedule = lecture.getRoomSchedule();
+
 			int assignedStudents = 0;
-			final int allowedStudents = this.getAllowedNumberOfStudentsForLecture(lecture);
+			final int allowedStudents = roomSchedule.getCoronaCapacity();
 			for (int i = 0; i < students.size(); i++) {
 				final Student student = students.get(i);
 				if (this.studentIsEnrolledFor(student, lecture)) {
@@ -61,7 +65,7 @@ public class StudentController {
 					this.students.save(student);
 					students.remove(i);
 					students.add(student);
-					if (++assignedStudents >= allowedStudents) break;
+					break;
 				}
 			}
 			studentSchedule.add(roomSchedule);
@@ -73,13 +77,9 @@ public class StudentController {
 		this.studentBookings.flush();
 	}
 
-	private int getAllowedNumberOfStudentsForLecture(Lecture lecture) {
-		return 1;
-	}
-
 	//for now it is just an example should retrieve the lectures via /getAllLectures endpoint
 	private ArrayList<CourseLectures> retrieveLectures() {
-		ArrayList<CourseLectures> courseLecturesList = new ArrayList<CourseLectures>();
+		ArrayList<CourseLectures> courseLecturesList = new ArrayList<>();
 		int[] exampleArray = new int[]{1, 2};
 		int[] exampleArray2 = new int[]{3, 4};
 		CourseLectures example1 = new CourseLectures(1, exampleArray);
@@ -116,12 +116,12 @@ public class StudentController {
 
 	private List<Lecture> getAllScheduledSortedLecturesUntil(LocalDateTime date) {
 		// get the schedule via getSchedule endpoint
-		final List<op29sem58.student.RoomSchedule> schedule = new ArrayList<op29sem58.student.RoomSchedule>();
+		final List<RoomSchedule> schedule = new ArrayList<>();
 		LocalDateTime exampleDate = LocalDateTime.of(2020,
 				Month.NOVEMBER, 29, 8, 45, 00);
 		LocalDateTime enDate = LocalDateTime.of(2020,
 				Month.NOVEMBER, 29, 10, 30, 00);
-		op29sem58.student.RoomSchedule example = new op29sem58.student.RoomSchedule(exampleDate, enDate, 0, 1, 1);
+		RoomSchedule example = new op29sem58.student.database.entities.RoomSchedule(exampleDate, enDate, 0, 1, 1, 100);
 		schedule.add(example);
 
 		// sort the lectures by their start time

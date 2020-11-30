@@ -1,5 +1,6 @@
 package op29sem58.student.database.entities;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import javax.persistence.*;
@@ -13,14 +14,37 @@ public class RoomSchedule {
 	@ManyToMany()
 	private Set<Student> students;
 
-	public RoomSchedule(Set<Student> students, int roomScheduleId) {
-		this.students = students;
-		this.roomScheduleId = roomScheduleId;
+	@Transient
+	private int lectureId;
+	@Transient
+	private int roomId;
+	@Transient
+	private LocalDateTime startTime;
+	@Transient
+	private LocalDateTime endTime;
+	@Transient
+	private int coronaCapacity;
+
+	public RoomSchedule(LocalDateTime startTime, LocalDateTime endTime, int id, int lectureId, int roomId, int coronaCapacity) {
+		this.startTime = startTime;
+		this.endTime = endTime;
+		this.roomScheduleId = id;
+		this.lectureId = lectureId;
+		this.roomId = roomId;
+		this.coronaCapacity = coronaCapacity;
 	}
 
 	public RoomSchedule() {
+
 	}
 
+	public int getCoronaCapacity() {
+		return coronaCapacity;
+	}
+
+	public void setCoronaCapacity(int coronaCapacity) {
+		this.coronaCapacity = coronaCapacity;
+	}
 	public Set<Student> getStudents() {
 		return this.students;
 	}
@@ -31,5 +55,25 @@ public class RoomSchedule {
 
 	public Integer getRoomScheduleId() {
 		return this.roomScheduleId;
+	}
+
+	public LocalDateTime getStartTime() {
+		return this.startTime;
+	}
+
+	public LocalDateTime getEndTime() {
+		return this.endTime;
+	}
+
+	public int getId() {
+		return this.roomScheduleId;
+	}
+
+	public int getLectureId() {
+		return this.lectureId;
+	}
+
+	public int getRoomId() {
+		return this.roomId;
 	}
 }
