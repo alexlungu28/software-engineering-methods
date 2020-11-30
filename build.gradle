@@ -26,32 +26,10 @@ plugins {
 	id 'info.solidsoft.pitest' version '1.5.2'
 }
 
-subprojects {
-
-	group = 'op29-sem58'
-	version = '0.0.1-SNAPSHOT'
-
-	apply plugin: 'java'
-	apply plugin: 'io.spring.dependency-management'
-	apply plugin: 'java-library'
-	apply plugin: 'org.springframework.boot'
-	apply plugin: 'jacoco'
-	apply plugin: 'checkstyle'
-	apply plugin: 'pmd'
-	apply plugin: 'info.solidsoft.pitest'
-
-	repositories {
-		mavenCentral()
-	}
-
-	dependencyManagement {
-		imports {
-			mavenBom("org.springframework.boot:spring-boot-dependencies:2.3.5.RELEASE")
-		}
-	}
-
-}
-
+group = 'nl.tudelft.cse.sem.template'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 14
+targetCompatibility = 14
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'

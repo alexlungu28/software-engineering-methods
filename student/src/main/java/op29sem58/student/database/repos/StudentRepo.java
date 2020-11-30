@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface StudentRepo extends JpaRepository<Student, String> {
-	List<Student> findAllByOrderByLastVisitedAsc();
+	List<Student> findByWantsToGoTrueOrderByLastVisitedAsc();
 }

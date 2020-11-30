@@ -1,6 +1,8 @@
 package op29sem58.student.database.entities;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.*;
@@ -35,7 +37,7 @@ public class RoomSchedule {
 	}
 
 	public RoomSchedule() {
-
+		this.students = new HashSet<Student>();
 	}
 
 	public int getCoronaCapacity() {

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import op29sem58.student.database.entities.Student;
+import op29sem58.student.communication.ServerCommunication;
 import op29sem58.student.database.entities.RoomSchedule;
 import op29sem58.student.database.entities.StudentEnrollment;
 import op29sem58.student.database.repos.StudentBookingRepo;
@@ -39,6 +40,8 @@ public class StudentController {
 
 	private Map<Integer, Integer> lectureIdToCourseId;
 
+	private ServerCommunication serverCommunication = new ServerCommunication();
+
 	@PostMapping(path = "/assignStudentsUntil")
 	public void assignStudentsUntil(@RequestBody AssignUntilOptions options) {
 		// initialize all courses
@@ -48,7 +51,7 @@ public class StudentController {
 		final List<Lecture> lectures = this.getAllScheduledSortedLecturesUntil(options.date);
 
 		// get all students, where the highest priority students are at the start
-		final List<Student> students = this.students.findAllByOrderByLastVisitedAsc();
+		final List<Student> students = this.students.findByWantsToGoTrueOrderByLastVisitedAsc();
 
 		// assign students to lectures
 		final List<RoomSchedule> studentSchedule = new ArrayList<>();
@@ -65,7 +68,8 @@ public class StudentController {
 					this.students.save(student);
 					students.remove(i);
 					students.add(student);
-					break;
+					i--;
+					if (++assignedStudents >= allowedStudents) break;
 				}
 			}
 			studentSchedule.add(roomSchedule);
@@ -77,22 +81,9 @@ public class StudentController {
 		this.studentBookings.flush();
 	}
 
-	//for now it is just an example should retrieve the lectures via /getAllLectures endpoint
-	private ArrayList<CourseLectures> retrieveLectures() {
-		ArrayList<CourseLectures> courseLecturesList = new ArrayList<>();
-		int[] exampleArray = new int[]{1, 2};
-		int[] exampleArray2 = new int[]{3, 4};
-		CourseLectures example1 = new CourseLectures(1, exampleArray);
-		CourseLectures example2 = new CourseLectures(2, exampleArray2);
-		courseLecturesList.add(example1);
-		courseLecturesList.add(example2);
-
-		return courseLecturesList;
-	}
-
 	private void initializeCourses() {
 		// get all lectures via /getAllLectures endpoint
-		List<CourseLectures> courseLecturesList = retrieveLectures();
+		final List<CourseLectures> courseLecturesList = this.serverCommunication.getAllLectures();
 
 		// fill map
 		this.lectureIdToCourseId = new HashMap<Integer, Integer>();
@@ -116,18 +107,15 @@ public class StudentController {
 
 	private List<Lecture> getAllScheduledSortedLecturesUntil(LocalDateTime date) {
 		// get the schedule via getSchedule endpoint
-		final List<RoomSchedule> schedule = new ArrayList<>();
-		LocalDateTime exampleDate = LocalDateTime.of(2020,
-				Month.NOVEMBER, 29, 8, 45, 00);
-		LocalDateTime enDate = LocalDateTime.of(2020,
-				Month.NOVEMBER, 29, 10, 30, 00);
-		RoomSchedule example = new op29sem58.student.database.entities.RoomSchedule(exampleDate, enDate, 0, 1, 1, 100);
-		schedule.add(example);
+		final List<RoomSchedule> schedule = this.serverCommunication.getSchedule();
 
 		// sort the lectures by their start time
 		schedule.sort((a, b) -> a.getStartTime().compareTo(b.getStartTime()));
 
 		// collect lectures that matter
-		return schedule.stream().filter(roomSchedule -> roomSchedule.getStartTime().isBefore(date)).map(roomSchedule -> new Lecture(roomSchedule.getLectureId(), roomSchedule)).collect(Collectors.toList());
+		return schedule.stream()
+			.filter(roomSchedule -> roomSchedule.getStartTime().isBefore(date))
+			.map(roomSchedule -> new Lecture(roomSchedule.getLectureId(), roomSchedule))
+			.collect(Collectors.toList());
 	}
 }
