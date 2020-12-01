@@ -102,6 +102,17 @@ public class RoomController {
         }
     }
 
+    @GetMapping(path = "/getCoronaCapacity/{roomId}/{minPerc}/{maxPerc}")
+    public @ResponseBody
+    Integer coronaCapacity(@PathVariable Integer roomId,
+                             @PathVariable Integer minPerc,
+                             @PathVariable Integer maxPerc){
+        return roomRepository.getCoronaCapacity(roomId, minPerc, maxPerc);
+    }
+
+
+
+
     /**
      * Method for deleting a Room.
      *

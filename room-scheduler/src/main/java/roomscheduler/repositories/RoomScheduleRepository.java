@@ -2,10 +2,13 @@ package roomscheduler.repositories;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.util.Pair;
+import roomscheduler.entities.IntPair;
 import roomscheduler.entities.RoomSchedule;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import roomscheduler.entities.RoomSlotStat;
+import roomscheduler.entities.ScheduleInfo;
 
 import java.sql.Date;
 import java.sql.Time;
@@ -27,12 +30,33 @@ public interface RoomScheduleRepository extends JpaRepository<RoomSchedule, Inte
                                            @Param("numSlots") Integer numSlots,
                                            @Param("lunchTime") Time lunchTime);
 
+    @Query(value = "SELECT id as roomScheduleId, rooms_id as roomId, lectures_id as lectureId, start_time as startTime, ADDDATE(start_time, INTERVAL (numOfSlots * :slotDuration + (numOfSlots - 1) * :breakDuration) MINUTE) as endTime, rooms_id as coronaCapacity " +
+            "FROM (SELECT r1.id as id, date_time as start_time, TIMESTAMP(date(date_time),  \"13:10:11\") as end_time, lectures_id, rooms_id, count(*) - 1 as numOfSlots" +
+            " FROM rooms_schedule AS r1 " +
+            "JOIN room_slots AS r2 " +
+            "ON r1.room_slots_id = r2.id " +
+            "group by r1.lectures_id) r3 ", nativeQuery = true)
+    List<ScheduleInfo> getScheduleInfo(@Param("slotDuration") Integer slotDuration,
+                                       @Param("breakDuration") Integer breakDuration);
+
 
     @Query(value = "SELECT rules.value " +
             "FROM rules " +
             "WHERE name = \"lunch slot\"",
             nativeQuery = true)
     Integer getLunchSlot();
+
+    @Query(value = "SELECT rules.value " +
+            "FROM rules " +
+            "WHERE name = \"slot duration\"",
+            nativeQuery = true)
+    Integer getSlotDuration();
+
+    @Query(value = "SELECT rules.value " +
+            "FROM rules " +
+            "WHERE name = \"break time\"",
+            nativeQuery = true)
+    Integer getBreakDuration();
 
 
     @Query(value = "SELECT rules.value " +
@@ -46,6 +70,9 @@ public interface RoomScheduleRepository extends JpaRepository<RoomSchedule, Inte
             "WHERE name = \"capacity more than 200\"",
             nativeQuery = true)
     Integer getMaxPerc();
+
+    @Query(value = "SELECT room_slots_id as RoomSlotId, id as RoomScheduleId FROM rooms_schedule WHERE lectures_id = :lecture_id", nativeQuery = true)
+    List<IntPair> getSlotIdAndRoomSlotId(@Param("lecture_id") Integer lecture_id);
 
 
     @Query(value = "SELECT room_slots_id " +

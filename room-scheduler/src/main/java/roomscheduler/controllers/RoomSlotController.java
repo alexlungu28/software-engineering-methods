@@ -14,7 +14,6 @@ import java.util.*;
 
 import roomscheduler.communication.RoomSlotCommunication;
 
-import javax.swing.text.html.Option;
 
 
 /**
@@ -93,6 +92,20 @@ public class RoomSlotController {
                 roomSlotRepository.saveAndFlush(next.get());
             }
             return "Marked room slots as occupied!";
+        }else{
+            throw new RuntimeException("Room slot not found for the id " + id);
+        }
+    }
+
+
+    @PostMapping(path = "/makeRoomSlotAvailable/{id}")
+    public @ResponseBody
+    String makeRoomSlotAvail(@PathVariable Integer id) {
+        Optional<RoomSlot> roomSlot = roomSlotRepository.findById(id);
+        if(roomSlot.isPresent()){
+            roomSlot.get().setOccupied(0);
+            roomSlotRepository.saveAndFlush(roomSlot.get());
+            return "Marked room slot as available!";
         }else{
             throw new RuntimeException("Room slot not found for the id " + id);
         }

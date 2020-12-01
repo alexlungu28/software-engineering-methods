@@ -42,6 +42,24 @@ public class RoomScheduleController {
         return "Saved room schedule";
     }
 
+    @GetMapping(path = "/getSchedule")
+    public @ResponseBody
+    List<ScheduleInformation> getAllSchedules() throws IOException {
+        Integer breakDuration = roomScheduleRepository.getBreakDuration();
+        Integer slotDuration = roomScheduleRepository.getSlotDuration();
+        List<ScheduleInfo> result = roomScheduleRepository.getScheduleInfo(slotDuration, breakDuration);
+        System.out.println(result);
+        int minPercentage = roomScheduleRepository.getMinPerc();
+        int maxPercentage = roomScheduleRepository.getMaxPerc();
+        List<ScheduleInformation> finalRes = new ArrayList<>();
+        for(ScheduleInfo s : result){
+            finalRes.add(new ScheduleInformation(s.getRoomScheduleId(), s.getStartTime(),
+                    s.getEndTime(), s.getLectureId(), s.getRoomId(), RoomScheduleCommunication.getCoronaCapacity(s.getRoomId(),minPercentage,maxPercentage)));
+        }
+        System.out.println(finalRes);
+        return finalRes;
+    }
+
 
     @GetMapping(path = "/availableSlots/{prefDate}/{numSlots}/{lunchTime}")
     public @ResponseBody
@@ -51,7 +69,8 @@ public class RoomScheduleController {
         return roomScheduleRepository.scheduleLecture(prefDate, numSlots, lunchTime);
     }
 
-    @GetMapping(path = "/scheduleLecture/{prefDate}/{numSlots}/{numOfStudents}/{lectureId}/{yearOfStudy}")
+    @GetMapping(path = "/scheduleLecture/{prefDate}/" +
+            "{numSlots}/{numOfStudents}/{lectureId}/{yearOfStudy}")
     public @ResponseBody
     String scheduleNewLecture(@PathVariable Date prefDate,
                                     @PathVariable Integer numSlots,
@@ -70,13 +89,14 @@ public class RoomScheduleController {
                 getAvailableRoomsSlots(prefDate,numSlots,lunchTime);
         System.out.println(dateIntPairs);
 
+        //TODO do not let lectures of the same year overlap
         List<Integer> slotIdsOfSameYearLectures = roomScheduleRepository.getSlotIdsForLecturesOfTheSameYear(yearOfStudy);
         System.out.println(slotIdsOfSameYearLectures);
 
         List<NameDateInfo> finalResult = new ArrayList<>();
-        for(SlotInfo pair : dateIntPairs){
-            for(IdNamePair i : roomInfoWithRequiredCapacity){
-                if(i.getId() == pair.getRoomId() && !slotIdsOfSameYearLectures.contains(pair.roomSlotId)) finalResult.
+        for (SlotInfo pair : dateIntPairs){
+            for (IdNamePair i : roomInfoWithRequiredCapacity){
+                if (i.getId() == pair.getRoomId() && !slotIdsOfSameYearLectures.contains(pair.roomSlotId)) finalResult.
                         add(new NameDateInfo(pair.getDate(), i.getName(), pair.getRoomSlotId()));
             }
         }
@@ -101,6 +121,22 @@ public class RoomScheduleController {
         final java.util.Date dateObj = sdf.parse(s);
         Time result = Time.valueOf(dateObj.toInstant().toString().substring(11,19));
         return result;
+    }
+
+
+    @DeleteMapping(path = "/cancelLecture/{id}")
+    public @ResponseBody
+    String deleteLecture(@PathVariable int id) throws IOException {
+        List<IntPair> values = roomScheduleRepository.getSlotIdAndRoomSlotId(id);
+        if(values.size() == 0){
+            return "There is no scheduled lecture with the given id";
+        }else{
+            for(IntPair p : values){
+                roomScheduleRepository.deleteById(p.getRoomScheduleId());
+                RoomScheduleCommunication.makeRoomSlotAvailable(p.getRoomSlotId());
+            }
+        }
+        return "Canceled lecture";
     }
 
 

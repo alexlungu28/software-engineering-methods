@@ -1,17 +1,14 @@
 package roomscheduler.communication;
 
 import com.google.gson.Gson;
-import roomscheduler.entities.RoomSlot;
 import roomscheduler.entities.SlotInfo;
 import roomscheduler.entities.IdNamePair;
-import roomscheduler.repositories.RoomSlotRepository;
 
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.Time;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 public class RoomScheduleCommunication extends ServerCommunication {
 
@@ -36,5 +33,20 @@ public class RoomScheduleCommunication extends ServerCommunication {
     public static void makeRoomSlotsOccupied(Integer roomSlotId, Integer numberOfSlots) throws IOException {
         Integer statusCode = executePostRequest("8081", "/updateRoomSlot/" + roomSlotId + "/" + numberOfSlots, "");
     }
+
+    public static void makeRoomSlotAvailable(Integer roomSlotId) throws IOException {
+        Integer statusCode = executePostRequest("8081", "/makeRoomSlotAvailable/" + roomSlotId, "");
+    }
+
+    public static Integer getCoronaCapacity(Integer roomId, Integer minPerc,
+                                            Integer maxPerc) throws IOException {
+
+        String port = "8080"; //this is the port of the room-service
+        String path = "/getCoronaCapacity/" + roomId + "/" + minPerc + "/" + maxPerc;
+        Integer count = gson.fromJson(getObjectJson(port, path), Integer.class);
+        return count;
+    }
+
+
 
 }
