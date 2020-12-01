@@ -19,6 +19,9 @@ public class Room {
 
 
     public Room(String name, Integer capacity) {
+        if (capacity < 1) {
+            throw new IllegalArgumentException("invalid capacity");
+        }
         this.name = name;
         this.capacity = capacity;
     }
@@ -47,7 +50,11 @@ public class Room {
     }
 
     public void setCapacity(Integer capacity) {
+        if (capacity < 1) {
+            throw new IllegalArgumentException("invalid capacity");
+        }
         this.capacity = capacity;
+
     }
 
     @Override
