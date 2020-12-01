@@ -3,6 +3,8 @@ plugins {
     id 'io.spring.dependency-management'
     id 'java'
     id 'checkstyle'
+    // PMD
+    id 'pmd'
 }
 
 group = 'op29-sem58'
@@ -31,4 +33,8 @@ test {
 checkstyle {
     toolVersion "8.37"
     configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
+}
+
+pmd {
+    incrementalAnalysis = true
 }

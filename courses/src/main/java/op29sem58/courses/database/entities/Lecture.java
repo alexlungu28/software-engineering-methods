@@ -34,6 +34,10 @@ public class Lecture {
         this.minNoStudents = minNumberOfStudents;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public int getId() {
         return id;
     }

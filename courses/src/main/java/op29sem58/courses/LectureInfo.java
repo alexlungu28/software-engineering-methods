@@ -25,11 +25,11 @@ public class LectureInfo {
         this.minNoStudents = minNoStudents;
     }
 
-    public int getCoursesId() {
+    public int getCourseId() {
         return this.courseId;
     }
 
-    public void setCoursesId(int coursesId) {
+    public void setCourseId(int coursesId) {
         this.courseId = coursesId;
     }
 

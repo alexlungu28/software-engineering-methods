@@ -48,9 +48,9 @@ public class CoursesController {
     @PostMapping(path = "/createLecture/{courseId}")
     public @ResponseBody String createCourse(@PathVariable int courseId,
                                              @RequestBody LectureInfo l) {
-        l.setCoursesId(courseId);
+        l.setCourseId(courseId);
         Optional<Course> courseOpt = coursesRepo
-                .findById(l.getCoursesId());
+                .findById(l.getCourseId());
 
         if (courseOpt.isEmpty()) {
             return "Incorrect course id, there is no course with this id. \n"
@@ -72,8 +72,7 @@ public class CoursesController {
     @GetMapping(path = "/scheduleForTwoWeeks")
     public @ResponseBody String scheduleForTwoWeeks() {
         List<Lecture> lectures = lecturesRepo.findAll();
-        LocalDate now = LocalDate.now();
-        LocalDate inTwoWeeks = now.plusWeeks(2);
+        LocalDate inTwoWeeks = LocalDate.now().plusWeeks(2);
 
         lectures.removeIf(lecture -> lecture.getDate().isAfter(inTwoWeeks));
 
@@ -95,4 +94,20 @@ public class CoursesController {
         return "Lectures for the coming two weeks are scheduled!";
     }
 
+
+    public CoursesRepo getCoursesRepo() {
+        return coursesRepo;
+    }
+
+    public void setCoursesRepo(CoursesRepo coursesRepo) {
+        this.coursesRepo = coursesRepo;
+    }
+
+    public LecturesRepo getLecturesRepo() {
+        return lecturesRepo;
+    }
+
+    public void setLecturesRepo(LecturesRepo lecturesRepo) {
+        this.lecturesRepo = lecturesRepo;
+    }
 }

@@ -13,9 +13,8 @@ public class ServerCommunication {
     private static final String STUDENT_SERVICE_URL = "http://localhost:8085";
     private static final String ROOM_SCHEDULE_SERVICE_URL = "http://localhost:8081";
 
-    private static CredentialsProvider credentials = new BasicCredentialsProvider();
-    private static CloseableHttpClient client = HttpClientBuilder.create()
-            .setDefaultCredentialsProvider(credentials).build();
+    private static CredentialsProvider credentials;
+    private static CloseableHttpClient client;
 
     /**
      * A standard method to make a get request with any url.
@@ -24,9 +23,13 @@ public class ServerCommunication {
      * @return the body of the get request
      */
     public static String makeGetRequest(String url) {
+        credentials = new BasicCredentialsProvider();
+        client = HttpClientBuilder.create()
+                .setDefaultCredentialsProvider(credentials).build();
         try {
             CloseableHttpResponse response = client.execute(new HttpGet(url));
             String body = EntityUtils.toString(response.getEntity());
+            client.close();
             return body;
         } catch (Exception e) {
             e.printStackTrace();
