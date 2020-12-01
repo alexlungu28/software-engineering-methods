@@ -31,6 +31,10 @@ public class Course {
         return id;
     }
 
+    public String getTeacherNetId() { return teacherNetId; }
+
+    public void setTeacherNetId(String teacherNetId) { this.teacherNetId = teacherNetId; }
+
     public String getName() {
         return name;
     }

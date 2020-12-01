@@ -1,26 +1,28 @@
 package op29sem58.courses;
 
-import javax.persistence.OneToMany;
 import java.time.LocalDate;
-import java.util.Set;
 
 public class LectureInfo {
-    private int coursesId;
+    private int courseId;
     private LocalDate date;
     private int nSlots;
+    private int minNoStudents;
 
-    public LectureInfo(int coursesId, LocalDate date, int nSlots){
-        this.coursesId = coursesId;
+    public LectureInfo(){}
+
+    public LectureInfo(int courseId, LocalDate date, int nSlots, int minNoStudents){
+        this.courseId = courseId;
         this.date = date;
         this.nSlots = nSlots;
+        this.minNoStudents = minNoStudents;
     }
 
     public int getCoursesId() {
-        return coursesId;
+        return this.courseId;
     }
 
     public void setCoursesId(int coursesId) {
-        this.coursesId = coursesId;
+        this.courseId = coursesId;
     }
 
     public LocalDate getDate() {
@@ -37,5 +39,23 @@ public class LectureInfo {
 
     public void setnSlots(int nSlots) {
         this.nSlots = nSlots;
+    }
+
+    public int getMinNoStudents() {
+        return minNoStudents;
+    }
+
+    public void setMinNoStudents(int minNoStudents) {
+        this.minNoStudents = minNoStudents;
+    }
+
+    @Override
+    public String toString() {
+        return "LectureInfo{" +
+                "courseId=" + courseId +
+                ", date=" + date +
+                ", nSlots=" + nSlots +
+                ", minNoStudents=" + minNoStudents +
+                '}';
     }
 }

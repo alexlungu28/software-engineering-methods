@@ -7,6 +7,8 @@ public class CourseInfo {
     private String code;
     private int yearOfStudy;
 
+    public CourseInfo(){}
+
     public CourseInfo(String teacherNetId, String name, String code, int yearOfStudy) {
         this.teacherNetId = teacherNetId;
         this.name = name;

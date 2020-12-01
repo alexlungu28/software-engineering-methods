@@ -2,7 +2,6 @@ package op29sem58.courses.database.entities;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Set;
 
 @Entity
 public class Lecture {
@@ -11,29 +10,23 @@ public class Lecture {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    @OneToMany
-    private Set<Course> courses;
+    @ManyToOne
+    private Course course;
     private LocalDate date;
     private int nSlots;
+    private int minNoStudents;
 
     public Lecture(){}
 
-    public Lecture(Set<Course> courses, LocalDate date, int nSlots){
-        this.courses = courses;
+    public Lecture(Course course, LocalDate date, int nSlots, int minNumberOfStudents){
+        this.course = course;
         this.date = date;
         this.nSlots = nSlots;
+        this.minNoStudents = minNumberOfStudents;
     }
 
     public int getId(){
         return id;
-    }
-
-    public Set<Course> getCoursesId() {
-        return courses;
-    }
-
-    public void setCoursesId(Set<Course> coursesId) {
-        this.courses = coursesId;
     }
 
     public LocalDate getDate() {
@@ -50,5 +43,21 @@ public class Lecture {
 
     public void setnSlots(int nSlots) {
         this.nSlots = nSlots;
+    }
+
+    public Course getCourse() {
+        return course;
+    }
+
+    public void setCourse(Course course) {
+        this.course = course;
+    }
+
+    public int getMinNoStudents() {
+        return minNoStudents;
+    }
+
+    public void setMinNoStudents(int minNumberOfStudents) {
+        this.minNoStudents = minNumberOfStudents;
     }
 }
