@@ -63,8 +63,8 @@ public class RoomSlotController {
             rules.put(r.getName(), Integer.parseInt(r.getValue()));
         }
         int breakSlot = rules.get("lunch slot");
-        int timeBetweenSlotsInHours = (rules.get("buffer time") + rules.get("break time")) / 60;
-        int timeBetweenSlotsInMin = (rules.get("buffer time") + rules.get("break time")) % 60;
+        int timeBetweenSlotsInHours = (rules.get("slot duration") + rules.get("break time")) / 60;
+        int timeBetweenSlotsInMin = (rules.get("slot duration") + rules.get("break time")) % 60;
         int slots_per_day = rules.get("slots per day");
         DateTimeFormatter formatter = org.joda.time.format.DateTimeFormat.forPattern("HH:mm:ss");
         String s = "";
@@ -75,6 +75,19 @@ public class RoomSlotController {
 
         return roomSlotRepository.createRoomSlots(slots_per_day, numDays, firstSlotDateTime, timeBetweenSlotsTime,
                 breakSlot, numberOfRooms);
+    }
+
+    @PostMapping(path = "/updateRoomSlot/{id}")
+    public @ResponseBody
+    String editRoomSlot(@PathVariable Integer id) {
+        Optional<RoomSlot> roomSlot = roomSlotRepository.findById(id);
+        if(roomSlot.isPresent()){
+            roomSlot.get().setOccupied(1);
+            roomSlotRepository.saveAndFlush(roomSlot.get());
+            return "Marked room slot as occupied!";
+        }else{
+            throw new RuntimeException("Room slot not found for the id " + id);
+        }
     }
 
 

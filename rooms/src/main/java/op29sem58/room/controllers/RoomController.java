@@ -1,9 +1,12 @@
 package op29sem58.room.controllers;
+import op29sem58.room.entities.RoomInfo;
 import op29sem58.room.repositories.RoomRepository;
 import op29sem58.room.entities.Room;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -69,6 +72,14 @@ public class RoomController {
     public @ResponseBody
     Long getNumberOfRooms(){
         return roomRepository.count();
+    }
+
+    @GetMapping(path = "/getRoomsWithCapacityAtLeast/{numOfStudents}/{minPer}/{maxPer}")
+    public @ResponseBody
+    List<RoomInfo> getRoomWithCapAtLeast(@PathVariable Integer numOfStudents,
+                                         @PathVariable Integer minPer,
+                                         @PathVariable Integer maxPer){
+        return roomRepository.getRoomsWithCapacityAtLeast(numOfStudents, minPer, maxPer);
     }
 
     /**

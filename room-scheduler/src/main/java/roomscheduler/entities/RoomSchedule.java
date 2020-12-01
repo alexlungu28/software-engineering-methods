@@ -13,15 +13,17 @@ public class RoomSchedule {
     private Integer id;
     private Integer room_slots_id;
     private Integer lectures_id;
+    private Integer year_of_study;
 
 
     protected RoomSchedule() {
 
     }
 
-    public RoomSchedule(Integer room_slots_id, Integer lectures_id) {
+    public RoomSchedule(Integer room_slots_id, Integer lectures_id, Integer year_of_study) {
         this.room_slots_id = room_slots_id;
         this.lectures_id = lectures_id;
+        this.year_of_study = year_of_study;
     }
 
     public Integer getId() {
@@ -48,6 +50,14 @@ public class RoomSchedule {
         this.lectures_id = lectures_id;
     }
 
+    public Integer getYear_of_study() {
+        return year_of_study;
+    }
+
+    public void setYear_of_study(Integer year_of_study) {
+        this.year_of_study = year_of_study;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -55,12 +65,13 @@ public class RoomSchedule {
         RoomSchedule that = (RoomSchedule) o;
         return Objects.equals(id, that.id) &&
                 Objects.equals(room_slots_id, that.room_slots_id) &&
-                Objects.equals(lectures_id, that.lectures_id);
+                Objects.equals(lectures_id, that.lectures_id) &&
+                Objects.equals(year_of_study, that.year_of_study);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, room_slots_id, lectures_id);
+        return Objects.hash(id, room_slots_id, lectures_id, year_of_study);
     }
 
     @Override
@@ -69,6 +80,7 @@ public class RoomSchedule {
                 "id=" + id +
                 ", room_slots_id=" + room_slots_id +
                 ", lectures_id=" + lectures_id +
+                ", year_of_study=" + year_of_study +
                 '}';
     }
 }

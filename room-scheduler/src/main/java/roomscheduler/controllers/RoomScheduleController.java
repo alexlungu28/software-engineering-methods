@@ -1,12 +1,22 @@
 package roomscheduler.controllers;
 
-import roomscheduler.entities.RoomSchedule;
+import roomscheduler.communication.RoomScheduleCommunication;
+import roomscheduler.entities.*;
 import roomscheduler.repositories.RoomScheduleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import roomscheduler.repositories.RoomSlotRepository;
 
+import java.io.IOException;
+import java.sql.Date;
+import java.sql.Time;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.TimeZone;
 
 /**
  * Controller for Room Schedule.
@@ -31,6 +41,65 @@ public class RoomScheduleController {
         roomScheduleRepository.saveAndFlush(r);
         return "Saved room schedule";
     }
+
+
+    @GetMapping(path = "/availableSlots/{prefDate}/{numSlots}/{lunchTime}")
+    public @ResponseBody
+    Iterable<RoomSlotStat> getAvailableSlots(@PathVariable Date prefDate,
+                                       @PathVariable Integer numSlots,
+                                       @PathVariable Time lunchTime) {
+        return roomScheduleRepository.scheduleLecture(prefDate, numSlots, lunchTime);
+    }
+
+    @GetMapping(path = "/scheduleLecture/{prefDate}/{numSlots}/{numOfStudents}/{lectureId}/{yearOfStudy}")
+    public @ResponseBody
+    String scheduleNewLecture(@PathVariable Date prefDate,
+                                    @PathVariable Integer numSlots,
+                                    @PathVariable Integer numOfStudents,
+                              @PathVariable Integer lectureId,
+                              @PathVariable Integer yearOfStudy) throws IOException, ParseException {
+        Integer lunchHour = 9 + roomScheduleRepository.getLunchSlot();
+        Time lunchTime = UTCTime("" + lunchHour  + ":45:00");
+        int minPercentage = roomScheduleRepository.getMinPerc();
+        int maxPercentage = roomScheduleRepository.getMaxPerc();
+        List<IdNamePair> roomInfoWithRequiredCapacity =
+                RoomScheduleCommunication.getRoomsIdsWithRequiredCapacity(numOfStudents, minPercentage, maxPercentage);
+        //System.out.println(roomInfoWithRequiredCapacity);
+        //System.out.println(roomIdsWithRequiredCapacity);
+        List<SlotInfo> dateIntPairs = RoomScheduleCommunication.
+                getAvailableRoomsSlots(prefDate,numSlots,lunchTime);
+        System.out.println(dateIntPairs);
+
+        List<NameDateInfo> finalResult = new ArrayList<>();
+        for(SlotInfo pair : dateIntPairs){
+            for(IdNamePair i : roomInfoWithRequiredCapacity){
+                if(i.getId() == pair.getRoomId()) finalResult.
+                        add(new NameDateInfo(pair.getDate(), i.getName(), pair.getRoomSlotId()));
+            }
+        }
+        if(finalResult.size() == 0){ //no available slots for the input given
+            return "There is no available slots for the input given. Try again!";
+        }else{
+            NameDateInfo result = finalResult.get(0);
+            roomScheduleRepository.saveAndFlush(new RoomSchedule(
+                    result.getRoomSlotId(), lectureId, yearOfStudy));
+            RoomScheduleCommunication.makeRoomSlotOccupied(result.getRoomSlotId());
+            return "Your lecture was successfully scheduled for: " + result.getDate().toString() +
+                    " in the room with name: " + result.getRoomName();
+        }
+    }
+
+    public static Time UTCTime(String s) throws ParseException {
+        final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        final java.util.Date dateObj = sdf.parse(s);
+        Time result = Time.valueOf(dateObj.toInstant().toString().substring(11,19));
+        return result;
+    }
+
+
+
+
 
     /**
      * Retrieve all Rooms Schedules.
