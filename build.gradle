@@ -31,10 +31,6 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 14
 targetCompatibility = 14
 
-repositories {
-	mavenCentral()
-}
-
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
