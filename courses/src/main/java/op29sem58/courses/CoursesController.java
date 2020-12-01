@@ -72,9 +72,8 @@ public class CoursesController {
     @GetMapping(path = "/scheduleForTwoWeeks")
     public @ResponseBody String scheduleForTwoWeeks() {
         List<Lecture> lectures = lecturesRepo.findAll();
-        LocalDate inTwoWeeks = LocalDate.now().plusWeeks(2);
 
-        lectures.removeIf(lecture -> lecture.getDate().isAfter(inTwoWeeks));
+        lectures.removeIf(lecture -> lecture.getDate().isAfter(LocalDate.now().plusWeeks(2)));
 
         if (lectures.size() == 0) {
             return "There are no lectures planned in the coming two weeks.";

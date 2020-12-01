@@ -26,8 +26,8 @@ public class ServerCommunication {
         credentials = new BasicCredentialsProvider();
         client = HttpClientBuilder.create()
                 .setDefaultCredentialsProvider(credentials).build();
-        try {
-            CloseableHttpResponse response = client.execute(new HttpGet(url));
+
+        try (CloseableHttpResponse response = client.execute(new HttpGet(url))) {
             String body = EntityUtils.toString(response.getEntity());
             client.close();
             return body;
