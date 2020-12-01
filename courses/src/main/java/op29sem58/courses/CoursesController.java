@@ -4,11 +4,21 @@ import op29sem58.courses.database.entities.Course;
 import op29sem58.courses.database.entities.Lecture;
 import op29sem58.courses.database.repos.CoursesRepo;
 import op29sem58.courses.database.repos.LecturesRepo;
+import org.apache.catalina.Server;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.apache.http.impl.client.CloseableHttpClient;
 
 
+import java.io.Closeable;
+import java.net.URI;
+import java.net.http.HttpRequest;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -55,6 +65,29 @@ public class CoursesController {
 
     //TODO: make a method that schedules lectures for the coming two weeks
     //path for schedulelecture is: 8081/scheduleLecture/{prefDate}/{numSlots}/{numOfStudents}/{lectureId}/{yearOfStudy}
+    @GetMapping(path = "/scheduleForTwoWeeks")
+    public @ResponseBody String scheduleForTwoWeeks(){
+        List<Lecture> lectures = lecturesRepo.findAll();
+        LocalDate now = LocalDate.now();
+        LocalDate inTwoWeeks = now.plusWeeks(2);
 
+        lectures.removeIf(lecture -> lecture.getDate().isAfter(inTwoWeeks));
+
+        if(lectures.size() == 0){
+            return "There are no lectures planned in the coming two weeks.";
+        }
+
+        for(Lecture l : lectures){
+            String path = ServerCommunication.getRoomScheduleServiceUrl() + "/scheduleLecture/" + l.getDate() + "/" + l.getnSlots() + "/"
+                    + l.getMinNoStudents() + "/" + l.getId() + "/" + l.getCourse().getYearOfStudy();
+            System.out.println(path);
+            String response = ServerCommunication.makeGetRequest(path);
+            if(response == null){
+                return "Something went wrong on our end. Please try again later.";
+            }
+        }
+
+        return "Lectures for the coming two weeks are scheduled!";
+    }
 
 }
