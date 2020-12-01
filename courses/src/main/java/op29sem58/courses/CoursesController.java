@@ -55,6 +55,6 @@ public class CoursesController {
 
     //TODO: make a method that schedules lectures for the coming two weeks
     //path for schedulelecture is: 8081/scheduleLecture/{prefDate}/{numSlots}/{numOfStudents}/{lectureId}/{yearOfStudy}
-    
+
 
 }
