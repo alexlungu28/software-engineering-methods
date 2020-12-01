@@ -4,6 +4,11 @@ public class CourseLectures {
 	private int courseId;
 	private int[] lectureIds;
 
+	public CourseLectures(int i, int[] exampleArray) {
+		courseId = i;
+		lectureIds = exampleArray;
+	}
+
 	public int getCourseId() {
 		return this.courseId;
 	}

@@ -1,5 +1,7 @@
 package op29sem58.student;
 
+import op29sem58.student.database.entities.RoomSchedule;
+
 public class Lecture {
 	private RoomSchedule roomSchedule;
 	private int id;

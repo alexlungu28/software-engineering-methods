@@ -3,6 +3,7 @@ package op29sem58.student.communication;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import op29sem58.student.database.entities.RoomSchedule;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -13,7 +14,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 
 import op29sem58.student.CourseLectures;
-import op29sem58.student.RoomSchedule;
 import op29sem58.student.communication.adapters.LocalDateTimeAdapter;
 
 import java.io.IOException;
