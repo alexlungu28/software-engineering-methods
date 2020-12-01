@@ -77,6 +77,19 @@ public class RoomSlotController {
                 breakSlot, numberOfRooms);
     }
 
+    @PostMapping(path = "/updateRoomSlot/{id}")
+    public @ResponseBody
+    String editRoomSlot(@PathVariable Integer id) {
+        Optional<RoomSlot> roomSlot = roomSlotRepository.findById(id);
+        if(roomSlot.isPresent()){
+            roomSlot.get().setOccupied(1);
+            roomSlotRepository.saveAndFlush(roomSlot.get());
+            return "Marked room slot as occupied!";
+        }else{
+            throw new RuntimeException("Room slot not found for the id " + id);
+        }
+    }
+
 
     /**
      * Retrieve all Room Slots.

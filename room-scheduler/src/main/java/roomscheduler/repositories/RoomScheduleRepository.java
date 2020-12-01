@@ -1,24 +1,20 @@
 package roomscheduler.repositories;
 
-import org.hibernate.sql.Select;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import roomscheduler.entities.DateIntPair;
 import roomscheduler.entities.RoomSchedule;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import roomscheduler.entities.RoomSlot;
 import roomscheduler.entities.RoomSlotStat;
 
 import java.sql.Date;
 import java.sql.Time;
-import java.util.List;
 
 @Repository
 public interface RoomScheduleRepository extends JpaRepository<RoomSchedule, Integer> {
 
 
-    @Query(value = "SELECT a.date_time as date, a.rooms_id as roomId " +
+    @Query(value = "SELECT a.date_time as date, a.rooms_id as roomId, a.id as roomSlotId " +
             "FROM room_slots AS a " +
             "JOIN room_slots AS b " +
             "ON b.rooms_id = a.rooms_id AND timestampdiff(hour, a.date_time, b.date_time) = :numSlots " +

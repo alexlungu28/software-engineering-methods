@@ -1,4 +1,5 @@
 package op29sem58.room.controllers;
+import op29sem58.room.entities.RoomInfo;
 import op29sem58.room.repositories.RoomRepository;
 import op29sem58.room.entities.Room;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,9 +76,9 @@ public class RoomController {
 
     @GetMapping(path = "/getRoomsWithCapacityAtLeast/{numOfStudents}/{minPer}/{maxPer}")
     public @ResponseBody
-    List<Integer> getRoomWithCapAtLeast(@PathVariable Integer numOfStudents,
-                                        @PathVariable Integer minPer,
-                                        @PathVariable Integer maxPer){
+    List<RoomInfo> getRoomWithCapAtLeast(@PathVariable Integer numOfStudents,
+                                         @PathVariable Integer minPer,
+                                         @PathVariable Integer maxPer){
         return roomRepository.getRoomsWithCapacityAtLeast(numOfStudents, minPer, maxPer);
     }
 

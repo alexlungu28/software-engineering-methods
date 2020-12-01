@@ -1,6 +1,7 @@
 package op29sem58.room.repositories;
 
 import op29sem58.room.entities.Room;
+import op29sem58.room.entities.RoomInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,8 +17,8 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
     String createInitialRooms();
 
 
-    @Query(value = "SELECT id \n" +
-            "FROM (SELECT id,\n" +
+    @Query(value = "SELECT id, name \n" +
+            "FROM (SELECT id, name, \n" +
             "CASE \n" +
             "\tWHEN t1.capBool = 1 THEN FLOOR(t1.capacity * :maxPer/100)\n" +
             "    ELSE FLOOR(t1.capacity * :minPer/100)\n" +
@@ -30,9 +31,9 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
             "\tFROM rooms) t1) t2\n" +
             "WHERE t2.coronaCapacity >= :numOfStudents",
             nativeQuery = true)
-    List<Integer> getRoomsWithCapacityAtLeast(@Param("numOfStudents") Integer numOfStudents,
-                                              @Param("minPer") Integer minPer,
-                                              @Param("maxPer") Integer maxPer);
+    List<RoomInfo> getRoomsWithCapacityAtLeast(@Param("numOfStudents") Integer numOfStudents,
+                                               @Param("minPer") Integer minPer,
+                                               @Param("maxPer") Integer maxPer);
 
 
 }
