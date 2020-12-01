@@ -2,7 +2,7 @@ plugins {
 	id 'java'
 	id 'checkstyle'
 	id 'jacoco'
-	id 'pmd'
+	// id 'pmd'
 }
 
 repositories {
@@ -60,6 +60,6 @@ checkstyle {
 	showViolations = true
 }
 
-pmd {
-	incrementalAnalysis = true
-}
+// pmd {
+// 	incrementalAnalysis = true
+// }
