@@ -101,7 +101,7 @@ public class RoomScheduleController {
             }
         }
         if(finalResult.size() == 0){ //no available slots for the input given
-            return "There is no available slots for the input given. Try again!";
+            return "There are no available slots for the input given. Try again!";
         }else{
             NameDateInfo result = finalResult.get(0);
             roomScheduleRepository.saveAndFlush(new RoomSchedule(
