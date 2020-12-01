@@ -9,16 +9,20 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 
-import java.io.IOException;
-import java.time.LocalDateTime;
-
 public class ServerCommunication {
     private static final String STUDENT_SERVICE_URL = "http://localhost:8085";
     private static final String ROOM_SCHEDULE_SERVICE_URL = "http://localhost:8081";
 
     private static CredentialsProvider credentials = new BasicCredentialsProvider();
-    private static CloseableHttpClient client = HttpClientBuilder.create().setDefaultCredentialsProvider(credentials).build();
+    private static CloseableHttpClient client = HttpClientBuilder.create()
+            .setDefaultCredentialsProvider(credentials).build();
 
+    /**
+     * A standard method to make a get request with any url.
+     *
+     * @param url the url with which this request needs to be made
+     * @return the body of the get request
+     */
     public static String makeGetRequest(String url) {
         try {
             CloseableHttpResponse response = client.execute(new HttpGet(url));

@@ -9,6 +9,14 @@ public class CourseInfo {
 
     public CourseInfo(){}
 
+    /**
+     * Constructor for courseInfo without id.
+     *
+     * @param teacherNetId the NetId of the teacher
+     * @param name the name of the course
+     * @param code the code of the course
+     * @param yearOfStudy the year in which this course is taught
+     */
     public CourseInfo(String teacherNetId, String name, String code, int yearOfStudy) {
         this.teacherNetId = teacherNetId;
         this.name = name;
@@ -16,6 +24,15 @@ public class CourseInfo {
         this.yearOfStudy = yearOfStudy;
     }
 
+    /**
+     * Constructor for courseInfo with id.
+     *
+     * @param id the id of the course
+     * @param teacherNetId the NetId of the teacher of this course
+     * @param name the name of this course
+     * @param code the code of this course
+     * @param yearOfStudy the year in which this course is taught
+     */
     public CourseInfo(int id, String teacherNetId, String name, String code, int yearOfStudy) {
         this.id = id;
         this.teacherNetId = teacherNetId;

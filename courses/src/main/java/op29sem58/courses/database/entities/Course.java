@@ -1,16 +1,12 @@
 package op29sem58.courses.database.entities;
 
-import org.springframework.jmx.export.annotation.ManagedNotification;
-
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.Set;
 
 @Entity
 public class Course {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
     private String teacherNetId;
@@ -20,7 +16,15 @@ public class Course {
 
     public Course(){}
 
-    public Course(String teacherNetId, String name, String code, int yearOfStudy){
+    /**
+     * Constructor for the course entity.
+     *
+     * @param teacherNetId the netId of the teacher of this course
+     * @param name the name of the course
+     * @param code the code of the course
+     * @param yearOfStudy the study year in which this course is held
+     */
+    public Course(String teacherNetId, String name, String code, int yearOfStudy) {
         this.teacherNetId = teacherNetId;
         this.name = name;
         this.code = code;
@@ -31,9 +35,13 @@ public class Course {
         return id;
     }
 
-    public String getTeacherNetId() { return teacherNetId; }
+    public String getTeacherNetId() {
+        return teacherNetId;
+    }
 
-    public void setTeacherNetId(String teacherNetId) { this.teacherNetId = teacherNetId; }
+    public void setTeacherNetId(String teacherNetId) {
+        this.teacherNetId = teacherNetId;
+    }
 
     public String getName() {
         return name;
@@ -43,9 +51,13 @@ public class Course {
         this.name = name;
     }
 
-    public String getCode() { return code; }
+    public String getCode() {
+        return code;
+    }
 
-    public void setCode(String code) { this.code = code; }
+    public void setCode(String code) {
+        this.code = code;
+    }
 
     public int getYearOfStudy() {
         return yearOfStudy;

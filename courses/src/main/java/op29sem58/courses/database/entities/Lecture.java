@@ -1,7 +1,8 @@
 package op29sem58.courses.database.entities;
 
-import javax.persistence.*;
 import java.time.LocalDate;
+import javax.persistence.*;
+
 
 @Entity
 public class Lecture {
@@ -13,19 +14,27 @@ public class Lecture {
     @ManyToOne
     private Course course;
     private LocalDate date;
-    private int nSlots;
+    private int nslots;
     private int minNoStudents;
 
     public Lecture(){}
 
-    public Lecture(Course course, LocalDate date, int nSlots, int minNumberOfStudents){
+    /**
+     * Constructor for the lecture entity.
+     *
+     * @param course the course of which this lecture is
+     * @param date the preferred date at which this lecture should be held
+     * @param nslots the number of slots this lecture takes
+     * @param minNumberOfStudents the minimum number of students that should attend this lecture
+     */
+    public Lecture(Course course, LocalDate date, int nslots, int minNumberOfStudents) {
         this.course = course;
         this.date = date;
-        this.nSlots = nSlots;
+        this.nslots = nslots;
         this.minNoStudents = minNumberOfStudents;
     }
 
-    public int getId(){
+    public int getId() {
         return id;
     }
 
@@ -37,12 +46,12 @@ public class Lecture {
         this.date = date;
     }
 
-    public int getnSlots() {
-        return nSlots;
+    public int getNslots() {
+        return nslots;
     }
 
-    public void setnSlots(int nSlots) {
-        this.nSlots = nSlots;
+    public void setNslots(int nslots) {
+        this.nslots = nslots;
     }
 
     public Course getCourse() {
