@@ -5,4 +5,3 @@ include 'courses'
 include 'room-scheduler'
 include 'rooms'
 include 'student'
-

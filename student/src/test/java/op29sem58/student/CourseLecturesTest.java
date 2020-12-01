@@ -1,0 +1,19 @@
+package op29sem58.student;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import org.junit.jupiter.api.Test;
+
+public class CourseLecturesTest {
+	@Test
+	public void constructorTest() {
+		var courseLectures = new CourseLectures();
+		assertNotNull(courseLectures);
+	}
+
+	@Test
+	public void failedTest() {
+		assertFalse(false);
+	}
+}
