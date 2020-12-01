@@ -33,8 +33,8 @@ public class RoomScheduleCommunication extends ServerCommunication {
         return stringToArray(objectJson, SlotInfo[].class);
     }
 
-    public static void makeRoomSlotOccupied(Integer roomSlotId) throws IOException {
-        Integer statusCode = executePostRequest("8081", "/updateRoomSlot/" + roomSlotId, "");
+    public static void makeRoomSlotsOccupied(Integer roomSlotId, Integer numberOfSlots) throws IOException {
+        Integer statusCode = executePostRequest("8081", "/updateRoomSlot/" + roomSlotId + "/" + numberOfSlots, "");
     }
 
 }

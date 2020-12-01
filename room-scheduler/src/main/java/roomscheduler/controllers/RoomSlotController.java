@@ -14,6 +14,8 @@ import java.util.*;
 
 import roomscheduler.communication.RoomSlotCommunication;
 
+import javax.swing.text.html.Option;
+
 
 /**
  * Controller for RoomSlot.
@@ -77,14 +79,20 @@ public class RoomSlotController {
                 breakSlot, numberOfRooms);
     }
 
-    @PostMapping(path = "/updateRoomSlot/{id}")
+    @PostMapping(path = "/updateRoomSlot/{id}/{numOfSlots}")
     public @ResponseBody
-    String editRoomSlot(@PathVariable Integer id) {
+    String makeRoomSlotsOccupied(@PathVariable Integer id,
+                                 @PathVariable Integer numOfSlots) {
         Optional<RoomSlot> roomSlot = roomSlotRepository.findById(id);
         if(roomSlot.isPresent()){
             roomSlot.get().setOccupied(1);
             roomSlotRepository.saveAndFlush(roomSlot.get());
-            return "Marked room slot as occupied!";
+            for(int i = 0; i < numOfSlots; i++){
+                Optional<RoomSlot> next = roomSlotRepository.findById(id + (i + 1)*20);
+                next.get().setOccupied(1);
+                roomSlotRepository.saveAndFlush(next.get());
+            }
+            return "Marked room slots as occupied!";
         }else{
             throw new RuntimeException("Room slot not found for the id " + id);
         }

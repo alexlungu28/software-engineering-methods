@@ -70,10 +70,13 @@ public class RoomScheduleController {
                 getAvailableRoomsSlots(prefDate,numSlots,lunchTime);
         System.out.println(dateIntPairs);
 
+        List<Integer> slotIdsOfSameYearLectures = roomScheduleRepository.getSlotIdsForLecturesOfTheSameYear(yearOfStudy);
+        System.out.println(slotIdsOfSameYearLectures);
+
         List<NameDateInfo> finalResult = new ArrayList<>();
         for(SlotInfo pair : dateIntPairs){
             for(IdNamePair i : roomInfoWithRequiredCapacity){
-                if(i.getId() == pair.getRoomId()) finalResult.
+                if(i.getId() == pair.getRoomId() && !slotIdsOfSameYearLectures.contains(pair.roomSlotId)) finalResult.
                         add(new NameDateInfo(pair.getDate(), i.getName(), pair.getRoomSlotId()));
             }
         }
@@ -83,7 +86,10 @@ public class RoomScheduleController {
             NameDateInfo result = finalResult.get(0);
             roomScheduleRepository.saveAndFlush(new RoomSchedule(
                     result.getRoomSlotId(), lectureId, yearOfStudy));
-            RoomScheduleCommunication.makeRoomSlotOccupied(result.getRoomSlotId());
+            for(int i = 0; i < numSlots; i++){
+                roomScheduleRepository.saveAndFlush(new RoomSchedule(result.getRoomSlotId() + (i + 1)*20, lectureId, yearOfStudy));
+            }
+            RoomScheduleCommunication.makeRoomSlotsOccupied(result.getRoomSlotId(), numSlots);
             return "Your lecture was successfully scheduled for: " + result.getDate().toString() +
                     " in the room with name: " + result.getRoomName();
         }

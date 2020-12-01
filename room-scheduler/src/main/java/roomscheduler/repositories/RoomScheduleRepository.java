@@ -9,6 +9,7 @@ import roomscheduler.entities.RoomSlotStat;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.util.List;
 
 @Repository
 public interface RoomScheduleRepository extends JpaRepository<RoomSchedule, Integer> {
@@ -45,5 +46,14 @@ public interface RoomScheduleRepository extends JpaRepository<RoomSchedule, Inte
             "WHERE name = \"capacity more than 200\"",
             nativeQuery = true)
     Integer getMaxPerc();
+
+
+    @Query(value = "SELECT room_slots_id " +
+            "FROM rooms_schedule " +
+            "WHERE year_of_study = :yearOfStudy",  nativeQuery = true)
+    List<Integer> getSlotIdsForLecturesOfTheSameYear(@Param("yearOfStudy") Integer yearOfStudy);
+
+
+
 
 }
