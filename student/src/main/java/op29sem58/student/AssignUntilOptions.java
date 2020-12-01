@@ -4,4 +4,5 @@ import java.time.LocalDateTime;
 
 public class AssignUntilOptions {
 	public LocalDateTime date;
+
 }
