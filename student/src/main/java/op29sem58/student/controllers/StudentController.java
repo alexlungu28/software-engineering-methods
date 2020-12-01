@@ -2,15 +2,13 @@ package op29sem58.student.controllers;
 
 
 import java.time.LocalDateTime;
-import java.time.Month;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import op29sem58.student.AssignUntilOptions;
 import op29sem58.student.CourseLectures;
 import op29sem58.student.Lecture;
@@ -18,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
 import op29sem58.student.database.entities.Student;
 import op29sem58.student.communication.ServerCommunication;
 import op29sem58.student.database.entities.RoomSchedule;
@@ -74,8 +71,6 @@ public class StudentController {
 			}
 			studentSchedule.add(roomSchedule);
 		}
-
-		System.out.println("Assigning successful!");
 		// save in database
 		this.studentBookings.saveAll(studentSchedule);
 		this.studentBookings.flush();
@@ -86,7 +81,7 @@ public class StudentController {
 		final List<CourseLectures> courseLecturesList = this.serverCommunication.getAllLectures();
 
 		// fill map
-		this.lectureIdToCourseId = new HashMap<Integer, Integer>();
+		this.lectureIdToCourseId = new HashMap<>();
 		for (CourseLectures courseLectures : courseLecturesList) {
 			final int courseId = courseLectures.getCourseId();
 			for (final int lectureId : courseLectures.getLectureIds()) {
@@ -110,7 +105,7 @@ public class StudentController {
 		final List<RoomSchedule> schedule = this.serverCommunication.getSchedule();
 
 		// sort the lectures by their start time
-		schedule.sort((a, b) -> a.getStartTime().compareTo(b.getStartTime()));
+		schedule.sort(Comparator.comparing(RoomSchedule::getStartTime));
 
 		// collect lectures that matter
 		return schedule.stream()
