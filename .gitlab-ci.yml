@@ -14,9 +14,9 @@ checkStyle:
     stage: staticAnalysis
     script: gradle checkstyleMain checkStyleTest
 
-PMD:
-    stage: staticAnalysis
-    script: gradle pmdMain pmdTest
+# PMD:
+#     stage: staticAnalysis
+#     script: gradle pmdMain pmdTest
 
 test:
     stage: test
