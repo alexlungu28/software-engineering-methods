@@ -1,4 +1,4 @@
-package op29sem58.courses;
+package project.op29sem58.courses;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
