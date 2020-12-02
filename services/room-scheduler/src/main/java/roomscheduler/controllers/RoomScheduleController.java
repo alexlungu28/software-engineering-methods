@@ -13,10 +13,7 @@ import java.sql.Date;
 import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.TimeZone;
+import java.util.*;
 
 /**
  * Controller for Room Schedule.
@@ -49,12 +46,12 @@ public class RoomScheduleController {
         Integer slotDuration = roomScheduleRepository.getSlotDuration();
         List<ScheduleInfo> result = roomScheduleRepository.getScheduleInfo(slotDuration, breakDuration);
         System.out.println(result);
-        int minPercentage = roomScheduleRepository.getMinPerc();
-        int maxPercentage = roomScheduleRepository.getMaxPerc();
         List<ScheduleInformation> finalRes = new ArrayList<>();
-        for(ScheduleInfo s : result){
+        for (ScheduleInfo s : result) {
             finalRes.add(new ScheduleInformation(s.getRoomScheduleId(), s.getStartTime(),
-                    s.getEndTime(), s.getLectureId(), s.getRoomId(), RoomScheduleCommunication.getCoronaCapacity(s.getRoomId(),minPercentage,maxPercentage)));
+                    s.getEndTime(), s.getLectureId(), s.getRoomId(), RoomScheduleCommunication
+                    .getCoronaCapacity(s.getRoomId(), roomScheduleRepository.getMinPerc(),
+                            roomScheduleRepository.getMaxPerc())));
         }
         System.out.println(finalRes);
         return finalRes;
@@ -116,7 +113,7 @@ public class RoomScheduleController {
     }
 
     public static Time UTCTime(String s) throws ParseException {
-        final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
         final java.util.Date dateObj = sdf.parse(s);
         Time result = Time.valueOf(dateObj.toInstant().toString().substring(11,19));
