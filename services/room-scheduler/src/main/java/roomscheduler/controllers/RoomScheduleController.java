@@ -85,7 +85,6 @@ public class RoomScheduleController {
         Time lunchTime = UTCTime("" + lunchHour  + ":45:00");
         int minPercentage = roomScheduleRepository.getMinPerc();
         int maxPercentage = roomScheduleRepository.getMaxPerc();
-        @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
         List<IdNamePair> roomInfoWithRequiredCapacity =
                 RoomScheduleCommunication.getRoomsIdsWithRequiredCapacity(numOfStudents, minPercentage, maxPercentage);
         //System.out.println(roomInfoWithRequiredCapacity);
