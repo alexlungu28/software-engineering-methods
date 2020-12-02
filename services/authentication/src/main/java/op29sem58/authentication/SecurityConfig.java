@@ -16,10 +16,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    MyUserDetailsService userDetailsService;
+    transient MyUserDetailsService userDetailsService;
 
     @Autowired
-    JwtRequestFilter jwtRequestFilter;
+    transient JwtRequestFilter jwtRequestFilter;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {

@@ -68,8 +68,12 @@ public class RoomSlotController {
         int timeBetweenSlotsInMin = (rules.get("slot duration") + rules.get("break time")) % 60;
         int slots_per_day = rules.get("slots per day");
         DateTimeFormatter formatter = org.joda.time.format.DateTimeFormat.forPattern("HH:mm:ss");
-        String s = "";
-        if (timeBetweenSlotsInMin / 10 == 0) s = "0";
+        String s;
+        if (timeBetweenSlotsInMin / 10 == 0) {
+            s = "0";
+        }else{
+            s = "";
+        }
         DateTime t = DateTime.parse(timeBetweenSlotsInHours+ ":" + s + timeBetweenSlotsInMin
                 + ":00", formatter);
         String timeBetweenSlotsTime = formatter.print(t);

@@ -17,9 +17,16 @@ public class Room {
     private String name;
     private Integer capacity;
 
+    /**
+     * Creates a new room with name and number of capacity.
+     *
+     * @param name The name of a new room
+     * @param capacity The capcacity of a room.
+     */
 
     public Room(String name, Integer capacity) {
-        if (capacity < 1) {
+        int one = 1;
+        if (capacity < one) {
             throw new IllegalArgumentException("invalid capacity");
         }
         this.name = name;
@@ -49,8 +56,15 @@ public class Room {
         return capacity;
     }
 
+    /**
+     * Sets a new capacity of a room.
+     *
+     * @param capacity The nwe number of people that can fit in a new room.
+     */
+
     public void setCapacity(Integer capacity) {
-        if (capacity < 1) {
+        int one = 1;
+        if (capacity < one) {
             throw new IllegalArgumentException("invalid capacity");
         }
         this.capacity = capacity;
@@ -59,12 +73,16 @@ public class Room {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Room room = (Room) o;
-        return Objects.equals(id, room.id) &&
-                Objects.equals(name, room.name) &&
-                Objects.equals(capacity, room.capacity);
+        return Objects.equals(id, room.id)
+                && Objects.equals(name, room.name)
+                && Objects.equals(capacity, room.capacity);
     }
 
     @Override
