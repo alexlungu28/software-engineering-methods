@@ -94,7 +94,7 @@ public class StudentController {
             @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
             final int courseId = courseLectures.getCourseId();
             for (final int lectureId : courseLectures.getLectureIds()) {
-            this.lectureIdToCourseId.put(lectureId, courseId);
+            	this.lectureIdToCourseId.put(lectureId, courseId);
             }
         }
     }
