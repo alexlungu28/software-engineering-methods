@@ -74,11 +74,15 @@ public class CoursesController {
      *
      * @return A string with a message about the status of the request
      */
-    @GetMapping(path = "/scheduleForTwoWeeks")
-    public @ResponseBody String scheduleForTwoWeeks() {
+    @PostMapping(path = "/scheduleLecturesUntil")
+    public @ResponseBody String scheduleLecturesUntil(@RequestBody LocalDate date) {
+        if (date.isBefore(LocalDate.now())) {
+            return "Please specify a date after the current date.";
+        }
+
         List<Lecture> lectures = lecturesRepo.findAll();
 
-        lectures.removeIf(lecture -> lecture.getDate().isAfter(LocalDate.now().plusWeeks(2)));
+        lectures.removeIf(lecture -> lecture.getDate().isAfter(date));
 
         if (lectures.size() == 0) {
             return "There are no lectures planned in the coming two weeks.";
@@ -93,6 +97,50 @@ public class CoursesController {
             if (response == null) {
                 return "Something went wrong on our end. Please try again later.";
             }
+        }
+
+        return "Lectures until " + date.toString() + " are scheduled!";
+    }
+
+    /**
+     * This method schedules a lecture in a room using the lecture id.
+     *
+     * @param lectureId The id of the lecture, specified in the path
+     * @return A string with info about the status of the request
+     */
+    @GetMapping(path = "/scheduleLecture/{lectureId}")
+    public @ResponseBody String scheduleLecture(@PathVariable int lectureId) {
+        Optional<Lecture> lecture = lecturesRepo.findById(lectureId);
+        if (lecture.isEmpty()) {
+            return "There is no lecture with this id, please check if the id is correct.";
+        }
+
+        Lecture l = lecture.get();
+        String path = ServerCommunication.getRoomScheduleServiceUrl() + "/scheduleLecture/"
+                + l.getDate() + "/" + l.getNslots() + "/" + l.getMinNoStudents()
+                + "/" + l.getId() + "/" + l.getCourse().getYearOfStudy();
+        String response = ServerCommunication.makeGetRequest(path);
+        if (response == null) {
+            return "Something went wrong on our end. Please try again later.";
+        }
+
+        return response;
+    }
+
+    /**
+     * Schedules the all lectures for the coming two weeks.
+     *
+     * @return A string with a message about the status of the request
+     */
+    @GetMapping(path = "/scheduleForTwoWeeks")
+    public @ResponseBody String scheduleForTwoWeeks() {
+        String s = scheduleLecturesUntil(LocalDate.now().plusWeeks(2));
+        String correctReturn = "Lectures until " + LocalDate.now().plusWeeks(2).toString()
+                + " are scheduled!";
+
+
+        if (!s.equals(correctReturn)) {
+            return "Something went wrong on our end, please try again later.";
         }
 
         return "Lectures for the coming two weeks are scheduled!";
