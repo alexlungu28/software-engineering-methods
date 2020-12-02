@@ -13,6 +13,7 @@ build:
 checkStyle:
     stage: staticAnalysis
     script: gradle checkstyleMain checkStyleTest
+    allow_failure: true
 
 PMD:
     stage: staticAnalysis
