@@ -1,8 +1,8 @@
 package roomscheduler.entities;
 
-
-import javax.persistence.*;
 import java.util.Objects;
+import javax.persistence.*;
+
 
 @Entity // This tells Hibernate to make a table out of this class
 @Table(name = "rooms_schedule")
@@ -60,13 +60,17 @@ public class RoomSchedule {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         RoomSchedule that = (RoomSchedule) o;
-        return Objects.equals(id, that.id) &&
-                Objects.equals(room_slots_id, that.room_slots_id) &&
-                Objects.equals(lectures_id, that.lectures_id) &&
-                Objects.equals(year_of_study, that.year_of_study);
+        return Objects.equals(id, that.id)
+                && Objects.equals(room_slots_id, that.room_slots_id)
+                && Objects.equals(lectures_id, that.lectures_id)
+                && Objects.equals(year_of_study, that.year_of_study);
     }
 
     @Override
@@ -76,11 +80,11 @@ public class RoomSchedule {
 
     @Override
     public String toString() {
-        return "RoomSchedule{" +
-                "id=" + id +
-                ", room_slots_id=" + room_slots_id +
-                ", lectures_id=" + lectures_id +
-                ", year_of_study=" + year_of_study +
-                '}';
+        return "RoomSchedule{"
+                + "id=" + id
+                + ", room_slots_id=" + room_slots_id
+                + ", lectures_id=" + lectures_id
+                + ", year_of_study=" + year_of_study
+                + '}';
     }
 }
