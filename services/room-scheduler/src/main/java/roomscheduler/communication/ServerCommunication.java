@@ -32,6 +32,7 @@ public class ServerCommunication {
      * @param path : url path.
      * @return json of given object.
      */
+    @SuppressWarnings("PMD")
     public static String getObjectJson(String port, String path) throws IOException {
         CloseableHttpResponse response = sendGetRequest(port, path);
         return EntityUtils.toString(response.getEntity());
@@ -64,6 +65,7 @@ public class ServerCommunication {
      * @return responsestatuscode : returns the status code.
      * @throws UnsupportedEncodingException when something goes wrong during encoding.
      */
+    @SuppressWarnings("PMD")
     public static int executePostRequest(String port, String path, String json) throws UnsupportedEncodingException {
         try {
             post.setURI(new URI("http://localhost:" + port + "/" + path));
