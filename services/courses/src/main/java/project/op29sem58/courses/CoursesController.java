@@ -15,9 +15,6 @@ import project.op29sem58.courses.database.entities.Lecture;
 import project.op29sem58.courses.database.repos.CoursesRepo;
 import project.op29sem58.courses.database.repos.LecturesRepo;
 
-
-
-
 @Controller
 public class CoursesController {
 
@@ -63,7 +60,9 @@ public class CoursesController {
         }
         Course course = courseOpt.get();
 
-        Lecture lecture = new Lecture(course, l.getDate(), l.getNumberOfTimeslots(), l.getMinNoStudents());
+        Lecture lecture = new Lecture(
+			course, l.getDate(), l.getNumberOfTimeslots(), l.getMinNoStudents()
+		);
 
         lecturesRepo.saveAndFlush(lecture);
         return "Lecture saved successfully!";
