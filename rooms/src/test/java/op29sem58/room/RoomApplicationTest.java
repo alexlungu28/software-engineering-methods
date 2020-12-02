@@ -101,6 +101,12 @@ class RoomApplicationTests {
      */
 //    @Test
 //    public void countRooms() {
+//            mockdatabase
+//            make room1
+//            mockdatabase.saveandflush(room1)
+//            when(mockdatabase.count()).thenreturn(1)
+//            assertequals(mockdatabasecount(), 1);
+//            mockdatabase.count()
 //        Room room1 = new Room("tz2", 100);
 //        Room room2 = new Room("tz2", 110);
 //        Room room3 = new Room("tz2", 150);
