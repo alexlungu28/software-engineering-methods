@@ -1,8 +1,7 @@
 rootProject.name = 'op29-sem58'
 
-include 'authentication'
-include 'courses'
-include 'room-scheduler'
-include 'rooms'
-include 'student'
-
+include 'services:authentication'
+include 'services:courses'
+include 'services:room-scheduler'
+include 'services:rooms'
+include 'services:student'
