@@ -62,17 +62,25 @@ public class RoomSchedule {
     public int getId() {
         return this.id;
     }
+    
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public int getCoronaCapacity() {
         return this.coronaCapacity;
     }
-
+    
     public void setCoronaCapacity(int coronaCapacity) {
         this.coronaCapacity = coronaCapacity;
     }
 
     public Set<Student> getStudents() {
         return this.students;
+    }
+    
+    public void setStudents(Set<Student> students) {
+        this.students = students;
     }
 
     public void addStudent(Student student) {
@@ -82,16 +90,32 @@ public class RoomSchedule {
     public LocalDateTime getStartTime() {
         return this.startTime;
     }
+    
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
 
     public LocalDateTime getEndTime() {
         return this.endTime;
+    }
+    
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
     }
 
     public int getLectureId() {
         return this.lectureId;
     }
+    
+    public void setLectureId(int lectureId) {
+        this.lectureId = lectureId;
+    }
 
     public int getRoomId() {
         return this.roomId;
+    }
+    
+    public void setRoomId(int roomId) {
+        this.roomId = roomId;
     }
 }

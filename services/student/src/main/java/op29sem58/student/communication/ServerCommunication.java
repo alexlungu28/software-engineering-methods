@@ -22,19 +22,20 @@ import org.apache.http.util.EntityUtils;
 public class ServerCommunication {
     private static final String COURSES_SERVICE_URL = "http://localhost:8085";
     private static final String ROOM_SCHEDULE_SERVICE_URL = "http://localhost:8081";
-
-    private CredentialsProvider credentials = new BasicCredentialsProvider();
-    private CloseableHttpClient client = HttpClientBuilder.create()
-        .setDefaultCredentialsProvider(this.credentials).build();
-    private Gson gson = new GsonBuilder()
+    private static final CredentialsProvider CREDENTIALS = new BasicCredentialsProvider();
+    private static final CloseableHttpClient client = HttpClientBuilder.create()
+        .setDefaultCredentialsProvider(ServerCommunication.CREDENTIALS).build();
+    private static final Gson gson = new GsonBuilder()
         .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
         .create();
 
     private <T> T makeGetRequest(String url, Class<T> classOf) {
-        try {
-            CloseableHttpResponse response = this.client.execute(new HttpGet(url));
+        try (
+            CloseableHttpResponse response = ServerCommunication.client.execute(new HttpGet(url))
+        ) {
             String body = EntityUtils.toString(response.getEntity());
-            T value = this.gson.fromJson(body, classOf);
+            response.close();
+            T value = ServerCommunication.gson.fromJson(body, classOf);
             return value;
         } catch (ClientProtocolException e) {
             e.printStackTrace();

@@ -26,23 +26,24 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class StudentController {
     @Autowired
-    private StudentRepo students;
+    private transient StudentRepo students;
 
     @Autowired
-    private StudentBookingRepo studentBookings;
+    private transient StudentBookingRepo studentBookings;
 
     @Autowired
-    private StudentEnrollmentRepo studentEnrollments;
+    private transient StudentEnrollmentRepo studentEnrollments;
 
-    private Map<Integer, Integer> lectureIdToCourseId;
+    private transient Map<Integer, Integer> lectureIdToCourseId;
 
-    private ServerCommunication serverCommunication = new ServerCommunication();
+    private transient ServerCommunication serverCommunication = new ServerCommunication();
 
     /**
      * Assigns all students up until the date given in the options.
      *
      * @param options Contains options for the request.
      */
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     @PostMapping(path = "/assignStudentsUntil")
     public void assignStudentsUntil(@RequestBody AssignUntilOptions options) {
         // initialize all courses
@@ -70,7 +71,8 @@ public class StudentController {
                     students.remove(i);
                     students.add(student);
                     i--;
-                    if (++assignedStudents >= allowedStudents) {
+                    assignedStudents++;
+                    if (assignedStudents >= allowedStudents) {
                         break;
                     }
                 }
@@ -89,6 +91,7 @@ public class StudentController {
         // fill map
         this.lectureIdToCourseId = new HashMap<>();
         for (CourseLectures courseLectures : courseLecturesList) {
+            @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
             final int courseId = courseLectures.getCourseId();
             for (final int lectureId : courseLectures.getLectureIds()) {
                 this.lectureIdToCourseId.put(lectureId, courseId);

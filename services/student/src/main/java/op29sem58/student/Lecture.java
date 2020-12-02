@@ -14,8 +14,16 @@ public class Lecture {
     public RoomSchedule getRoomSchedule() {
         return this.roomSchedule;
     }
+    
+    public void setRoomSchedule(RoomSchedule roomSchedule) {
+        this.roomSchedule = roomSchedule;
+    }
 
     public int getId() {
         return this.id;
+    }
+    
+    public void setId(int id) {
+        this.id = id;
     }
 }

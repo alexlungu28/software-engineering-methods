@@ -17,6 +17,10 @@ public class Student {
     public String getNetId() {
         return this.netId;
     }
+    
+    public void setNetId(String netId) {
+        this.netId = netId;
+    }
 
     public LocalDateTime getLastVisited() {
         return this.lastVisited;
@@ -28,5 +32,9 @@ public class Student {
 
     public boolean getWantsToGo() {
         return this.wantsToGo;
+    }
+    
+    public void setWantsToGo(boolean wantsToGo) {
+        this.wantsToGo = wantsToGo;
     }
 }

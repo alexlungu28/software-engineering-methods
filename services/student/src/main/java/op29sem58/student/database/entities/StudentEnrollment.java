@@ -13,23 +13,35 @@ public class StudentEnrollment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(unique = true, nullable = false)
-    private Integer id;
+    private int id;
     
-    private Integer courseId;
+    private int courseId;
 
     @ManyToOne
     @JoinColumn(name = "student_net_id")
     private Student student;
     
-    public Integer getId() {
+    public int getId() {
         return this.id;
     }
+    
+    public void setId(int id) {
+        this.id = id;
+    }
 
-    public Integer getCourseId() {
+    public int getCourseId() {
         return this.courseId;
+    }
+    
+    public void setCourseId(int courseId) {
+        this.courseId = courseId;
     }
 
     public Student getStudent() {
         return this.student;
+    }
+    
+    public void setStudent(Student student) {
+        this.student = student;
     }
 }

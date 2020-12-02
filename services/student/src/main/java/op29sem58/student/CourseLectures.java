@@ -12,8 +12,16 @@ public class CourseLectures {
     public int getCourseId() {
         return this.courseId;
     }
+    
+    public void setCourseId(int courseId) {
+        this.courseId = courseId;
+    }
 
     public int[] getLectureIds() {
         return this.lectureIds;
+    }
+    
+    public void setLectureIds(int[] lectureIds) {
+        this.lectureIds = lectureIds;
     }
 }
