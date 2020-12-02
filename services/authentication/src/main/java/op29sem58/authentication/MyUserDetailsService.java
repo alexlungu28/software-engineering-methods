@@ -13,11 +13,11 @@ import org.springframework.stereotype.Service;
 public class MyUserDetailsService implements UserDetailsService {
 
     @Autowired
-    private UserRepository userRepository;
+    private transient UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String netId) throws UsernameNotFoundException {
-        Optional<User> user = userRepository.findByNetID(netId);
+        Optional<User> user = userRepository.findByNetid(netId);
 
         user.orElseThrow(() -> new UsernameNotFoundException("User with NetID "
                 + netId + " not found"));

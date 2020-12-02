@@ -6,7 +6,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,13 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthenticationController {
 
     @Autowired
-    private AuthenticationManager authenticationManager;
+    private transient AuthenticationManager authenticationManager;
 
     @Autowired
-    private MyUserDetailsService userDetailsService;
+    private transient MyUserDetailsService userDetailsService;
 
     @Autowired
-    private JwtUtil jwtTokenUtil;
+    private transient JwtUtil jwtTokenUtil;
 
     /** Creates a token for the user if the provided credentials are correct.
      *
@@ -30,7 +29,7 @@ public class AuthenticationController {
      */
     @PostMapping("/login")
     public String createAuthenticationToken(@RequestBody User user) {
-        String id = user.getNetID();
+        String id = user.getNetid();
         String password = user.getPassword();
         password = "" + password.hashCode();
         try {

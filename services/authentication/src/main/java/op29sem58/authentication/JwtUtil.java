@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class JwtUtil {
-    public String secretKey = "secret";
+    public transient String secretKey = "secret";
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
