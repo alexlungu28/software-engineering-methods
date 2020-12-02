@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="8.37">
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\authentication\src\main\java\op29sem58\authentication\AuthenticationController.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\authentication\src\main\java\op29sem58\authentication\AuthenticationService.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\authentication\src\main\java\op29sem58\authentication\JwtRequestFilter.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\authentication\src\main\java\op29sem58\authentication\JwtUtil.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\authentication\src\main\java\op29sem58\authentication\MyUserDetails.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\authentication\src\main\java\op29sem58\authentication\MyUserDetailsService.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\authentication\src\main\java\op29sem58\authentication\SecurityConfig.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\authentication\src\main\java\op29sem58\authentication\roles\Role.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\authentication\src\main\java\op29sem58\authentication\users\User.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\authentication\src\main\java\op29sem58\authentication\users\UserController.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\authentication\src\main\java\op29sem58\authentication\users\UserRepository.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\authentication\src\main\java\op29sem58\authentication\users\UserService.java">
+</file>
+</checkstyle>

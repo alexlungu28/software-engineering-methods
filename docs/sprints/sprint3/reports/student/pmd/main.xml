@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd xmlns="http://pmd.sourceforge.net/report/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pmd.sourceforge.net/report/2.0.0 http://pmd.sourceforge.net/report_2_0_0.xsd" version="6.26.0" timestamp="2020-12-02T20:38:25.714">
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\student\src\main\java\op29sem58\student\controllers\StudentController.java">
+<violation beginline="78" endline="107" begincolumn="29" endcolumn="95" rule="DataflowAnomalyAnalysis" ruleset="Error Prone" package="op29sem58.student.controllers" class="StudentController" method="assignStudentsUntil" variable="students" externalInfoUrl="https://pmd.github.io/pmd-6.26.0/pmd_rules_java_errorprone.html#dataflowanomalyanalysis" priority="5">
+Found 'DU'-anomaly for variable 'students' (lines '78'-'107').
+</violation>
+<violation beginline="85" endline="85" begincolumn="17" endcolumn="36" rule="DataflowAnomalyAnalysis" ruleset="Error Prone" package="op29sem58.student.controllers" class="StudentController" method="assignStudentsUntil" variable="assignedStudents" externalInfoUrl="https://pmd.github.io/pmd-6.26.0/pmd_rules_java_errorprone.html#dataflowanomalyanalysis" priority="5">
+Found 'DD'-anomaly for variable 'assignedStudents' (lines '85'-'85').
+</violation>
+<violation beginline="85" endline="96" begincolumn="21" endcolumn="38" rule="DataflowAnomalyAnalysis" ruleset="Error Prone" package="op29sem58.student.controllers" class="StudentController" method="assignStudentsUntil" variable="assignedStudents" externalInfoUrl="https://pmd.github.io/pmd-6.26.0/pmd_rules_java_errorprone.html#dataflowanomalyanalysis" priority="5">
+Found 'DD'-anomaly for variable 'assignedStudents' (lines '85'-'96').
+</violation>
+<violation beginline="85" endline="107" begincolumn="17" endcolumn="36" rule="DataflowAnomalyAnalysis" ruleset="Error Prone" package="op29sem58.student.controllers" class="StudentController" method="assignStudentsUntil" variable="assignedStudents" externalInfoUrl="https://pmd.github.io/pmd-6.26.0/pmd_rules_java_errorprone.html#dataflowanomalyanalysis" priority="5">
+Found 'DU'-anomaly for variable 'assignedStudents' (lines '85'-'107').
+</violation>
+<violation beginline="86" endline="86" begincolumn="23" endcolumn="72" rule="DataflowAnomalyAnalysis" ruleset="Error Prone" package="op29sem58.student.controllers" class="StudentController" method="assignStudentsUntil" variable="allowedStudents" externalInfoUrl="https://pmd.github.io/pmd-6.26.0/pmd_rules_java_errorprone.html#dataflowanomalyanalysis" priority="5">
+Found 'DD'-anomaly for variable 'allowedStudents' (lines '86'-'86').
+</violation>
+<violation beginline="86" endline="107" begincolumn="23" endcolumn="72" rule="DataflowAnomalyAnalysis" ruleset="Error Prone" package="op29sem58.student.controllers" class="StudentController" method="assignStudentsUntil" variable="allowedStudents" externalInfoUrl="https://pmd.github.io/pmd-6.26.0/pmd_rules_java_errorprone.html#dataflowanomalyanalysis" priority="5">
+Found 'DU'-anomaly for variable 'allowedStudents' (lines '86'-'107').
+</violation>
+<violation beginline="95" endline="87" begincolumn="22" endcolumn="26" rule="DataflowAnomalyAnalysis" ruleset="Error Prone" package="op29sem58.student.controllers" class="StudentController" method="assignStudentsUntil" variable="i" externalInfoUrl="https://pmd.github.io/pmd-6.26.0/pmd_rules_java_errorprone.html#dataflowanomalyanalysis" priority="5">
+Found 'DD'-anomaly for variable 'i' (lines '95'-'87').
+</violation>
+<violation beginline="95" endline="107" begincolumn="21" endcolumn="23" rule="DataflowAnomalyAnalysis" ruleset="Error Prone" package="op29sem58.student.controllers" class="StudentController" method="assignStudentsUntil" variable="i" externalInfoUrl="https://pmd.github.io/pmd-6.26.0/pmd_rules_java_errorprone.html#dataflowanomalyanalysis" priority="5">
+Found 'DU'-anomaly for variable 'i' (lines '95'-'107').
+</violation>
+<violation beginline="116" endline="116" begincolumn="23" endcolumn="61" rule="DataflowAnomalyAnalysis" ruleset="Error Prone" package="op29sem58.student.controllers" class="StudentController" method="initializeCourses" variable="courseId" externalInfoUrl="https://pmd.github.io/pmd-6.26.0/pmd_rules_java_errorprone.html#dataflowanomalyanalysis" priority="5">
+Found 'DD'-anomaly for variable 'courseId' (lines '116'-'116').
+</violation>
+<violation beginline="116" endline="121" begincolumn="23" endcolumn="61" rule="DataflowAnomalyAnalysis" ruleset="Error Prone" package="op29sem58.student.controllers" class="StudentController" method="initializeCourses" variable="courseId" externalInfoUrl="https://pmd.github.io/pmd-6.26.0/pmd_rules_java_errorprone.html#dataflowanomalyanalysis" priority="5">
+Found 'DU'-anomaly for variable 'courseId' (lines '116'-'121').
+</violation>
+</file>
+</pmd>
