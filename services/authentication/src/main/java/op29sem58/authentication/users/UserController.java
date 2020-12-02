@@ -15,26 +15,20 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     @Autowired
-    private UserService userService;
+    private transient UserService userService;
 
     @GetMapping("/users")
     public @ResponseBody Iterable<User> getAllUsers() {
         return userService.getAllUsers();
     }
 
-    @GetMapping("/user/{netID}")
-    public Optional<User> getUser(@PathVariable String netID) {
-        return userService.getUser(netID);
+    @GetMapping("/user/{netid}")
+    public Optional<User> getUser(@PathVariable String netid) {
+        return userService.getUser(netid);
     }
 
     @PutMapping("/users/update")
     public String updateUser(@RequestBody User user) {
         return userService.modifyUser(user);
     }
-
-/*    @PostMapping("/register")
-    public String register(@RequestBody User usr) {
-        System.out.println(usr.toString());
-        return userService.register(usr);
-    }*/
 }

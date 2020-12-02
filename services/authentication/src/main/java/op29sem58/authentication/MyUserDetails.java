@@ -12,12 +12,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 public class MyUserDetails implements UserDetails {
 
-    private String netid;
+    public static final long serialVersionUID = 4328743;
+
+    private transient String netid;
     private String username;
-    private String password;
+    private transient String password;
     private boolean active;
-    private List<GrantedAuthority> authorities;
-    private Role role;
+    private transient List<GrantedAuthority> authorities;
+    private transient Role role;
 
     public MyUserDetails() {
 
@@ -28,7 +30,7 @@ public class MyUserDetails implements UserDetails {
      * @param user - the user to get the details from - also sets authority to their role
      */
     public MyUserDetails(User user) {
-        this.netid = user.getNetID();
+        this.netid = user.getNetid();
         this.password = user.getPassword();
         this.role = user.getRole();
         this.authorities = Arrays.stream(user.getRole().getName().split(" "))

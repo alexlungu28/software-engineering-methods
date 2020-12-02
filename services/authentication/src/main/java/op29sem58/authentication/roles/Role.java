@@ -1,5 +1,6 @@
 package op29sem58.authentication.roles;
 
+import java.util.Locale;
 import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -43,7 +44,7 @@ public class Role {
      * @return the name of the role
      */
     public String getName() {
-        return "ROLE_" + name.toUpperCase();
+        return "ROLE_" + name.toUpperCase(Locale.US);
     }
 
     @Override
