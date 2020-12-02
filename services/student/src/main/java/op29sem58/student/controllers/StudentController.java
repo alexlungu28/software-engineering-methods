@@ -43,7 +43,6 @@ public class StudentController {
      *
      * @param options Contains options for the request.
      */
-    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     @PostMapping(path = "/assignStudentsUntil")
     public void assignStudentsUntil(@RequestBody AssignUntilOptions options) {
         // initialize all courses
@@ -91,7 +90,6 @@ public class StudentController {
         // fill map
         this.lectureIdToCourseId = new HashMap<>();
         for (CourseLectures courseLectures : courseLecturesList) {
-            @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
             final int courseId = courseLectures.getCourseId();
             for (final int lectureId : courseLectures.getLectureIds()) {
             	this.lectureIdToCourseId.put(lectureId, courseId);

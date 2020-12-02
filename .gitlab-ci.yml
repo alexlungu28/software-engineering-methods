@@ -17,6 +17,7 @@ checkStyle:
 PMD:
     stage: staticAnalysis
     script: gradle pmdMain pmdTest
+    allow_failure: true
 
 test:
     stage: test
