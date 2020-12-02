@@ -19,6 +19,7 @@ import op29sem58.student.database.repos.StudentBookingRepo;
 import op29sem58.student.database.repos.StudentEnrollmentRepo;
 import op29sem58.student.database.repos.StudentRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,6 +38,28 @@ public class StudentController {
     private transient Map<Integer, Integer> lectureIdToCourseId;
 
     private transient ServerCommunication serverCommunication = new ServerCommunication();
+    
+    /**
+     * Initialize a default student set.
+     */
+    @PostMapping(path = "/initializeStudents")
+    public void initializeStudents() {
+        List<Student> students = new ArrayList<Student>();
+        for (int i = 0; i < 8; i++) {
+            Student student = new Student();
+            student.setLastVisited(LocalDateTime.now());
+            student.setNetId("student" + i);
+            student.setWantsToGo(true);
+            students.add(student);
+        }
+        this.students.saveAll(students);
+        this.students.flush();
+    }
+
+    @GetMapping(path = "/getInitializedStudents")
+    public List<Student> getInitializedStudents() {
+        return this.students.findAll();
+    }
 
     /**
      * Assigns all students up until the date given in the options.
@@ -92,7 +115,7 @@ public class StudentController {
         for (CourseLectures courseLectures : courseLecturesList) {
             final int courseId = courseLectures.getCourseId();
             for (final int lectureId : courseLectures.getLectureIds()) {
-            	this.lectureIdToCourseId.put(lectureId, courseId);
+                this.lectureIdToCourseId.put(lectureId, courseId);
             }
         }
     }
