@@ -19,7 +19,7 @@ public class Lecture {
     @ManyToOne
     private Course course;
     private LocalDate date;
-    private int nslots;
+    private int numberOfTimeslots;
     private int minNoStudents;
 
     public Lecture(){}
@@ -29,13 +29,13 @@ public class Lecture {
      *
      * @param course the course of which this lecture is
      * @param date the preferred date at which this lecture should be held
-     * @param nslots the number of slots this lecture takes
+     * @param numberOfTimeSlots the number of slots this lecture takes
      * @param minNumberOfStudents the minimum number of students that should attend this lecture
      */
-    public Lecture(Course course, LocalDate date, int nslots, int minNumberOfStudents) {
+    public Lecture(Course course, LocalDate date, int numberOfTimeSlots, int minNumberOfStudents) {
         this.course = course;
         this.date = date;
-        this.nslots = nslots;
+        this.numberOfTimeslots = numberOfTimeSlots;
         this.minNoStudents = minNumberOfStudents;
     }
 
@@ -55,12 +55,12 @@ public class Lecture {
         this.date = date;
     }
 
-    public int getNslots() {
-        return nslots;
+    public int getNumberOfTimeslots() {
+        return numberOfTimeslots;
     }
 
-    public void setNslots(int nslots) {
-        this.nslots = nslots;
+    public void setNumberOfTimeslots(int numberOfTimeslots) {
+        this.numberOfTimeslots = numberOfTimeslots;
     }
 
     public Course getCourse() {

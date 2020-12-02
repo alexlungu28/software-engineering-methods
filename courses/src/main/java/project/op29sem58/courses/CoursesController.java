@@ -63,7 +63,7 @@ public class CoursesController {
         }
         Course course = courseOpt.get();
 
-        Lecture lecture = new Lecture(course, l.getDate(), l.getNslots(), l.getMinNoStudents());
+        Lecture lecture = new Lecture(course, l.getDate(), l.getNumberOfTimeslots(), l.getMinNoStudents());
 
         lecturesRepo.saveAndFlush(lecture);
         return "Lecture saved successfully!";
@@ -90,7 +90,7 @@ public class CoursesController {
 
         for (Lecture l : lectures) {
             String path = ServerCommunication.getRoomScheduleServiceUrl() + "/scheduleLecture/"
-                    + l.getDate() + "/" + l.getNslots() + "/" + l.getMinNoStudents()
+                    + l.getDate() + "/" + l.getNumberOfTimeslots() + "/" + l.getMinNoStudents()
                     + "/" + l.getId() + "/" + l.getCourse().getYearOfStudy();
             System.out.println(path);
             String response = ServerCommunication.makeGetRequest(path);
@@ -117,7 +117,7 @@ public class CoursesController {
 
         Lecture l = lecture.get();
         String path = ServerCommunication.getRoomScheduleServiceUrl() + "/scheduleLecture/"
-                + l.getDate() + "/" + l.getNslots() + "/" + l.getMinNoStudents()
+                + l.getDate() + "/" + l.getNumberOfTimeslots() + "/" + l.getMinNoStudents()
                 + "/" + l.getId() + "/" + l.getCourse().getYearOfStudy();
         String response = ServerCommunication.makeGetRequest(path);
         if (response == null) {
