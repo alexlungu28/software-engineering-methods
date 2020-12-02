@@ -42,12 +42,16 @@ public class NameDateInfo {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         NameDateInfo that = (NameDateInfo) o;
-        return Objects.equals(date, that.date) &&
-                Objects.equals(roomName, that.roomName) &&
-                Objects.equals(roomSlotId, that.roomSlotId);
+        return Objects.equals(date, that.date)
+                && Objects.equals(roomName, that.roomName)
+                && Objects.equals(roomSlotId, that.roomSlotId);
     }
 
     @Override
@@ -57,10 +61,10 @@ public class NameDateInfo {
 
     @Override
     public String toString() {
-        return "NameDateInfo{" +
-                "date=" + date +
-                ", roomName='" + roomName + '\'' +
-                ", roomSlotId=" + roomSlotId +
-                '}';
+        return "NameDateInfo{"
+                + "date=" + date
+                + ", roomName='" + roomName + '\''
+                + ", roomSlotId=" + roomSlotId
+                + '}';
     }
 }

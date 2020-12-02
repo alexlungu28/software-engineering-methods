@@ -1,19 +1,20 @@
 package roomscheduler.controllers;
 
-import roomscheduler.communication.RoomScheduleCommunication;
-import roomscheduler.entities.*;
-import roomscheduler.repositories.RoomScheduleRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-import roomscheduler.repositories.RoomSlotRepository;
-
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import roomscheduler.communication.RoomScheduleCommunication;
+import roomscheduler.entities.*;
+import roomscheduler.repositories.RoomScheduleRepository;
+import roomscheduler.repositories.RoomSlotRepository;
+
+
 
 /**
  * Controller for Room Schedule.
@@ -44,7 +45,8 @@ public class RoomScheduleController {
     List<ScheduleInformation> getAllSchedules() throws IOException {
         Integer breakDuration = roomScheduleRepository.getBreakDuration();
         Integer slotDuration = roomScheduleRepository.getSlotDuration();
-        List<ScheduleInfo> result = roomScheduleRepository.getScheduleInfo(slotDuration, breakDuration);
+        List<ScheduleInfo> result = roomScheduleRepository
+                .getScheduleInfo(slotDuration, breakDuration);
         System.out.println(result);
         List<ScheduleInformation> finalRes = new ArrayList<>();
         for (ScheduleInfo s : result) {
@@ -66,8 +68,8 @@ public class RoomScheduleController {
         return roomScheduleRepository.scheduleLecture(prefDate, numSlots, lunchTime);
     }
 
-    @GetMapping(path = "/scheduleLecture/{prefDate}/" +
-            "{numSlots}/{numOfStudents}/{lectureId}/{yearOfStudy}")
+    @GetMapping(path = "/scheduleLecture/{prefDate}/"
+            + "{numSlots}/{numOfStudents}/{lectureId}/{yearOfStudy}")
     public @ResponseBody
     String scheduleNewLecture(@PathVariable Date prefDate,
                                     @PathVariable Integer numSlots,
@@ -83,8 +85,8 @@ public class RoomScheduleController {
                 RoomScheduleCommunication.getRoomsIdsWithRequiredCapacity(numOfStudents, minPercentage, maxPercentage);
         //System.out.println(roomInfoWithRequiredCapacity);
         //System.out.println(roomIdsWithRequiredCapacity);
-        List<SlotInfo> dateIntPairs = RoomScheduleCommunication.
-                getAvailableRoomsSlots(prefDate,numSlots,lunchTime);
+        List<SlotInfo> dateIntPairs = RoomScheduleCommunication
+                .getAvailableRoomsSlots(prefDate,numSlots,lunchTime);
         System.out.println(dateIntPairs);
 
         //TODO do not let lectures of the same year overlap
