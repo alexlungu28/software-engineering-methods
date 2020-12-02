@@ -58,9 +58,11 @@ allprojects {
 		]
 		ignoreFailures = true
 		showViolations = true
+		sourceSets = []
 	}
 
 	pmd {
 		incrementalAnalysis = true
+		sourceSets = []
 	}
 }
