@@ -54,10 +54,11 @@ allprojects {
 		toolVersion "8.37"
 		configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
 		configProperties = [
-				'checkstyle.cache.file': "${buildDir}/checkstyle.cache",
+			'checkstyle.cache.file': "${buildDir}/checkstyle.cache",
 		]
-		ignoreFailures = true
-		showViolations = true
+        ignoreFailures = false
+        maxErrors = 0
+        maxWarnings = 0
 		sourceSets = []
 	}
 
