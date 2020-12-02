@@ -1,13 +1,20 @@
 package op29sem58.room.controllers;
-import op29sem58.room.entities.RoomInfo;
-import op29sem58.room.repositories.RoomRepository;
-import op29sem58.room.entities.Room;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import op29sem58.room.entities.Room;
+import op29sem58.room.entities.RoomInfo;
+import op29sem58.room.repositories.RoomRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 
 /**
  * Controller for Room.
@@ -70,7 +77,7 @@ public class RoomController {
 
     @GetMapping(path = "/countRooms")
     public @ResponseBody
-    Long getNumberOfRooms(){
+    Long getNumberOfRooms() {
         return roomRepository.count();
     }
 
@@ -78,7 +85,7 @@ public class RoomController {
     public @ResponseBody
     List<RoomInfo> getRoomWithCapAtLeast(@PathVariable Integer numOfStudents,
                                          @PathVariable Integer minPer,
-                                         @PathVariable Integer maxPer){
+                                         @PathVariable Integer maxPer) {
         return roomRepository.getRoomsWithCapacityAtLeast(numOfStudents, minPer, maxPer);
     }
 
@@ -92,12 +99,12 @@ public class RoomController {
     public @ResponseBody
     String editRoom(@RequestBody Room r) {
         Optional<Room> room = roomRepository.findById(r.getId());
-        if(room.isPresent()){
+        if (room.isPresent()) {
             room.get().setName(r.getName());
             room.get().setCapacity(r.getCapacity());
             roomRepository.saveAndFlush(room.get());
             return "Changed Room";
-        }else{
+        } else {
             throw new RuntimeException("Room not found for the id " + r.getId());
         }
     }
@@ -106,7 +113,7 @@ public class RoomController {
     public @ResponseBody
     Integer coronaCapacity(@PathVariable Integer roomId,
                              @PathVariable Integer minPerc,
-                             @PathVariable Integer maxPerc){
+                             @PathVariable Integer maxPerc) {
         return roomRepository.getCoronaCapacity(roomId, minPerc, maxPerc);
     }
 
