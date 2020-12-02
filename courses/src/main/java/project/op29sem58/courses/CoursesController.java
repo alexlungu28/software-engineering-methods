@@ -1,15 +1,19 @@
-package op29sem58.courses;
+package project.op29sem58.courses;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import op29sem58.courses.database.entities.Course;
-import op29sem58.courses.database.entities.Lecture;
-import op29sem58.courses.database.repos.CoursesRepo;
-import op29sem58.courses.database.repos.LecturesRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
+import project.op29sem58.courses.database.entities.Course;
+import project.op29sem58.courses.database.entities.Lecture;
+import project.op29sem58.courses.database.repos.CoursesRepo;
+import project.op29sem58.courses.database.repos.LecturesRepo;
 
 
 
@@ -23,7 +27,8 @@ public class CoursesController {
     private LecturesRepo lecturesRepo;
 
     @GetMapping(path = "/getAllCourses")
-    public @ResponseBody Iterable<Course> getAllCourses() {
+    public @ResponseBody
+    Iterable<Course> getAllCourses() {
         return coursesRepo.findAll();
     }
 

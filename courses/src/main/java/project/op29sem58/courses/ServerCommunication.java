@@ -1,4 +1,4 @@
-package op29sem58.courses;
+package project.op29sem58.courses;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CredentialsProvider;

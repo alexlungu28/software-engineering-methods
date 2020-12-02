@@ -1,4 +1,4 @@
-package op29sem58.courses;
+package project.op29sem58.courses;
 
 public class CourseInfo {
     private int id;

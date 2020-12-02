@@ -1,7 +1,12 @@
-package op29sem58.courses.database.entities;
+package project.op29sem58.courses.database.entities;
 
 import java.time.LocalDate;
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+
 
 
 @Entity
