@@ -4,6 +4,9 @@ allprojects {
 	apply plugin: 'jacoco'
 	apply plugin: 'pmd'
 
+	sourceCompatibility = 14
+	targetCompatibility = 14
+
 	dependencies {
 		implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 		implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
