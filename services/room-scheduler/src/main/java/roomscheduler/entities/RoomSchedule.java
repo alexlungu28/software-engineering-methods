@@ -20,6 +20,17 @@ public class RoomSchedule {
 
     }
 
+
+    /**
+     * Constructor for RoomSchedule.
+     *
+
+     *
+
+     * @param room_slots_id
+     * @param lectures_id
+     * @param year_of_study
+     */
     public RoomSchedule(Integer room_slots_id, Integer lectures_id, Integer year_of_study) {
         this.room_slots_id = room_slots_id;
         this.lectures_id = lectures_id;

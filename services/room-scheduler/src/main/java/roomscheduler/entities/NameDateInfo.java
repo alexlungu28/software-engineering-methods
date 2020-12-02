@@ -10,6 +10,14 @@ public class NameDateInfo {
     String roomName;
     Integer roomSlotId;
 
+    /**
+     * Constructor for NameDateInfo.
+     *
+
+     * @param date date
+     * @param roomName roomName
+     * @param roomSlotId roomSlotId
+     */
     public NameDateInfo(Timestamp date, String roomName, Integer roomSlotId) {
         this.date = date;
         this.roomName = roomName;

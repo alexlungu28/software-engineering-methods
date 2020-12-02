@@ -40,6 +40,11 @@ public class RoomScheduleController {
         return "Saved room schedule";
     }
 
+    /**
+     * Method for getting all room schedules.
+     * @return
+     * @throws IOException exception
+     */
     @GetMapping(path = "/getSchedule")
     public @ResponseBody
     List<ScheduleInformation> getAllSchedules() throws IOException {
@@ -115,6 +120,13 @@ public class RoomScheduleController {
         }
     }
 
+    /**
+     * UTC Converter.
+
+     * @param s time as string
+     * @return
+     * @throws ParseException exception
+     */
     public static Time UTCTime(String s) throws ParseException {
         final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
