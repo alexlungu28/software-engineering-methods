@@ -2,21 +2,23 @@ image: gradle:6.7-jdk15
 
 stages:
     - build
-    - staticAnalysis
     - test
+    - staticAnalysis
 
 build:
     stage: build
     script:
         - gradle build
 
-# checkStyle:
-#     stage: staticAnalysis
-#     script: gradle checkstyleMain checkStyleTest
+checkStyle:
+    stage: staticAnalysis
+    script: gradle checkstyleMain checkStyleTest
+    allow_failure: true
 
-# PMD:
-#     stage: staticAnalysis
-#     script: gradle pmdMain pmdTest
+PMD:
+    stage: staticAnalysis
+    script: gradle pmdMain pmdTest
+    allow_failure: true
 
 test:
     stage: test

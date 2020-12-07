@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd xmlns="http://pmd.sourceforge.net/report/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pmd.sourceforge.net/report/2.0.0 http://pmd.sourceforge.net/report_2_0_0.xsd" version="6.26.0" timestamp="2020-12-02T20:39:45.027">
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\student\src\test\java\op29sem58\student\ApiTest.java">
+<violation beginline="28" endline="28" begincolumn="23" endcolumn="29" rule="BeanMembersShouldSerialize" ruleset="Error Prone" package="op29sem58.student" class="ApiTest" variable="mockMvc" externalInfoUrl="https://pmd.github.io/pmd-6.26.0/pmd_rules_java_errorprone.html#beanmembersshouldserialize" priority="3">
+Found non-transient, non-static member. Please mark as transient or provide accessors.
+</violation>
+</file>
+</pmd>

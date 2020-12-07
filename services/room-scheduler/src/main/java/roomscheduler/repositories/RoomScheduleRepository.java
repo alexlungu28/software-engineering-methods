@@ -17,6 +17,8 @@ import java.util.List;
 @Repository
 public interface RoomScheduleRepository extends JpaRepository<RoomSchedule, Integer> {
 
+    String selectRulesValue = "SELECT rules.value ";
+    String fromRules = "FROM rules ";
 
     @Query(value = "SELECT a.date_time as date, a.rooms_id as roomId, a.id as roomSlotId " +
             "FROM room_slots AS a " +
@@ -40,33 +42,33 @@ public interface RoomScheduleRepository extends JpaRepository<RoomSchedule, Inte
                                        @Param("breakDuration") Integer breakDuration);
 
 
-    @Query(value = "SELECT rules.value " +
-            "FROM rules " +
+    @Query(value = selectRulesValue +
+            fromRules +
             "WHERE name = \"lunch slot\"",
             nativeQuery = true)
     Integer getLunchSlot();
 
-    @Query(value = "SELECT rules.value " +
-            "FROM rules " +
+    @Query(value = selectRulesValue +
+            fromRules +
             "WHERE name = \"slot duration\"",
             nativeQuery = true)
     Integer getSlotDuration();
 
-    @Query(value = "SELECT rules.value " +
-            "FROM rules " +
+    @Query(value = selectRulesValue +
+            fromRules +
             "WHERE name = \"break time\"",
             nativeQuery = true)
     Integer getBreakDuration();
 
 
-    @Query(value = "SELECT rules.value " +
-            "FROM rules " +
+    @Query(value = selectRulesValue +
+            fromRules +
             "WHERE name = \"capacity at most 200\"",
             nativeQuery = true)
     Integer getMinPerc();
 
-    @Query(value = "SELECT rules.value " +
-            "FROM rules " +
+    @Query(value = selectRulesValue +
+            fromRules +
             "WHERE name = \"capacity more than 200\"",
             nativeQuery = true)
     Integer getMaxPerc();

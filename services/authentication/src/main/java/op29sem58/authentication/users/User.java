@@ -14,7 +14,7 @@ import op29sem58.authentication.roles.Role;
 public class User {
     @Id
     @Column(name = "net_id")
-    private String netID;
+    private String netid;
     private String password;
     @ManyToOne
     @JoinColumn(name = "roles_id", referencedColumnName = "id")
@@ -26,33 +26,33 @@ public class User {
     /**
      * Constructor for logging in.
      *
-     * @param netID user netid
+     * @param netid user netid
      * @param password user password
      */
-    public User(String netID, String password) {
-        this.netID = netID;
+    public User(String netid, String password) {
+        this.netid = netid;
         this.password = password;
     }
 
     /**
      * Constructor for adding/modifying a user.
      *
-     * @param netID user netid
+     * @param netid user netid
      * @param password user password
      * @param role user role
      */
-    public User(String netID, String password, Role role) {
-        this.netID = netID;
+    public User(String netid, String password, Role role) {
+        this.netid = netid;
         this.password = password;
         this.role = role;
     }
 
-    public String getNetID() {
-        return netID;
+    public String getNetid() {
+        return netid;
     }
 
-    public void setNetID(String netID) {
-        this.netID = netID;
+    public void setNetid(String netid) {
+        this.netid = netid;
     }
 
     public String getPassword() {
@@ -80,20 +80,20 @@ public class User {
             return false;
         }
         User user = (User) o;
-        return Objects.equals(netID, user.netID)
+        return Objects.equals(netid, user.netid)
                 && Objects.equals(password, user.password)
                 && Objects.equals(role, user.role);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(netID, password, role);
+        return Objects.hash(netid, password, role);
     }
 
     @Override
     public String toString() {
         return "User{"
-                + "netID='" + netID + '\''
+                + "netID='" + netid + '\''
                 + ", password='" + password + '\''
                 + ", role=" + role
                 + '}';
