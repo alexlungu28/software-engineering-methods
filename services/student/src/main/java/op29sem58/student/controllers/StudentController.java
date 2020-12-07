@@ -50,7 +50,7 @@ public class StudentController {
      */
     @PostMapping(path = "/initializeStudents")
     public void initializeStudents() {
-        List<Student> students = new ArrayList<Student>();
+        List<Student> students = new ArrayList<>();
         for (int i = 0; i < 8; i++) {
             Student student = new Student();
             student.setLastVisited(LocalDateTime.now());
