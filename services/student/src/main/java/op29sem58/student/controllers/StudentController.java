@@ -3,9 +3,7 @@ package op29sem58.student.controllers;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import op29sem58.student.AssignUntilOptions;
@@ -111,7 +109,7 @@ public class StudentController {
 
     private boolean studentIsEnrolledFor(Student student, Lecture lecture) {
         int courseId = Integer.MAX_VALUE;
-        for(CourseLectures cl: courseLecturesList) {
+        for (CourseLectures cl: courseLecturesList) {
             if (cl.courseHasLecture(lecture.getId())) {
                 courseId = cl.getCourseId();
                 break;
