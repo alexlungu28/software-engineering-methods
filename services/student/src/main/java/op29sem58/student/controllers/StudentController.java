@@ -24,8 +24,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+// Here is the main Student Service code. This handles all the requests required to assign students.
 @RestController
 public class StudentController {
+
+    //The Repo's are annotated with @Autowired, this helps Spring connect the Repository's so that hibernate can retrieve
+    // the students, studentBookings and studentEnrollments
     @Autowired
     private transient StudentRepo students;
 
@@ -35,12 +39,14 @@ public class StudentController {
     @Autowired
     private transient StudentEnrollmentRepo studentEnrollments;
 
-    private transient Map<Integer, Integer> lectureIdToCourseId;
+    //This is a list consisting of all the courses with their lectures.
+    private List<CourseLectures> courseLecturesList;
 
+    //This is our class to communicate with other microservices
     private transient ServerCommunication serverCommunication = new ServerCommunication();
     
     /**
-     * Initialize a default student set.
+     * Initialize a default student set. By just
      */
     @PostMapping(path = "/initializeStudents")
     public void initializeStudents() {
@@ -108,27 +114,21 @@ public class StudentController {
 
     private void initializeCourses() {
         // get all lectures via /getAllLectures endpoint
-        final List<CourseLectures> courseLecturesList = this.serverCommunication.getAllLectures();
-
-        // fill map
-        this.lectureIdToCourseId = new HashMap<>();
-        for (CourseLectures courseLectures : courseLecturesList) {
-            final int courseId = courseLectures.getCourseId();
-            for (final int lectureId : courseLectures.getLectureIds()) {
-                this.lectureIdToCourseId.put(lectureId, courseId);
-            }
-        }
+        courseLecturesList = this.serverCommunication.getAllLectures();
     }
 
     private boolean studentIsEnrolledFor(Student student, Lecture lecture) {
-        final int courseId = this.getCourseIdForLecture(lecture);
+        int courseId = Integer.MAX_VALUE;
+        for(CourseLectures cl: courseLecturesList) {
+            if (cl.courseHasLecture(lecture.getId())) {
+                courseId = cl.getCourseId();
+                break;
+            }
+        }
+        if (courseId == Integer.MAX_VALUE) return false;
         final Optional<StudentEnrollment> maybeStudentEnrollment =
             this.studentEnrollments.findByCourseIdAndStudent(courseId, student);
         return maybeStudentEnrollment.isPresent();
-    }
-
-    private int getCourseIdForLecture(Lecture lecture) {
-        return this.lectureIdToCourseId.get(lecture.getId());
     }
 
     private List<Lecture> getAllScheduledSortedLecturesUntil(LocalDateTime date) {
