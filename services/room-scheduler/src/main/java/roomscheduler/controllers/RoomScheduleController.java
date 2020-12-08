@@ -121,8 +121,6 @@ public class RoomScheduleController {
         List<IdNamePair> roomInfoWithRequiredCapacity =
                 RoomScheduleCommunication.getRoomsIdsWithRequiredCapacity(numOfStudents,
                         minPercentage, maxPercentage);
-        //System.out.println(roomInfoWithRequiredCapacity);
-        //System.out.println(roomIdsWithRequiredCapacity);
         List<SlotInfo> dateIntPairs = RoomScheduleCommunication
                 .getAvailableRoomsSlots(prefDate, numSlots, lunchTime);
         System.out.println(dateIntPairs);
