@@ -1,7 +1,11 @@
 package roomscheduler.entities;
 
 import java.util.Objects;
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Id;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 
 
 @Entity // This tells Hibernate to make a table out of this class
@@ -23,13 +27,10 @@ public class RoomSchedule {
 
     /**
      * Constructor for RoomSchedule.
-     *
 
-     *
-
-     * @param room_slots_id
-     * @param lectures_id
-     * @param year_of_study
+     * @param room_slots_id the id of the room slot
+     * @param lectures_id lecture id
+     * @param year_of_study year of study
      */
     public RoomSchedule(Integer room_slots_id, Integer lectures_id, Integer year_of_study) {
         this.room_slots_id = room_slots_id;

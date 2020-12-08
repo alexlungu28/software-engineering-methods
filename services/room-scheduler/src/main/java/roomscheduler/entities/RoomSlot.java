@@ -1,6 +1,10 @@
 package roomscheduler.entities;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Id;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import java.sql.Timestamp;
 import java.util.Objects;
 
@@ -20,6 +24,14 @@ public class RoomSlot {
 
     }
 
+    /**
+     * Constructor for RoomSlot.
+     *
+     *
+     * @param date_time date time
+     * @param occupied boolean for whether the room slot is occupied or not
+     * @param rooms_id room id
+     */
     public RoomSlot(Timestamp date_time, Integer occupied, Integer rooms_id) {
         this.date_time = date_time;
         this.occupied = occupied;
@@ -60,8 +72,12 @@ public class RoomSlot {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         RoomSlot roomSlot = (RoomSlot) o;
         return Objects.equals(id, roomSlot.id) &&
                 Objects.equals(date_time, roomSlot.date_time) &&

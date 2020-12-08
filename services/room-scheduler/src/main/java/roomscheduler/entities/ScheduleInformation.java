@@ -3,7 +3,7 @@ package roomscheduler.entities;
 import java.sql.Timestamp;
 import java.util.Objects;
 
-public class ScheduleInformation implements ScheduleInfo{
+public class ScheduleInformation implements ScheduleInfo {
 
     Integer roomScheduleId;
     Timestamp startTime;
@@ -12,7 +12,18 @@ public class ScheduleInformation implements ScheduleInfo{
     Integer roomId;
     Integer coronaCapacity;
 
-    public ScheduleInformation(Integer roomScheduleId, Timestamp startTime, Timestamp endTime, Integer lectureId, Integer roomId, Integer coronaCapacity) {
+    /**
+     * Constructor for ScheduleInformation.
+     *
+     * @param roomScheduleId roomSchedule Id
+     * @param startTime start time
+     * @param endTime end time
+     * @param lectureId lecture id
+     * @param roomId room id
+     * @param coronaCapacity corona capacity of the room
+     */
+    public ScheduleInformation(Integer roomScheduleId, Timestamp startTime,
+                               Timestamp endTime, Integer lectureId, Integer roomId, Integer coronaCapacity) {
         this.roomScheduleId = roomScheduleId;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -77,8 +88,12 @@ public class ScheduleInformation implements ScheduleInfo{
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ScheduleInformation that = (ScheduleInformation) o;
         return Objects.equals(roomScheduleId, that.roomScheduleId) &&
                 Objects.equals(startTime, that.startTime) &&

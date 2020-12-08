@@ -1,6 +1,10 @@
 package roomscheduler.entities;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Table;
+import javax.persistence.GenerationType;
 import java.util.Objects;
 
 
@@ -49,8 +53,12 @@ public class Rule {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Rule rule = (Rule) o;
         return Objects.equals(idrules, rule.idrules) &&
                 Objects.equals(name, rule.name) &&

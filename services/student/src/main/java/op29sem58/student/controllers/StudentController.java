@@ -39,13 +39,13 @@ public class StudentController {
     private transient StudentEnrollmentRepo studentEnrollments;
 
     //This is a list consisting of all the courses with their lectures.
-    private List<CourseLectures> courseLecturesList;
+    private transient List<CourseLectures> courseLecturesList;
 
     //This is our class to communicate with other microservices
     private transient ServerCommunication serverCommunication = new ServerCommunication();
     
     /**
-     * Initialize a default student set. By just
+     * Initialize a default student set.
      */
     @PostMapping(path = "/initializeStudents")
     public void initializeStudents(@RequestBody List<Student> students) {
@@ -68,6 +68,7 @@ public class StudentController {
      * @param options Contains options for the request.
      */
     @PostMapping(path = "/assignStudentsUntil")
+    @SuppressWarnings("PMD") //DU anomaly
     public void assignStudentsUntil(@RequestBody AssignUntilOptions options) {
         // Request all courses with their lectures from coursesService, so courseLecturesList is initialized.
         this.initializeCourses();
@@ -118,6 +119,7 @@ public class StudentController {
     /**
      * This initializes all courses, by sending a request to the Courses Service.
      */
+    @SuppressWarnings("PMD") //DU anomaly
     private void initializeCourses() {
         courseLecturesList = this.serverCommunication.getAllLectures();
     }
@@ -131,16 +133,14 @@ public class StudentController {
      * @return a boolean if the student is enrolled.
      */
     private boolean studentIsEnrolledFor(Student student, Lecture lecture) {
-        int courseId = Integer.MAX_VALUE;
-        for (CourseLectures cl: courseLecturesList) {
-            if (cl.courseHasLecture(lecture.getId())) {
-                courseId = cl.getCourseId();
-                break;
-            }
+        Optional<CourseLectures> courseLecture = courseLecturesList.stream()
+                .filter(e -> e.courseHasLecture(lecture.getId()))
+                .findFirst();
+        if (courseLecture.isEmpty()) {
+            return false;
         }
-        if (courseId == Integer.MAX_VALUE) return false;
         final Optional<StudentEnrollment> maybeStudentEnrollment =
-            this.studentEnrollments.findByCourseIdAndStudent(courseId, student);
+            this.studentEnrollments.findByCourseIdAndStudent(courseLecture.get().getCourseId(), student);
         return maybeStudentEnrollment.isPresent();
     }
 
