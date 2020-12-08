@@ -1,7 +1,10 @@
 package roomscheduler.communication;
 
 import com.google.gson.Gson;
-import javassist.bytecode.ExceptionTable;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -13,15 +16,13 @@ import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
+
 
 public class ServerCommunication {
 
     static CredentialsProvider provider = new BasicCredentialsProvider();
-    static CloseableHttpClient client; // = HttpClientBuilder.create().setDefaultCredentialsProvider(provider).build();
+    static CloseableHttpClient client = HttpClientBuilder.create()
+            .setDefaultCredentialsProvider(provider).build();
     static Gson gson = new Gson();
     static HttpPost post = new HttpPost();
 
@@ -44,10 +45,8 @@ public class ServerCommunication {
      * @return the servers response
      */
     public static CloseableHttpResponse sendGetRequest(String port, String path) {
-        client = HttpClientBuilder.create().setDefaultCredentialsProvider(provider).build();
-        try (CloseableHttpResponse response = client.execute(new HttpGet("http://localhost:" + port + "/" + path));) {
-            client.close();
-            return response;
+        try {
+            return client.execute(new HttpGet("http://localhost:" + port + "/" + path));
         } catch (ClientProtocolException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -65,7 +64,8 @@ public class ServerCommunication {
      * @throws UnsupportedEncodingException when something goes wrong during encoding.
      */
     @SuppressWarnings("PMD")
-    public static int executePostRequest(String port, String path, String json) throws UnsupportedEncodingException {
+    public static int executePostRequest(String port, String path,
+                     String json) throws UnsupportedEncodingException {
         try {
             post.setURI(new URI("http://localhost:" + port + "/" + path));
         } catch (URISyntaxException e) {
@@ -87,10 +87,8 @@ public class ServerCommunication {
      * @return the servers response.
      */
     public static CloseableHttpResponse sendPostRequest(HttpPost post) {
-        client = HttpClientBuilder.create().setDefaultCredentialsProvider(provider).build();
-        try (CloseableHttpResponse response = client.execute(post);) {
-            client.close();
-            return response;
+        try {
+            return client.execute(post);
         } catch (ClientProtocolException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -108,18 +106,20 @@ public class ServerCommunication {
      * @return : returns the status code.
      * @throws IOException : when something goes wrong with the IO operations.
      */
+    @SuppressWarnings("PMD")
     public static int sendDeleteRequest(String port, String path) throws IOException {
         HttpDelete delete = new HttpDelete("http://localhost:" + port + "/" + path);
-        client = HttpClientBuilder.create().setDefaultCredentialsProvider(provider).build();
-        try (CloseableHttpResponse response = client.execute(delete)) {
-            client.close();
+        try {
+            CloseableHttpResponse response = client.execute(delete);
             delete.reset();
             return response.getStatusLine().getStatusCode();
         } catch (Exception e) {
             e.printStackTrace();
         }
         return 500;
-
     }
 }
+
+
+
 

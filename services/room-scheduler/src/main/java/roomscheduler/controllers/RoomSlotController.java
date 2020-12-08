@@ -1,23 +1,23 @@
 package roomscheduler.controllers;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 import org.joda.time.DateTime;
-import roomscheduler.entities.RoomSlot;
-import roomscheduler.entities.Rule;
-import roomscheduler.repositories.RoomSlotRepository;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
-import java.io.IOException;
-import org.joda.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.HashMap;
-import java.util.Optional;
 import roomscheduler.communication.RoomSlotCommunication;
+import roomscheduler.entities.RoomSlot;
+import roomscheduler.entities.Rule;
+import roomscheduler.repositories.RoomSlotRepository;
 
 
 
@@ -76,8 +76,7 @@ public class RoomSlotController {
      */
     @PutMapping(path = "/generateRoomSlots/{numDays}/{firstSlotDateTime}")
     public @ResponseBody String generateRoomSlots(@PathVariable int numDays,
-                                                  @PathVariable
-                                                          String firstSlotDateTime) throws IOException {
+              @PathVariable String firstSlotDateTime) throws IOException {
         Long numberOfRooms = RoomSlotCommunication.numberOfRooms();
         List<Rule> allRules = RoomSlotCommunication.getRules();
         HashMap<String, Integer> rules = new HashMap<>();
@@ -99,7 +98,8 @@ public class RoomSlotController {
                 + ":00", formatter);
         String timeBetweenSlotsTime = formatter.print(t);
 
-        return roomSlotRepository.createRoomSlots(slotsPerDay, numDays, firstSlotDateTime, timeBetweenSlotsTime,
+        return roomSlotRepository.createRoomSlots(slotsPerDay, numDays,
+                firstSlotDateTime, timeBetweenSlotsTime,
                 breakSlot, numberOfRooms);
     }
 

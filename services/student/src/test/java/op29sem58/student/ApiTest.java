@@ -9,6 +9,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import op29sem58.student.communication.adapters.LocalDateTimeAdapter;
 import op29sem58.student.database.entities.Student;
 import org.junit.Test;
@@ -22,9 +25,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @SpringBootTest(classes = StudentService.class)
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)

@@ -1,5 +1,8 @@
 package roomscheduler.repositories;
 
+import java.sql.Date;
+import java.sql.Time;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -8,9 +11,6 @@ import roomscheduler.entities.IntPair;
 import roomscheduler.entities.RoomSchedule;
 import roomscheduler.entities.RoomSlotStat;
 import roomscheduler.entities.ScheduleInfo;
-import java.sql.Date;
-import java.sql.Time;
-import java.util.List;
 
 @Repository
 public interface RoomScheduleRepository extends JpaRepository<RoomSchedule, Integer> {
@@ -21,8 +21,10 @@ public interface RoomScheduleRepository extends JpaRepository<RoomSchedule, Inte
     @Query(value = "SELECT a.date_time as date, a.rooms_id as roomId, a.id as roomSlotId " +
             "FROM room_slots AS a " +
             "JOIN room_slots AS b " +
-            "ON b.rooms_id = a.rooms_id AND timestampdiff(hour, a.date_time, b.date_time) = :numSlots " +
-            "and DATE(a.date_time) = :date and not (time(a.date_time) <= :lunchTime and time(b.date_time) > :lunchTime) " +
+            "ON b.rooms_id = a.rooms_id AND " +
+            "timestampdiff(hour, a.date_time, b.date_time) = :numSlots " +
+            "and DATE(a.date_time) = :date and " +
+            "not (time(a.date_time) <= :lunchTime and time(b.date_time) > :lunchTime) " +
             "and not (a.occupied = 1 or b.occupied = 1) " +
             "ORDER BY a.rooms_id, a.date_time",
             nativeQuery = true)
@@ -30,10 +32,13 @@ public interface RoomScheduleRepository extends JpaRepository<RoomSchedule, Inte
                                            @Param("numSlots") Integer numSlots,
                                            @Param("lunchTime") Time lunchTime);
 
-    @Query(value = "SELECT id as roomScheduleId, rooms_id as roomId, lectures_id as lectureId, start_time as startTime, " +
-            "ADDDATE(start_time, INTERVAL (numOfSlots * :slotDuration + (numOfSlots - 1) * :breakDuration) MINUTE) " +
+    @Query(value = "SELECT id as roomScheduleId, rooms_id as roomId, lectures_id as lectureId, " +
+            "start_time as startTime, " +
+            "ADDDATE(start_time, INTERVAL (numOfSlots * :slotDuration + (numOfSlots - 1) " +
+            "* :breakDuration) MINUTE) " +
             "as endTime, rooms_id as coronaCapacity " +
-            "FROM (SELECT r1.id as id, date_time as start_time, TIMESTAMP(date(date_time),  \"13:10:11\") as end_time, lectures_id, rooms_id, " +
+            "FROM (SELECT r1.id as id, date_time as start_time, " +
+            "lectures_id, rooms_id, " +
             "count(*) - 1 as numOfSlots" +
             " FROM rooms_schedule AS r1 " +
             "JOIN room_slots AS r2 " +
@@ -74,7 +79,8 @@ public interface RoomScheduleRepository extends JpaRepository<RoomSchedule, Inte
             nativeQuery = true)
     Integer getMaxPerc();
 
-    @Query(value = "SELECT room_slots_id as RoomSlotId, id as RoomScheduleId FROM rooms_schedule WHERE lectures_id = :lecture_id", nativeQuery = true)
+    @Query(value = "SELECT room_slots_id as RoomSlotId, id as RoomScheduleId " +
+            "FROM rooms_schedule WHERE lectures_id = :lecture_id", nativeQuery = true)
     List<IntPair> getSlotIdAndRoomSlotId(@Param("lecture_id") Integer lecture_id);
 
 
