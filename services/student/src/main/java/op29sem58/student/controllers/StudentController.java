@@ -44,7 +44,7 @@ public class StudentController {
     private transient ServerCommunication serverCommunication = new ServerCommunication();
     
     /**
-     * Initialize a default student set. By just
+     * Initialize a default student set.
      */
     @PostMapping(path = "/initializeStudents")
     public void initializeStudents(@RequestBody List<Student> students) {
