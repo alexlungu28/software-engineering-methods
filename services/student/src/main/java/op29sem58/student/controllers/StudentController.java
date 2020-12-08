@@ -26,7 +26,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class StudentController {
 
-    //The Repo's are annotated with @Autowired, this helps Spring connect the Repository's so that hibernate can retrieve
+    //The Repo's are annotated with @Autowired, this helps
+    // Spring connect the Repository's so that hibernate can retrieve
     // the students, studentBookings and studentEnrollments
     @Autowired
     private transient StudentRepo students;
@@ -38,7 +39,7 @@ public class StudentController {
     private transient StudentEnrollmentRepo studentEnrollments;
 
     //This is a list consisting of all the courses with their lectures.
-    private List<CourseLectures> courseLecturesList;
+    private transient List<CourseLectures> courseLecturesList;
 
     //This is our class to communicate with other microservices
     private transient ServerCommunication serverCommunication = new ServerCommunication();
@@ -63,6 +64,7 @@ public class StudentController {
      * @param options Contains options for the request.
      */
     @PostMapping(path = "/assignStudentsUntil")
+    @SuppressWarnings("PMD") //DU anomaly
     public void assignStudentsUntil(@RequestBody AssignUntilOptions options) {
         // initialize all courses
         this.initializeCourses();
@@ -102,22 +104,22 @@ public class StudentController {
         this.studentBookings.flush();
     }
 
+    @SuppressWarnings("PMD") //DU anomaly
     private void initializeCourses() {
         // get all lectures via /getAllLectures endpoint
         courseLecturesList = this.serverCommunication.getAllLectures();
     }
 
     private boolean studentIsEnrolledFor(Student student, Lecture lecture) {
-        int courseId = Integer.MAX_VALUE;
-        for (CourseLectures cl: courseLecturesList) {
-            if (cl.courseHasLecture(lecture.getId())) {
-                courseId = cl.getCourseId();
-                break;
-            }
+        Optional<CourseLectures> courseLecture = courseLecturesList.stream()
+                .filter(e -> e.courseHasLecture(lecture.getId()))
+                .findFirst();
+        if (courseLecture.isEmpty()) {
+            return false;
         }
-        if (courseId == Integer.MAX_VALUE) return false;
         final Optional<StudentEnrollment> maybeStudentEnrollment =
-            this.studentEnrollments.findByCourseIdAndStudent(courseId, student);
+            this.studentEnrollments.findByCourseIdAndStudent(courseLecture.get()
+                    .getCourseId(), student);
         return maybeStudentEnrollment.isPresent();
     }
 

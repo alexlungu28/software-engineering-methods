@@ -9,12 +9,21 @@ public class CourseLectures {
         this.lectureIds = lectureIds;
     }
 
+    /**
+     * If the course has this lectureId, it will return true.
+     *
+     * @param lectureId to check if the course has this lecture
+     * @return true if course contains this lecture, false otherwise
+     */
     public boolean courseHasLecture(int lectureId) {
-        for(int id : this.lectureIds) {
-            if (id == lectureId) return true;
+        for (int id : this.lectureIds) {
+            if (id == lectureId) {
+                return true;
+            }
         }
         return false;
     }
+
     public int getCourseId() {
         return courseId;
     }
