@@ -1,8 +1,9 @@
 package op29sem58.student.local.entities;
 
 /**
- * This Class is created so that we can store the list we receive from the courses service, which are only the courses
- * with their lectures. This helps with assigning the students as we can check if they are enrolled for the course.
+ * This Class is created so that we can store the list we receive from the courses service,
+ * which are only the courses with their lectures. This helps with assigning the students
+ * as we can check if they are enrolled for the course.
  */
 public class CourseLectures {
     private int courseId;

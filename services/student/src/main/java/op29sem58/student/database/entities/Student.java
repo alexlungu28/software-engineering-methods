@@ -6,8 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 
 /**
- * This is a Student class, we store the Net_ID, which also is the primary key. We also store the lastVisited date and if
- * the person wants to go.
+ * This is a Student class, we store the Net_ID, which also is the primary key.
+ * We also store the lastVisited date and if the person wants to go.
  */
 @Entity(name = "Student")
 public class Student {
