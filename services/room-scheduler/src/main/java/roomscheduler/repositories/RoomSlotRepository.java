@@ -1,10 +1,10 @@
 package roomscheduler.repositories;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import roomscheduler.entities.RoomSlot;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import roomscheduler.entities.RoomSlot;
 
 @Repository
 public interface RoomSlotRepository extends JpaRepository<RoomSlot, Integer> {

@@ -1,11 +1,19 @@
 package op29sem58.student;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import op29sem58.student.communication.adapters.LocalDateTimeAdapter;
+import op29sem58.student.database.entities.Student;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +33,27 @@ import org.springframework.test.web.servlet.MockMvc;
 @AutoConfigureTestDatabase(replace = Replace.ANY)
 public class ApiTest {
     @Autowired
-    protected MockMvc mockMvc;
+    protected transient MockMvc mockMvc;
+
+
+    final transient Gson gson = new GsonBuilder()
+            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+            .create();
     
     @Test
     public void exampleTest() throws Exception {
-        this.mockMvc.perform(post("/initializeStudents")).andExpect(status().isOk());
+        List<Student> students = new ArrayList<>();
+        for (int i = 0; i < 8; i++) {
+            Student student = new Student();
+            student.setLastVisited(LocalDateTime.now());
+            student.setNetId("student" + i);
+            student.setWantsToGo(true);
+            students.add(student);
+        }
+        gson.toJson(students);
+        String requestJson = gson.toJson(students);
+        this.mockMvc.perform(post("/initializeStudents").contentType(APPLICATION_JSON)
+                .content(requestJson)).andExpect(status().isOk());
         this.mockMvc.perform(get("/getInitializedStudents"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", hasSize(8)));

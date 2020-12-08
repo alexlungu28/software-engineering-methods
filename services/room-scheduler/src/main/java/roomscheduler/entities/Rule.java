@@ -1,7 +1,11 @@
 package roomscheduler.entities;
 
-import javax.persistence.*;
 import java.util.Objects;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 
 @Entity // This tells Hibernate to make a table out of this class
@@ -49,8 +53,12 @@ public class Rule {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Rule rule = (Rule) o;
         return Objects.equals(idrules, rule.idrules) &&
                 Objects.equals(name, rule.name) &&
