@@ -48,15 +48,7 @@ public class StudentController {
      * Initialize a default student set. By just
      */
     @PostMapping(path = "/initializeStudents")
-    public void initializeStudents() {
-        List<Student> students = new ArrayList<>();
-        for (int i = 0; i < 8; i++) {
-            Student student = new Student();
-            student.setLastVisited(LocalDateTime.now());
-            student.setNetId("student" + i);
-            student.setWantsToGo(true);
-            students.add(student);
-        }
+    public void initializeStudents(@RequestBody List<Student> students) {
         this.students.saveAll(students);
         this.students.flush();
     }
@@ -140,7 +132,7 @@ public class StudentController {
      */
     private boolean studentIsEnrolledFor(Student student, Lecture lecture) {
         int courseId = Integer.MAX_VALUE;
-        for(CourseLectures cl: courseLecturesList) {
+        for (CourseLectures cl: courseLecturesList) {
             if (cl.courseHasLecture(lecture.getId())) {
                 courseId = cl.getCourseId();
                 break;
