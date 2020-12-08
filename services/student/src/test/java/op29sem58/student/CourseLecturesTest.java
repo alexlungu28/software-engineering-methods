@@ -7,9 +7,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 public class CourseLecturesTest {
-    @Test
-    public void constructorTest() {
-        var courseLectures = new CourseLectures(1, new int[]{});
-        assertNotNull(courseLectures);
-    }
+//    @Test
+//    public void constructorTest() {
+//        var courseLectures = new CourseLectures(1, new int[]{});
+//        assertNotNull(courseLectures);
+//    }
 }
