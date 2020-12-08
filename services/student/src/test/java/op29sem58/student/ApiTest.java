@@ -25,7 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @AutoConfigureTestDatabase(replace = Replace.ANY)
 public class ApiTest {
     @Autowired
-    protected MockMvc mockMvc;
+    protected transient MockMvc mockMvc;
     
     @Test
     public void exampleTest() throws Exception {
