@@ -9,6 +9,13 @@ public class SlotInfo {
     public Integer roomId;
     public Integer roomSlotId;
 
+    /**
+     * Constructor for Slot Info.
+     *
+     * @param date date
+     * @param roomId roomId
+     * @param roomSlotId roomSlotId
+     */
     public SlotInfo(Timestamp date, Integer roomId, Integer roomSlotId) {
         this.date = date;
         this.roomId = roomId;
@@ -41,8 +48,12 @@ public class SlotInfo {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         SlotInfo slotInfo = (SlotInfo) o;
         return Objects.equals(date, slotInfo.date) &&
                 Objects.equals(roomId, slotInfo.roomId) &&
