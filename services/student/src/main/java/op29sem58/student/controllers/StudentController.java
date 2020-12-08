@@ -67,6 +67,7 @@ public class StudentController {
      * @param options Contains options for the request.
      */
     @PostMapping(path = "/assignStudentsUntil")
+    @SuppressWarnings("PMD") //DU anomaly
     public void assignStudentsUntil(@RequestBody AssignUntilOptions options) {
         // initialize all courses
         this.initializeCourses();
@@ -106,6 +107,7 @@ public class StudentController {
         this.studentBookings.flush();
     }
 
+    @SuppressWarnings("PMD") //DU anomaly
     private void initializeCourses() {
         // get all lectures via /getAllLectures endpoint
         final List<CourseLectures> courseLecturesList = this.serverCommunication.getAllLectures();
