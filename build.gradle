@@ -4,6 +4,9 @@ allprojects {
 	apply plugin: 'jacoco'
 	apply plugin: 'pmd'
 
+	jacoco {
+		toolVersion = "0.8.6"
+	}
 	sourceCompatibility = 14
 	targetCompatibility = 14
 
@@ -20,7 +23,7 @@ allprojects {
 
 		testImplementation 'com.h2database:h2' // in-memory database
 		testImplementation 'org.hibernate:hibernate-entitymanager'
-		testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2' 
+		testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
 		testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 		testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine' 
