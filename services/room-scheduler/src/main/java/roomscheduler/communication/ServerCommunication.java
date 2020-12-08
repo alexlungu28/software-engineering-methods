@@ -21,7 +21,7 @@ import org.apache.http.util.EntityUtils;
 public class ServerCommunication {
 
     static CredentialsProvider provider = new BasicCredentialsProvider();
-    static CloseableHttpClient client; // = HttpClientBuilder.create().setDefaultCredentialsProvider(provider).build();
+    static CloseableHttpClient client;
     static Gson gson = new Gson();
     static HttpPost post = new HttpPost();
 
