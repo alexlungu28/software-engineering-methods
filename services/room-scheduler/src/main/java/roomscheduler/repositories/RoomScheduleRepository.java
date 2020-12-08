@@ -38,7 +38,7 @@ public interface RoomScheduleRepository extends JpaRepository<RoomSchedule, Inte
             "* :breakDuration) MINUTE) " +
             "as endTime, rooms_id as coronaCapacity " +
             "FROM (SELECT r1.id as id, date_time as start_time, " +
-            "TIMESTAMP(date(date_time),  \"13:10:11\") as end_time, lectures_id, rooms_id, " +
+            "lectures_id, rooms_id, " +
             "count(*) - 1 as numOfSlots" +
             " FROM rooms_schedule AS r1 " +
             "JOIN room_slots AS r2 " +
