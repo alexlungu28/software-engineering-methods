@@ -65,7 +65,8 @@ public class ServerCommunication {
      * @throws UnsupportedEncodingException when something goes wrong during encoding.
      */
     @SuppressWarnings("PMD")
-    public static int executePostRequest(String port, String path, String json) throws UnsupportedEncodingException {
+    public static int executePostRequest(String port, String path,
+                     String json) throws UnsupportedEncodingException {
         try {
             post.setURI(new URI("http://localhost:" + port + "/" + path));
         } catch (URISyntaxException e) {

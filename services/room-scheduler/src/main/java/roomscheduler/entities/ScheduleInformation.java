@@ -23,7 +23,7 @@ public class ScheduleInformation implements ScheduleInfo {
      * @param coronaCapacity corona capacity of the room
      */
     public ScheduleInformation(Integer roomScheduleId, Timestamp startTime,
-                               Timestamp endTime, Integer lectureId, Integer roomId, Integer coronaCapacity) {
+           Timestamp endTime, Integer lectureId, Integer roomId, Integer coronaCapacity) {
         this.roomScheduleId = roomScheduleId;
         this.startTime = startTime;
         this.endTime = endTime;

@@ -26,7 +26,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class StudentController {
 
-    //The Repo's are annotated with @Autowired, this helps Spring connect the Repository's so that hibernate can retrieve
+    //The Repo's are annotated with @Autowired, this helps
+    // Spring connect the Repository's so that hibernate can retrieve
     // the students, studentBookings and studentEnrollments
     @Autowired
     private transient StudentRepo students;
@@ -117,7 +118,8 @@ public class StudentController {
             return false;
         }
         final Optional<StudentEnrollment> maybeStudentEnrollment =
-            this.studentEnrollments.findByCourseIdAndStudent(courseLecture.get().getCourseId(), student);
+            this.studentEnrollments.findByCourseIdAndStudent(courseLecture.get()
+                    .getCourseId(), student);
         return maybeStudentEnrollment.isPresent();
     }
 

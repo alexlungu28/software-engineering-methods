@@ -76,8 +76,7 @@ public class RoomSlotController {
      */
     @PutMapping(path = "/generateRoomSlots/{numDays}/{firstSlotDateTime}")
     public @ResponseBody String generateRoomSlots(@PathVariable int numDays,
-                                                  @PathVariable
-                                                          String firstSlotDateTime) throws IOException {
+              @PathVariable String firstSlotDateTime) throws IOException {
         Long numberOfRooms = RoomSlotCommunication.numberOfRooms();
         List<Rule> allRules = RoomSlotCommunication.getRules();
         HashMap<String, Integer> rules = new HashMap<>();
@@ -99,7 +98,8 @@ public class RoomSlotController {
                 + ":00", formatter);
         String timeBetweenSlotsTime = formatter.print(t);
 
-        return roomSlotRepository.createRoomSlots(slotsPerDay, numDays, firstSlotDateTime, timeBetweenSlotsTime,
+        return roomSlotRepository.createRoomSlots(slotsPerDay, numDays,
+                firstSlotDateTime, timeBetweenSlotsTime,
                 breakSlot, numberOfRooms);
     }
 
