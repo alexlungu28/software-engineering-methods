@@ -7,9 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import op29sem58.student.AssignUntilOptions;
-import op29sem58.student.CourseLectures;
-import op29sem58.student.Lecture;
+import op29sem58.student.local.entities.CourseLectures;
+import op29sem58.student.local.entities.Lecture;
 import op29sem58.student.communication.ServerCommunication;
 import op29sem58.student.database.entities.RoomSchedule;
 import op29sem58.student.database.entities.Student;
@@ -55,6 +54,7 @@ public class StudentController {
 
     /**
      * Retieves a list with all the students stored in the database.
+     *
      * @return list with all students in the database
      */
     @GetMapping(path = "/getStudents")
@@ -65,16 +65,16 @@ public class StudentController {
     /**
      * Assigns all students up until the date given in the options.
      *
-     * @param options Contains options for the request.
+     * @param date so that we can request all lectures up till that date
      */
     @PostMapping(path = "/assignStudentsUntil")
     @SuppressWarnings("PMD") //DU anomaly
-    public void assignStudentsUntil(@RequestBody AssignUntilOptions options) {
+    public void assignStudentsUntil(@RequestBody LocalDateTime date) {
         // Request all courses with their lectures from coursesService, so courseLecturesList is initialized.
         this.initializeCourses();
 
         // get all lectures to assign students to, sorted by their startTime
-        final List<Lecture> lectures = this.getAllScheduledSortedLecturesUntil(options.date);
+        final List<Lecture> lectures = this.getAllScheduledSortedLecturesUntil(date);
 
         // Now that we have a list with all upcoming lectures sorted by earliest startTime. We can allocate students to
         // them. We do this by iterating through the lectures and getting the scheduled room for each lecture. For each
@@ -128,6 +128,7 @@ public class StudentController {
      * This checks if the student is enrolled for the lecture, by iterating though the list of courseLectures and retrieving
      * the courseID by the use of the lectureID. Then send a request to enrollments with the courseID and student.
      * If student is enrolled a boolean true will be returned.
+     *
      * @param student a Student to check if enrolled
      * @param lecture a lecture to get the courseID
      * @return a boolean if the student is enrolled.
@@ -146,6 +147,7 @@ public class StudentController {
 
     /**
      * This gets a sorted list of lectures sorted by upcoming.
+     *
      * @param date to get all lectures before date
      * @return return all lecture before date
      */
