@@ -9,10 +9,16 @@ public class CourseLectures {
         this.lectureIds = lectureIds;
     }
 
-    public int getCourseId() {
-        return this.courseId;
+    public boolean courseHasLecture(int lectureId) {
+        for(int id : this.lectureIds) {
+            if (id == lectureId) return true;
+        }
+        return false;
     }
-    
+    public int getCourseId() {
+        return courseId;
+    }
+
     public void setCourseId(int courseId) {
         this.courseId = courseId;
     }
