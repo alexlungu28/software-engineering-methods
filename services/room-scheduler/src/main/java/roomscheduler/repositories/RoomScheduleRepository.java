@@ -1,5 +1,8 @@
 package roomscheduler.repositories;
 
+import java.sql.Date;
+import java.sql.Time;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -8,9 +11,6 @@ import roomscheduler.entities.IntPair;
 import roomscheduler.entities.RoomSchedule;
 import roomscheduler.entities.RoomSlotStat;
 import roomscheduler.entities.ScheduleInfo;
-import java.sql.Date;
-import java.sql.Time;
-import java.util.List;
 
 @Repository
 public interface RoomScheduleRepository extends JpaRepository<RoomSchedule, Integer> {
