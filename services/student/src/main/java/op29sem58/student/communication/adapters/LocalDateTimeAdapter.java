@@ -10,6 +10,10 @@ import com.google.gson.JsonSerializer;
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 
+/**
+ * This class is meant so that we can both deserialze and
+ * serialize the LocalDateTime in the way we want to.
+ */
 public class LocalDateTimeAdapter implements
         JsonDeserializer<LocalDateTime>, JsonSerializer<LocalDateTime> {
     @Override

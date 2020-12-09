@@ -8,6 +8,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+/**
+ * This it a database entry to keep track of the courses each student is enrolled to.
+ * We have a manyToOne relationship to the student. As a Student can have many courses
+ * he is enrolled to. We do not store Courses on our side, only the courseID which is
+ * why it is not marked as a manyToMany relationship. As a course can have multiple
+ * students as well of course.
+ */
 @Entity(name = "StudentEnrollment")
 public class StudentEnrollment {
     @Id

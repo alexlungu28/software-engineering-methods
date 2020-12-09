@@ -7,9 +7,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import op29sem58.student.CourseLectures;
 import op29sem58.student.communication.adapters.LocalDateTimeAdapter;
 import op29sem58.student.database.entities.RoomSchedule;
+import op29sem58.student.local.entities.CourseLectures;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -19,6 +19,11 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 
+/**
+ * This is meant for all our communication to other services.
+ * We start with defining the other services URL's, setting
+ * up the Gson builder so that we can serialize our requests.
+ */
 public class ServerCommunication {
     private static final String COURSES_SERVICE_URL = "http://localhost:8085";
     private static final String ROOM_SCHEDULE_SERVICE_URL = "http://localhost:8081";
