@@ -54,7 +54,7 @@ public class ApiTest {
         String requestJson = gson.toJson(students);
         this.mockMvc.perform(post("/initializeStudents").contentType(APPLICATION_JSON)
                 .content(requestJson)).andExpect(status().isOk());
-        this.mockMvc.perform(get("/getInitializedStudents"))
+        this.mockMvc.perform(get("/getStudents"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", hasSize(8)));
     }

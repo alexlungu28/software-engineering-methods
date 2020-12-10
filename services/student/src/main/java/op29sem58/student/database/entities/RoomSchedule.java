@@ -9,6 +9,14 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Transient;
 
+/**
+ * This is a RoomSchedule entity, the interesting part is that we store only the part
+ * relevant to our service in the database. So the ID is the RoomSchedule ID we receive
+ * from the roomScheduler, we link this with the students in a many to many relationship 
+ * and store that relationship in the database. The other information like lectureId, 
+ * roomId, startTime endTime and coronaCapacity is used while assigning the students, but
+ * discarded afterwards, as we do not want to store, values across multiple databases.
+ */
 @Entity(name = "RoomSchedule")
 public class RoomSchedule {
     @Id
