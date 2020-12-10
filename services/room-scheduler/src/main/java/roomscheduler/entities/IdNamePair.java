@@ -30,11 +30,15 @@ public class IdNamePair {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         IdNamePair that = (IdNamePair) o;
-        return Objects.equals(id, that.id) &&
-                Objects.equals(name, that.name);
+        return Objects.equals(id, that.id)
+                && Objects.equals(name, that.name);
     }
 
     @Override
@@ -44,9 +48,9 @@ public class IdNamePair {
 
     @Override
     public String toString() {
-        return "IdNamePair{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
+        return "IdNamePair{"
+                + "id=" + id
+                + ", name='" + name + '\''
+                + '}';
     }
 }
