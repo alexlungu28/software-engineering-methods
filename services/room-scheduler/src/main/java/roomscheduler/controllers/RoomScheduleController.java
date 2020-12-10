@@ -134,6 +134,7 @@ public class RoomScheduleController {
         //TODO do not let lectures of the same year overlap
         List<Integer> slotIdsOfSameYearLectures = roomScheduleRepository
                 .getSlotIdsForLecturesOfTheSameYear(yearOfStudy);
+        System.out.println(slotIdsOfSameYearLectures);
 
         List<NameDateInfo> finalResult = new ArrayList<>();
         for (SlotInfo pair : dateIntPairs) {

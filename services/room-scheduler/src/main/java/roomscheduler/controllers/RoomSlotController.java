@@ -119,9 +119,16 @@ public class RoomSlotController {
             roomSlot.get().setOccupied(1);
             roomSlotRepository.saveAndFlush(roomSlot.get());
             for (int i = 0; i < numOfSlots; i++) {
-                Optional<RoomSlot> next = roomSlotRepository.findById(id + (i + 1) * 20);
-                next.get().setOccupied(1);
-                roomSlotRepository.saveAndFlush(next.get());
+                if (i < numOfSlots - 1) {
+                    Optional<RoomSlot> next = roomSlotRepository.findById(id + (i + 1) * 20);
+                    next.get().setOccupied(1);
+                    roomSlotRepository.saveAndFlush(next.get());
+                } else {
+                    Optional<RoomSlot> next = roomSlotRepository.findById(id + (i + 1) * 20);
+                    next.get().setOccupied(3);
+                    roomSlotRepository.saveAndFlush(next.get());
+                }
+
             }
             return "Marked room slots as occupied!";
         } else {

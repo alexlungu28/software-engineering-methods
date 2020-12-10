@@ -25,7 +25,8 @@ public interface RoomScheduleRepository extends JpaRepository<RoomSchedule, Inte
             "timestampdiff(hour, a.date_time, b.date_time) = :numSlots " +
             "and DATE(a.date_time) = :date and " +
             "not (time(a.date_time) <= :lunchTime and time(b.date_time) > :lunchTime) " +
-            "and not (a.occupied = 1 or b.occupied = 1) " +
+            "and not (a.occupied = 1 or b.occupied = 1) and not (a.occupied = 3 " +
+            "or b.occupied = 3) " +
             "ORDER BY a.rooms_id, a.date_time",
             nativeQuery = true)
     Iterable<RoomSlotStat> availableSlots(@Param("date") Date d,
@@ -54,7 +55,8 @@ public interface RoomScheduleRepository extends JpaRepository<RoomSchedule, Inte
             nativeQuery = true)
     Integer getLunchSlot();
 
-    @Query(value = "select * from rooms_schedule where lectures_id = :lectureId", nativeQuery = true)
+    @Query(value = "select * from rooms_schedule where " +
+            "lectures_id = :lectureId", nativeQuery = true)
     List<RoomSchedule> getRoomScheduleWithLectureId(@Param("lectureId") Integer lectureId);
 
     @Query(value = selectRulesValue +
@@ -87,9 +89,12 @@ public interface RoomScheduleRepository extends JpaRepository<RoomSchedule, Inte
     List<IntPair> getSlotIdAndRoomSlotId(@Param("lecture_id") Integer lecture_id);
 
 
-    @Query(value = "SELECT room_slots_id " +
-            "FROM rooms_schedule " +
-            "WHERE year_of_study = :yearOfStudy",  nativeQuery = true)
+    @Query(value = "select id from room_slots " +
+            "where date_time in (select date_time from " +
+            "room_slots where id in (select room_slots_id " +
+            "from rooms_schedule " +
+            "where year_of_study = :yearOfStudy) " +
+            "and room_slots.occupied != 3)",  nativeQuery = true)
     List<Integer> getSlotIdsForLecturesOfTheSameYear(@Param("yearOfStudy") Integer yearOfStudy);
 
 
