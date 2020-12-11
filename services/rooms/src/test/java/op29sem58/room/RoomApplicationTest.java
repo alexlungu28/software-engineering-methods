@@ -21,9 +21,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 class RoomApplicationTest {
 
     @Autowired
-    transient private RoomController roomController;
+    transient RoomController roomController;
     @Autowired
-    transient private RoomRepository roomRepository;
+    transient RoomRepository roomRepository;
 
     @Test
     void contextLoads() {
