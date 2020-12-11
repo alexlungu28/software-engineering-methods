@@ -1,6 +1,9 @@
 package roomscheduler.controllers;
 
 import java.io.IOException;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -147,7 +150,14 @@ public class RoomSlotController {
     String makeRoomSlotAvail(@PathVariable Integer id) {
         Optional<RoomSlot> roomSlot = roomSlotRepository.findById(id);
         if (roomSlot.isPresent()) {
-            roomSlot.get().setOccupied(0);
+            Timestamp timestamp = roomSlot.get().getDate_time();
+            String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date(timestamp.getTime()));
+            Timestamp b = Timestamp.valueOf(date + " 14:45:00");
+            if (b.getTime() == timestamp.getTime()) { //it is a lunch slot
+                roomSlot.get().setOccupied(2);
+            } else {
+                roomSlot.get().setOccupied(0);
+            }
             roomSlotRepository.saveAndFlush(roomSlot.get());
             return "Marked room slot as available!";
         } else {
