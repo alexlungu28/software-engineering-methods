@@ -131,18 +131,20 @@ public class RoomScheduleController {
         List<SlotInfo> dateIntPairs = RoomScheduleCommunication
                 .getAvailableRoomsSlots(prefDate, numSlots, lunchTime);
 
-        //TODO do not let lectures of the same year overlap
-        List<Integer> slotIdsOfSameYearLectures = roomScheduleRepository
-                .getSlotIdsForLecturesOfTheSameYear(yearOfStudy);
-        System.out.println(slotIdsOfSameYearLectures);
+        List<Integer> slotIdsToNotOverlapSameYear = roomScheduleRepository
+                .getSlotIdsToNotOverlapSameYear(yearOfStudy);
+
 
         List<NameDateInfo> finalResult = new ArrayList<>();
-        for (SlotInfo pair : dateIntPairs) {
-            for (IdNamePair i : roomInfoWithRequiredCapacity) {
-                if (i.getId() == pair.getRoomId() && !slotIdsOfSameYearLectures
+        outer: for (IdNamePair i : roomInfoWithRequiredCapacity) {
+            for (SlotInfo pair : dateIntPairs) {
+                if (i.getId() == pair.getRoomId() && !slotIdsToNotOverlapSameYear
                         .contains(pair.roomSlotId)) {
                     finalResult.add(new NameDateInfo(pair.getDate(),
                             i.getName(), pair.getRoomSlotId()));
+                    //once we found one room slot to schedule the lecture, we can
+                    //stop searching
+                    break outer;
                 }
             }
         }

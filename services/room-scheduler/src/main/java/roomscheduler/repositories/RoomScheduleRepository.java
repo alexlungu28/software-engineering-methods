@@ -95,7 +95,7 @@ public interface RoomScheduleRepository extends JpaRepository<RoomSchedule, Inte
             "from rooms_schedule " +
             "where year_of_study = :yearOfStudy) " +
             "and room_slots.occupied != 3)",  nativeQuery = true)
-    List<Integer> getSlotIdsForLecturesOfTheSameYear(@Param("yearOfStudy") Integer yearOfStudy);
+    List<Integer> getSlotIdsToNotOverlapSameYear(@Param("yearOfStudy") Integer yearOfStudy);
 
 
 

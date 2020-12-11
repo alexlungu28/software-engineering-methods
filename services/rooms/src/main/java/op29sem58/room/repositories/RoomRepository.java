@@ -44,7 +44,8 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
             "\t\tELSE 0\n" +
             "\tEND AS capBool\n" +
             "\tFROM rooms) t1) t2\n" +
-            "WHERE t2.coronaCapacity >= :numOfStudents",
+            "WHERE t2.coronaCapacity >= :numOfStudents " +
+            "ORDER BY coronaCapacity ASC",
             nativeQuery = true)
     List<RoomInfo> getRoomsWithCapacityAtLeast(@Param("numOfStudents") Integer numOfStudents,
                                                @Param("minPer") Integer minPer,
