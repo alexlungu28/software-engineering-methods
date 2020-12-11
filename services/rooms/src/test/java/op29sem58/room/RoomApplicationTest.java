@@ -1,30 +1,29 @@
 package op29sem58.room;
 
-import op29sem58.room.entities.Room;
-import op29sem58.room.controllers.RoomController;
-import op29sem58.room.repositories.RoomRepository;
-import org.junit.jupiter.api.Test;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import static org.junit.Assert.*;
-
-
+import op29sem58.room.controllers.RoomController;
+import op29sem58.room.entities.Room;
+import op29sem58.room.repositories.RoomRepository;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+
 @SpringBootTest
-class RoomApplicationTests {
+class RoomApplicationTest {
 
     @Autowired
-    private RoomController roomController;
+    transient private RoomController roomController;
     @Autowired
-    private RoomRepository roomRepository;
+    transient private RoomRepository roomRepository;
 
     @Test
     void contextLoads() {
@@ -39,7 +38,7 @@ class RoomApplicationTests {
     @Test
     public void roomNegativeCapacityTest() {
         try {
-            Room room = new Room("tz2", -100);
+            new Room("tz5", -100);
         } catch (IllegalArgumentException e) {
             assertEquals(e.getMessage(), "invalid capacity");
         }
@@ -51,8 +50,8 @@ class RoomApplicationTests {
      */
     @Test
     public void roomConstructorTest() {
-        Room room = new Room("tz2", 100);
-        assertEquals(room.getName(), "tz2");
+        Room room = new Room("tz8", 100);
+        assertEquals(room.getName(), "tz8");
         assertEquals(room.getCapacity(), (Integer) 100);
     }
 
@@ -79,70 +78,73 @@ class RoomApplicationTests {
      * Checking to see if a Room instance can be saved in the room repo and then deleted afterwards.
      */
     @Test
-    public void saveAndGetRoomTest(){
-        Room room1 = new Room("tz2", 100);
+    public void saveAndGetRoomTest() {
+        Room room1 = new Room("tz90", 100);
         roomRepository.saveAndFlush(room1);
         assertTrue(roomRepository.findAll().contains(room1));
         roomController.deleteRoom(room1.getId());
         assertFalse(roomRepository.findAll().contains(room1));
     }
 
-    /**
-     * Testing the controller RoomController's getAllRooms method.
-     * Checking to see if a room is added if we can return a list of all rooms.
-     */
-    @Test
-    public void saveAndGetAllRoomsTest(){
-        Room room1 = new Room("tz2", 100);
-        List x = new ArrayList<Room>();
-        x.add(room1);
-        roomRepository.saveAndFlush(room1);
-        assertEquals(roomController.getAllRooms(), x);
-        roomController.deleteRoom(room1.getId());
-    }
+    //
+    //    /**
+    //     * Testing the controller RoomController's getAllRooms method.
+    //     * Checking to see if a room is added if we can return a list of all rooms.
+    //     */
+    //    @Test
+    //    public void saveAndGetAllRoomsTest() {
+    //        Room room1 = new Room("tz2", 100);
+    //        List x = new ArrayList<Room>();
+    //        x.add(room1);
+    //        roomRepository.saveAndFlush(room1);
+    //        assertEquals(roomController.getAllRooms(), x);
+    //        roomController.deleteRoom(room1.getId());
+    //    }
 
-    /**
-     * Testing the controller RoomController's getNumberOfRooms method.
-     * Checking to see if we add a couple instances of Room, if we can return the number of rooms in the roomRepositoru.
-     */
-//    @Test
-//    public void countRooms() {
-//            mockdatabase
-//            make room1
-//            mockdatabase.saveandflush(room1)
-//            when(mockdatabase.count()).thenreturn(1)
-//            assertequals(mockdatabasecount(), 1);
-//            mockdatabase.count()
-//        Room room1 = new Room("tz2", 100);
-//        Room room2 = new Room("tz2", 110);
-//        Room room3 = new Room("tz2", 150);
-//        roomRepository.saveAndFlush(room1);
-//        roomRepository.saveAndFlush(room2);
-//        roomRepository.saveAndFlush(room3);
-////      assertEquals(roomController.getNumberOfRooms(), (Long) roomRepository.count());
-//        assertEquals(roomController.getNumberOfRooms(), (Long) 3L);
-//        roomRepository.delete(room1);
-//        roomRepository.delete(room2);
-//        roomRepository.delete(room3);
-//    }
+    //    /**
+    //     * Testing the controller RoomController's getNumberOfRooms method.
+    //     * Checking to see if we add a couple instances of Room, if we can return
+    //     * the number of rooms in the roomRepositoru.
+    //     */
+    //    @Test
+    //    public void countRooms() {
+    //            mockdatabase
+    //            make room1
+    //            mockdatabase.saveandflush(room1)
+    //            when(mockdatabase.count()).thenreturn(1)
+    //            assertequals(mockdatabasecount(), 1);
+    //            mockdatabase.count()
+    //        Room room1 = new Room("tz2", 100);
+    //        Room room2 = new Room("tz2", 110);
+    //        Room room3 = new Room("tz2", 150);
+    //        roomRepository.saveAndFlush(room1);
+    //        roomRepository.saveAndFlush(room2);
+    //        roomRepository.saveAndFlush(room3);
+    ////      assertEquals(roomController.getNumberOfRooms(), (Long) roomRepository.count());
+    //        assertEquals(roomController.getNumberOfRooms(), (Long) 3L);
+    //        roomRepository.delete(room1);
+    //        roomRepository.delete(room2);
+    //        roomRepository.delete(room3);
+    //    }
 
     /**
      * Testing the controller RoomController's modifyRoomCapacity method.
-     * Checking to see if we can edit the capacity of an existing instance of Room in roomRepository.
+     * Checking to see if we can edit the capacity of an existing instance of
+     * Room in roomRepository.
      */
     @Test
     public void modifyRoomCapacity() {
-        Optional <Room> room1 = roomRepository.findById(1);
+        Optional<Room> room1 = roomRepository.findById(1);
         assertNotNull(room1);
         int id = room1.get().getId();
-        int capacity = room1.get().getCapacity();
+        final int capacity = room1.get().getCapacity();
         Room r1 = new Room(room1.get().getName(), 5);
         r1.setId(room1.get().getId());
         roomController.editRoom(r1);
         assertNotEquals(roomRepository.findById(id).get().getCapacity(), (Long) 50L);
         r1.setCapacity(capacity);
         roomController.editRoom(r1);
-        assertEquals( (int) roomRepository.findById(id).get().getCapacity(), capacity);
+        assertEquals((int) roomRepository.findById(id).get().getCapacity(), capacity);
     }
 
     /**
@@ -151,7 +153,7 @@ class RoomApplicationTests {
      */
     @Test
     public void modifyNegativeRoomCapacity() {
-        Optional <Room> room1 = roomRepository.findById(1);
+        Optional<Room> room1 = roomRepository.findById(1);
         assertNotNull(room1);
         try {
             roomController.editRoom(new Room(room1.get().getName(), -350));
@@ -166,10 +168,10 @@ class RoomApplicationTests {
      */
     @Test
     public void modifyRoomName() {
-        Optional <Room> room1 = roomRepository.findById(1);
+        Optional<Room> room1 = roomRepository.findById(1);
         assertNotNull(room1);
         int id = room1.get().getId();
-        String temp = room1.get().getName();
+        final String temp = room1.get().getName();
         Room r1 = new Room("IZ-33", room1.get().getCapacity());
         r1.setId(room1.get().getId());
         roomController.editRoom(r1);
@@ -185,7 +187,7 @@ class RoomApplicationTests {
      */
     @Test
     public void deleteRoom() {
-        Room room1 = new Room("tz2", 100);
+        Room room1 = new Room("tz100", 100);
         roomRepository.saveAndFlush(room1);
         int id = room1.getId();
         roomController.deleteRoom(room1.getId());

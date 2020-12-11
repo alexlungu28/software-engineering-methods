@@ -6,6 +6,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
@@ -151,7 +152,7 @@ public class RoomSlotController {
         Optional<RoomSlot> roomSlot = roomSlotRepository.findById(id);
         if (roomSlot.isPresent()) {
             Timestamp timestamp = roomSlot.get().getDate_time();
-            String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date(timestamp.getTime()));
+            String date = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).format(new Date(timestamp.getTime()));
             Timestamp b = Timestamp.valueOf(date + " 14:45:00");
             if (b.getTime() == timestamp.getTime()) { //it is a lunch slot
                 roomSlot.get().setOccupied(2);

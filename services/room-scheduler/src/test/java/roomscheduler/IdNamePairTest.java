@@ -1,29 +1,30 @@
 package roomscheduler;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+
+import java.sql.Timestamp;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import roomscheduler.entities.IdNamePair;
 import roomscheduler.entities.NameDateInfo;
 
-import java.sql.Timestamp;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class IdNamePairTest {
 
     @Test
     void constructorTest() {
-        IdNamePair np = new IdNamePair(0, "test");
+        IdNamePair np = new IdNamePair(0, "test5");
         assertEquals(np.getId(), (Integer) 0);
-        assertEquals(np.getName(), "test");
+        assertEquals(np.getName(), "test5");
     }
 
     @Test
     void toStringTest() {
-        IdNamePair np = new IdNamePair(0, "test");
-        assertEquals(np.toString(), "IdNamePair{id=0, name='test'}");
+        IdNamePair np = new IdNamePair(0, "test8");
+        assertEquals(np.toString(), "IdNamePair{id=0, name='test8'}");
     }
 
     @Test
@@ -39,8 +40,8 @@ public class IdNamePairTest {
 
     @Test
     public void testHashCode() {
-        IdNamePair np = new IdNamePair(0, "test");
-        IdNamePair np2 = new IdNamePair(0, "test");
+        IdNamePair np = new IdNamePair(0, "test90");
+        IdNamePair np2 = new IdNamePair(0, "test90");
         assertNotSame(np, np2);
         assertEquals(np.hashCode(), np2.hashCode());
     }
