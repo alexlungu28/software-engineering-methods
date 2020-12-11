@@ -154,7 +154,7 @@ public class RoomSlotController {
             Timestamp timestamp = roomSlot.get().getDate_time();
             String date = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
                     .format(new Date(timestamp.getTime()));
-            Timestamp b = Timestamp.valueOf(date + " 14:45:00");
+            Timestamp b = Timestamp.valueOf(date + " 12:45:00");
             if (b.getTime() == timestamp.getTime()) { //it is a lunch slot
                 roomSlot.get().setOccupied(2);
             } else {

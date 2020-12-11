@@ -121,7 +121,7 @@ public class RoomScheduleController {
             throw new RuntimeException("The lecture with id " + lectureId + " has" +
                     " been already scheduled!");
         }
-        Integer lunchHour = 9 + roomScheduleRepository.getLunchSlot();
+        Integer lunchHour = 7 + roomScheduleRepository.getLunchSlot();
         Time lunchTime = utcTime("" + lunchHour  + ":45:00");
         int minPercentage = roomScheduleRepository.getMinPerc();
         int maxPercentage = roomScheduleRepository.getMaxPerc();
