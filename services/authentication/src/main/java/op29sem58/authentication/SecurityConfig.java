@@ -30,22 +30,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/login")
+                .antMatchers("/login", "/getUsername")
                 .permitAll()
 
                 .antMatchers(
-                        "/getMyCourses", "/getSchedule", "/allMyLectures",
-                        "/allMyCourses", "/user", "/declineOnCampusOffer/**", "/setPreferences/**")
+                        "/isStudent")
                 .hasAnyRole("STUDENT", "TEACHER", "ADMIN")
 
                 .antMatchers(
-                        "/moveLectureOnline", "/scheduleLecturesUntil", "/scheduleLecture",
-                        "/cancelLecture/**", "/assignStudentsUntil"
+                        "/isTeacher"
                 ).hasAnyRole("TEACHER", "ADMIN")
 
                 .antMatchers(
-                        "/users", "/users/**", "/modifyUser", "/createCourse", "/modifyCourse",
-                        "/createLecture", "/createRoom", "/modifyRoom", "/deleteRoom/**")
+                        "/isAdmin")
                 .hasAnyRole("ADMIN")
 
                 .and().sessionManagement()
