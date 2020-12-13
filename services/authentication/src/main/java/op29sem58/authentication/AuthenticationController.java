@@ -1,13 +1,16 @@
 package op29sem58.authentication;
 
+import io.jsonwebtoken.Jwts;
 import op29sem58.authentication.users.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -44,5 +47,26 @@ public class AuthenticationController {
 
         final String jwt = jwtTokenUtil.generateToken(userDetails);
         return jwt;
+    }
+
+    @GetMapping("/isStudent")
+    public boolean isStudent() {
+        return true;
+    }
+
+    @GetMapping("/isTeacher")
+    public boolean isTeacher() {
+        return true;
+    }
+
+    @GetMapping("/isAdmin")
+    public boolean isAdmin() {
+        return true;
+    }
+
+    @GetMapping("/getUsername")
+    public String getUsername(@RequestHeader("Authorization") String token) {
+        token = token.replace("Bearer ", "");
+        return Jwts.parser().setSigningKey("secret").parseClaimsJws(token).getBody().getSubject();
     }
 }
