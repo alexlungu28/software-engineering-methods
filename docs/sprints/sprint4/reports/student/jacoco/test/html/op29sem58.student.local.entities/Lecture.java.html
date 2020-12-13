@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Lecture.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">student</a> &gt; <a href="index.source.html" class="el_package">op29sem58.student.local.entities</a> &gt; <span class="el_source">Lecture.java</span></div><h1>Lecture.java</h1><pre class="source lang-java linenums">package op29sem58.student.local.entities;
+
+import op29sem58.student.database.entities.RoomSchedule;
+
+/**
+ * This class helps us temporary store the lectures to make it more easy to assign the students.
+ */
+public class Lecture {
+    private RoomSchedule roomSchedule;
+    private int id;
+
+<span class="nc" id="L12">    public Lecture(int id, RoomSchedule roomSchedule) {</span>
+<span class="nc" id="L13">        this.id = id;</span>
+<span class="nc" id="L14">        this.roomSchedule = roomSchedule;</span>
+<span class="nc" id="L15">    }</span>
+
+    public RoomSchedule getRoomSchedule() {
+<span class="nc" id="L18">        return this.roomSchedule;</span>
+    }
+    
+    public void setRoomSchedule(RoomSchedule roomSchedule) {
+<span class="nc" id="L22">        this.roomSchedule = roomSchedule;</span>
+<span class="nc" id="L23">    }</span>
+
+    public int getId() {
+<span class="nc" id="L26">        return this.id;</span>
+    }
+    
+    public void setId(int id) {
+<span class="nc" id="L30">        this.id = id;</span>
+<span class="nc" id="L31">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

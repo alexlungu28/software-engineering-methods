@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="8.37">
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\room-scheduler\src\main\java\roomscheduler\RoomScheduleService.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\room-scheduler\src\main\java\roomscheduler\communication\RoomScheduleCommunication.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\room-scheduler\src\main\java\roomscheduler\communication\RoomSlotCommunication.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\room-scheduler\src\main\java\roomscheduler\communication\ServerCommunication.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\room-scheduler\src\main\java\roomscheduler\controllers\RoomScheduleController.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\room-scheduler\src\main\java\roomscheduler\controllers\RoomSlotController.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\room-scheduler\src\main\java\roomscheduler\controllers\RuleController.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\room-scheduler\src\main\java\roomscheduler\entities\IdNamePair.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\room-scheduler\src\main\java\roomscheduler\entities\IntPair.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\room-scheduler\src\main\java\roomscheduler\entities\NameDateInfo.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\room-scheduler\src\main\java\roomscheduler\entities\RoomInfo.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\room-scheduler\src\main\java\roomscheduler\entities\RoomSchedule.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\room-scheduler\src\main\java\roomscheduler\entities\RoomSlot.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\room-scheduler\src\main\java\roomscheduler\entities\RoomSlotStat.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\room-scheduler\src\main\java\roomscheduler\entities\Rule.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\room-scheduler\src\main\java\roomscheduler\entities\ScheduleInfo.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\room-scheduler\src\main\java\roomscheduler\entities\ScheduleInformation.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\room-scheduler\src\main\java\roomscheduler\entities\SlotInfo.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\room-scheduler\src\main\java\roomscheduler\repositories\RoomScheduleRepository.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\room-scheduler\src\main\java\roomscheduler\repositories\RoomSlotRepository.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\room-scheduler\src\main\java\roomscheduler\repositories\RuleRepository.java">
+</file>
+</checkstyle>
