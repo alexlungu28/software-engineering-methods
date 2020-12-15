@@ -33,10 +33,10 @@ class UserControllerTest {
     transient Role r1 = new Role(1, "Student");
 
     @Autowired
-    private MockMvc mvc;
+    transient MockMvc mvc;
 
     @MockBean
-    private UserService userService;
+    transient UserService userService;
 
     @After
     public void reset_mocks() {
