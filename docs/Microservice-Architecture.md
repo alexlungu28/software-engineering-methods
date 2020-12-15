@@ -1,5 +1,4 @@
 
-
 |Service|In|Out|
 | :- | :- | :- |
 |Authentication service|<p>POST /login</p><p>{ password: string, netid: string }</p>|JWT token containing authorities, this JWT is passed in the Bearer header in every following request|
@@ -11,6 +10,7 @@
 ||<p>POST /createLecture</p><p>{ name: string, courseId: int, teacherNetId: int, date: string, requiredTimeslots: int}</p>|Lecture created in the database, get HTTP status back and the JSON contains the created lecture|
 ||GET /getMyCourses|<p>[</p><p>` `{ name: string, code: string, year: int, id: int },</p><p>{ name: string, code: string, year: int, id: int },</p><p>{ name: string, code: string, year: int, id: int },<br>` `etc</p><p>]</p>|
 ||POST /moveLectureOnline<br>{ lectureId: int }||
+||GET /getAllCourses|`[{courseId: int, teacherNetId: String, name: String, code: String, yearOfStudy: int, lectureIds: [int, int, int, ...]}, ...]`|
 ||GET /getAllLectures|`[{courseId: int, lectureIds: [int, int, int, ...]}, ...]`|
 |Room Schedule service|<p>POST /scheduleLecturesUntil</p><p>{</p><p>` `date: string<br>}</p>|A JSON with all the scheduled lectures to rooms, including the time|
 ||<p>POST</p><p>/scheduleLecture</p><p>{ lectureId: int }</p>||
