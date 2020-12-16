@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 
@@ -33,11 +34,26 @@ public class RoomController {
         this.roomRepository = roomRepository;
     }
 
+    /**
+     * Method for creating a room.
+     *
+     * @param token token
+     * @param r Room to be added
+     * @return if the token corresponds to an admin, return "created" message, exception otherwise
+     */
     @PostMapping(path = "/createRoom") // Map ONLY POST Requests
     public @ResponseBody
-    String addNewRoom(@RequestBody Room r) {
-        roomRepository.saveAndFlush(r);
-        return "Saved room";
+    String addNewRoom(@RequestHeader("Authorization") String token, @RequestBody Room r) {
+        token = token.replace("Bearer ", "");
+        boolean isAuthorized = Authorization.authorize(token, "Admin");
+        if (!isAuthorized) {
+            throw new RuntimeException("You do not have the privilege to perform " +
+                    "this action.");
+        } else {
+            roomRepository.saveAndFlush(r);
+            return "Saved room";
+
+        }
     }
 
     /**
@@ -47,14 +63,33 @@ public class RoomController {
      */
     @GetMapping(path = "/allrooms")
     public @ResponseBody
-    Iterable<Room> getAllRooms() {
-        return roomRepository.findAll();
+    Iterable<Room> getAllRooms(@RequestHeader("Authorization") String token) {
+        token = token.replace("Bearer ", "");
+        boolean isAuthorized = Authorization.authorize(token, "Admin");
+        if (!isAuthorized) {
+            throw new RuntimeException("You do not have the privilege to perform " +
+                    "this action.");
+        } else {
+            return roomRepository.findAll();
+        }
     }
 
-
+    /**
+     * Method for initializing the rooms table.
+     *
+     * @param token token
+     * @return message ("saved" if token corresponds to an admin, exception otherwise)
+     */
     @PutMapping(path = "/generateRooms")
-    public @ResponseBody String generateRooms() {
-        return roomRepository.createInitialRooms();
+    public @ResponseBody String generateRooms(@RequestHeader("Authorization") String token) {
+        token = token.replace("Bearer ", "");
+        boolean isAuthorized = Authorization.authorize(token, "Admin");
+        if (!isAuthorized) {
+            throw new RuntimeException("You do not have the privilege to perform " +
+                    "this action.");
+        } else {
+            return roomRepository.createInitialRooms();
+        }
     }
 
 
@@ -75,6 +110,11 @@ public class RoomController {
         }
     }
 
+    /**
+     * Method for retrieving the number of rooms.
+     *
+     * @return number of rooms
+     */
     @GetMapping(path = "/countRooms")
     public @ResponseBody
     Long getNumberOfRooms() {
