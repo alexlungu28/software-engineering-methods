@@ -40,7 +40,7 @@ public class RoomSlotCommunication extends ServerCommunication {
      */
     public static List<Rule> getRules() throws IOException {
         String port = "8081";
-        String path = "/allrules";
+        String path = "/allRules";
         return stringToArray(getObjectJson(port, path), Rule[].class);
     }
 

@@ -88,7 +88,7 @@ public class RoomScheduleController {
     Iterable<RoomSlotStat> getAvailableSlots(@PathVariable Date prefDate,
                                        @PathVariable Integer numSlots,
                                        @PathVariable Time lunchTime) {
-        return roomScheduleRepository.scheduleLecture(prefDate, numSlots, lunchTime);
+        return roomScheduleRepository.availableSlots(prefDate, numSlots, lunchTime);
     }
 
     /**
@@ -114,7 +114,14 @@ public class RoomScheduleController {
                               @PathVariable Integer lectureId,
                               @PathVariable Integer yearOfStudy)
             throws IOException, ParseException {
-        Integer lunchHour = 9 + roomScheduleRepository.getLunchSlot();
+        List<RoomSchedule> roomScheduleWithGivenLectureId = roomScheduleRepository
+                .getRoomScheduleWithLectureId(lectureId);
+        //it should not be possible to schedule a lecture that is already scheduled
+        if (!roomScheduleWithGivenLectureId.isEmpty()) {
+            throw new RuntimeException("The lecture with id " + lectureId + " has" +
+                    " been already scheduled!");
+        }
+        Integer lunchHour = 7 + roomScheduleRepository.getLunchSlot();
         Time lunchTime = utcTime("" + lunchHour  + ":45:00");
         int minPercentage = roomScheduleRepository.getMinPerc();
         int maxPercentage = roomScheduleRepository.getMaxPerc();
@@ -123,20 +130,21 @@ public class RoomScheduleController {
                         minPercentage, maxPercentage);
         List<SlotInfo> dateIntPairs = RoomScheduleCommunication
                 .getAvailableRoomsSlots(prefDate, numSlots, lunchTime);
-        System.out.println(dateIntPairs);
 
-        //TODO do not let lectures of the same year overlap
-        List<Integer> slotIdsOfSameYearLectures = roomScheduleRepository
-                .getSlotIdsForLecturesOfTheSameYear(yearOfStudy);
-        System.out.println(slotIdsOfSameYearLectures);
+        List<Integer> slotIdsToNotOverlapSameYear = roomScheduleRepository
+                .getSlotIdsToNotOverlapSameYear(yearOfStudy);
+
 
         List<NameDateInfo> finalResult = new ArrayList<>();
-        for (SlotInfo pair : dateIntPairs) {
-            for (IdNamePair i : roomInfoWithRequiredCapacity) {
-                if (i.getId() == pair.getRoomId() && !slotIdsOfSameYearLectures
+        outer: for (IdNamePair i : roomInfoWithRequiredCapacity) {
+            for (SlotInfo pair : dateIntPairs) {
+                if (i.getId() == pair.getRoomId() && !slotIdsToNotOverlapSameYear
                         .contains(pair.roomSlotId)) {
                     finalResult.add(new NameDateInfo(pair.getDate(),
                             i.getName(), pair.getRoomSlotId()));
+                    //once we found one room slot to schedule the lecture, we can
+                    //stop searching
+                    break outer;
                 }
             }
         }

@@ -1,8 +1,12 @@
 package roomscheduler.controllers;
 
 import java.io.IOException;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
@@ -119,9 +123,16 @@ public class RoomSlotController {
             roomSlot.get().setOccupied(1);
             roomSlotRepository.saveAndFlush(roomSlot.get());
             for (int i = 0; i < numOfSlots; i++) {
-                Optional<RoomSlot> next = roomSlotRepository.findById(id + (i + 1) * 20);
-                next.get().setOccupied(1);
-                roomSlotRepository.saveAndFlush(next.get());
+                if (i < numOfSlots - 1) {
+                    Optional<RoomSlot> next = roomSlotRepository.findById(id + (i + 1) * 20);
+                    next.get().setOccupied(1);
+                    roomSlotRepository.saveAndFlush(next.get());
+                } else {
+                    Optional<RoomSlot> next = roomSlotRepository.findById(id + (i + 1) * 20);
+                    next.get().setOccupied(3);
+                    roomSlotRepository.saveAndFlush(next.get());
+                }
+
             }
             return "Marked room slots as occupied!";
         } else {
@@ -140,7 +151,15 @@ public class RoomSlotController {
     String makeRoomSlotAvail(@PathVariable Integer id) {
         Optional<RoomSlot> roomSlot = roomSlotRepository.findById(id);
         if (roomSlot.isPresent()) {
-            roomSlot.get().setOccupied(0);
+            Timestamp timestamp = roomSlot.get().getDate_time();
+            String date = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+                    .format(new Date(timestamp.getTime()));
+            Timestamp b = Timestamp.valueOf(date + " 12:45:00");
+            if (b.getTime() == timestamp.getTime()) { //it is a lunch slot
+                roomSlot.get().setOccupied(2);
+            } else {
+                roomSlot.get().setOccupied(0);
+            }
             roomSlotRepository.saveAndFlush(roomSlot.get());
             return "Marked room slot as available!";
         } else {
