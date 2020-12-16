@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import op29sem58.student.communication.ServerCommunication;
@@ -62,6 +63,23 @@ public class StudentController {
     @GetMapping(path = "/getStudents")
     public List<Student> getStudents() {
         return this.students.findAll();
+    }
+
+    /**
+     * To set the preference if the student wants to go or not.
+     *
+     * @param json this includes the studentId and boolean wantsToGo.
+     */
+    @PostMapping(path = "/setPreferences")
+    public void setPreference(@RequestBody Map<String, String> json) {
+        String i = json.get("user");
+        String wantsToGo = json.get("wantsToGo");
+        Student student = students.findById(i).orElse(new Student());
+        if ("true".equals(wantsToGo)) {
+            student.setWantsToGo(true);
+        } else {
+            student.setWantsToGo(false);
+        }
     }
 
     /**
