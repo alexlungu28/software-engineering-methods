@@ -24,6 +24,7 @@ public class Authorization {
      */
     @SuppressWarnings("PMD")
     public static boolean authorize(String token, String role) {
+        token = token.replace("Bearer ", "");
         CloseableHttpResponse response = sendGetRequest("8090", "is" + role, token);
         int statusCode = response.getStatusLine().getStatusCode();
         return statusCode == 200;

@@ -36,15 +36,6 @@ public class RoomScheduleController {
     @Autowired
     private RoomScheduleRepository roomScheduleRepository;
 
-    private boolean isAuthorized(String token, String role) {
-        token = token.replace("Bearer ", "");
-        if (!Authorization.authorize(token, role)) {
-            throw new RuntimeException("You do not have the privilege to perform " +
-                    "this action.");
-        }
-        return true;
-    }
-
     public RoomScheduleRepository getRoomScheduleRepository() {
         return roomScheduleRepository;
     }
@@ -56,8 +47,11 @@ public class RoomScheduleController {
     @PostMapping(path = "/addroomschedule") // Map ONLY POST Requests
     public @ResponseBody
     String addNewRoomSchedule(@RequestHeader String token, @RequestBody RoomSchedule r) {
-        roomScheduleRepository.saveAndFlush(r);
-        return "Saved room schedule";
+        if (Authorization.authorize(token, "Admin")) {
+            roomScheduleRepository.saveAndFlush(r);
+            return "Saved room schedule";
+        } else throw new RuntimeException("You do not have the privilege to perform " +
+                "this action.");
     }
 
     /**
@@ -69,30 +63,37 @@ public class RoomScheduleController {
      */
     @GetMapping(path = "/getSchedule")
     public @ResponseBody
-    List<ScheduleInformation> getAllSchedules() throws IOException {
-        Integer breakDuration = roomScheduleRepository.getBreakDuration();
-        Integer slotDuration = roomScheduleRepository.getSlotDuration();
-        List<ScheduleInfo> result = roomScheduleRepository
-                .getScheduleInfo(slotDuration, breakDuration);
-        System.out.println(result);
-        List<ScheduleInformation> finalRes = new ArrayList<>();
-        for (ScheduleInfo s : result) {
-            finalRes.add(new ScheduleInformation(s.getRoomScheduleId(), s.getStartTime(),
-                    s.getEndTime(), s.getLectureId(), s.getRoomId(), RoomScheduleCommunication
-                    .getCoronaCapacity(s.getRoomId(), roomScheduleRepository.getMinPerc(),
-                            roomScheduleRepository.getMaxPerc())));
-        }
-        System.out.println(finalRes);
-        return finalRes;
+    List<ScheduleInformation> getAllSchedules(@RequestHeader String token) throws IOException {
+        if (Authorization.authorize(token, "Student")) {
+            Integer breakDuration = roomScheduleRepository.getBreakDuration();
+            Integer slotDuration = roomScheduleRepository.getSlotDuration();
+            List<ScheduleInfo> result = roomScheduleRepository
+                    .getScheduleInfo(slotDuration, breakDuration);
+            System.out.println(result);
+            List<ScheduleInformation> finalRes = new ArrayList<>();
+            for (ScheduleInfo s : result) {
+                finalRes.add(new ScheduleInformation(s.getRoomScheduleId(), s.getStartTime(),
+                        s.getEndTime(), s.getLectureId(), s.getRoomId(), RoomScheduleCommunication
+                        .getCoronaCapacity(s.getRoomId(), roomScheduleRepository.getMinPerc(),
+                                roomScheduleRepository.getMaxPerc())));
+            }
+            System.out.println(finalRes);
+            return finalRes;
+        } else throw new RuntimeException("You do not have the privilege to perform " +
+                "this action.");
     }
 
 
     @GetMapping(path = "/availableSlots/{prefDate}/{numSlots}/{lunchTime}")
     public @ResponseBody
-    Iterable<RoomSlotStat> getAvailableSlots(@PathVariable Date prefDate,
+    Iterable<RoomSlotStat> getAvailableSlots(@RequestHeader String token,
+                                       @PathVariable Date prefDate,
                                        @PathVariable Integer numSlots,
                                        @PathVariable Time lunchTime) {
-        return roomScheduleRepository.availableSlots(prefDate, numSlots, lunchTime);
+        if (Authorization.authorize(token, "Student")) {
+            return roomScheduleRepository.availableSlots(prefDate, numSlots, lunchTime);
+        } else throw new RuntimeException("You do not have the privilege to perform " +
+                "this action.");
     }
 
     /**
@@ -112,61 +113,66 @@ public class RoomScheduleController {
             + "{numSlots}/{numOfStudents}/{lectureId}/{yearOfStudy}")
     @SuppressWarnings("PMD")
     public @ResponseBody
-    String scheduleNewLecture(@PathVariable Date prefDate,
+    String scheduleNewLecture(@RequestHeader String token,
+                                    @PathVariable Date prefDate,
                                     @PathVariable Integer numSlots,
                                     @PathVariable Integer numOfStudents,
                               @PathVariable Integer lectureId,
                               @PathVariable Integer yearOfStudy)
             throws IOException, ParseException {
-        List<RoomSchedule> roomScheduleWithGivenLectureId = roomScheduleRepository
-                .getRoomScheduleWithLectureId(lectureId);
-        //it should not be possible to schedule a lecture that is already scheduled
-        if (!roomScheduleWithGivenLectureId.isEmpty()) {
-            throw new RuntimeException("The lecture with id " + lectureId + " has" +
-                    " been already scheduled!");
-        }
-        Integer lunchHour = 7 + roomScheduleRepository.getLunchSlot();
-        Time lunchTime = utcTime("" + lunchHour  + ":45:00");
-        int minPercentage = roomScheduleRepository.getMinPerc();
-        int maxPercentage = roomScheduleRepository.getMaxPerc();
-        List<IdNamePair> roomInfoWithRequiredCapacity =
-                RoomScheduleCommunication.getRoomsIdsWithRequiredCapacity(numOfStudents,
-                        minPercentage, maxPercentage);
-        List<SlotInfo> dateIntPairs = RoomScheduleCommunication
-                .getAvailableRoomsSlots(prefDate, numSlots, lunchTime);
+        if (Authorization.authorize(token, "Teacher")) {
+            List<RoomSchedule> roomScheduleWithGivenLectureId = roomScheduleRepository
+                    .getRoomScheduleWithLectureId(lectureId);
+            //it should not be possible to schedule a lecture that is already scheduled
+            if (!roomScheduleWithGivenLectureId.isEmpty()) {
+                throw new RuntimeException("The lecture with id " + lectureId + " has" +
+                        " been already scheduled!");
+            }
+            Integer lunchHour = 7 + roomScheduleRepository.getLunchSlot();
+            Time lunchTime = utcTime("" + lunchHour + ":45:00");
+            int minPercentage = roomScheduleRepository.getMinPerc();
+            int maxPercentage = roomScheduleRepository.getMaxPerc();
+            List<IdNamePair> roomInfoWithRequiredCapacity =
+                    RoomScheduleCommunication.getRoomsIdsWithRequiredCapacity(numOfStudents,
+                            minPercentage, maxPercentage);
+            List<SlotInfo> dateIntPairs = RoomScheduleCommunication
+                    .getAvailableRoomsSlots(prefDate, numSlots, lunchTime);
 
-        List<Integer> slotIdsToNotOverlapSameYear = roomScheduleRepository
-                .getSlotIdsToNotOverlapSameYear(yearOfStudy);
+            List<Integer> slotIdsToNotOverlapSameYear = roomScheduleRepository
+                    .getSlotIdsToNotOverlapSameYear(yearOfStudy);
 
 
-        List<NameDateInfo> finalResult = new ArrayList<>();
-        outer: for (IdNamePair i : roomInfoWithRequiredCapacity) {
-            for (SlotInfo pair : dateIntPairs) {
-                if (i.getId() == pair.getRoomId() && !slotIdsToNotOverlapSameYear
-                        .contains(pair.roomSlotId)) {
-                    finalResult.add(new NameDateInfo(pair.getDate(),
-                            i.getName(), pair.getRoomSlotId()));
-                    //once we found one room slot to schedule the lecture, we can
-                    //stop searching
-                    break outer;
+            List<NameDateInfo> finalResult = new ArrayList<>();
+            outer:
+            for (IdNamePair i : roomInfoWithRequiredCapacity) {
+                for (SlotInfo pair : dateIntPairs) {
+                    if (i.getId() == pair.getRoomId() && !slotIdsToNotOverlapSameYear
+                            .contains(pair.roomSlotId)) {
+                        finalResult.add(new NameDateInfo(pair.getDate(),
+                                i.getName(), pair.getRoomSlotId()));
+                        //once we found one room slot to schedule the lecture, we can
+                        //stop searching
+                        break outer;
+                    }
                 }
             }
-        }
-        if (finalResult.size() == 0) { //no available slots for the input given
-            return "There are no available slots for the input given. Try again!";
-        } else {
-            NameDateInfo result = finalResult.get(0);
-            roomScheduleRepository.saveAndFlush(new RoomSchedule(
-                    result.getRoomSlotId(), lectureId, yearOfStudy));
-            for (int i = 0; i < numSlots; i++) {
-                roomScheduleRepository.saveAndFlush(new
-                        RoomSchedule(result.getRoomSlotId()
-                        + (i + 1) * 20, lectureId, yearOfStudy));
+            if (finalResult.size() == 0) { //no available slots for the input given
+                return "There are no available slots for the input given. Try again!";
+            } else {
+                NameDateInfo result = finalResult.get(0);
+                roomScheduleRepository.saveAndFlush(new RoomSchedule(
+                        result.getRoomSlotId(), lectureId, yearOfStudy));
+                for (int i = 0; i < numSlots; i++) {
+                    roomScheduleRepository.saveAndFlush(new
+                            RoomSchedule(result.getRoomSlotId()
+                            + (i + 1) * 20, lectureId, yearOfStudy));
+                }
+                RoomScheduleCommunication.makeRoomSlotsOccupied(result.getRoomSlotId(), numSlots);
+                return "Your lecture was successfully scheduled for: " + result.getDate().toString() +
+                        " in the room with name: " + result.getRoomName();
             }
-            RoomScheduleCommunication.makeRoomSlotsOccupied(result.getRoomSlotId(), numSlots);
-            return "Your lecture was successfully scheduled for: " + result.getDate().toString() +
-                    " in the room with name: " + result.getRoomName();
-        }
+        } else throw new RuntimeException("You do not have the privilege to perform " +
+                "this action.");
     }
 
     /**
@@ -194,17 +200,20 @@ public class RoomScheduleController {
      */
     @DeleteMapping(path = "/cancelLecture/{id}")
     public @ResponseBody
-    String deleteLecture(@PathVariable int id) throws IOException {
-        List<IntPair> values = roomScheduleRepository.getSlotIdAndRoomSlotId(id);
-        if (values.size() == 0) {
-            return "There is no scheduled lecture with the given id";
-        } else {
-            for (IntPair p : values) {
-                roomScheduleRepository.deleteById(p.getRoomScheduleId());
-                RoomScheduleCommunication.makeRoomSlotAvailable(p.getRoomSlotId());
+    String deleteLecture(@RequestHeader String token, @PathVariable int id) throws IOException {
+        if (Authorization.authorize(token, "Teacher")) {
+            List<IntPair> values = roomScheduleRepository.getSlotIdAndRoomSlotId(id);
+            if (values.size() == 0) {
+                return "There is no scheduled lecture with the given id";
+            } else {
+                for (IntPair p : values) {
+                    roomScheduleRepository.deleteById(p.getRoomScheduleId());
+                    RoomScheduleCommunication.makeRoomSlotAvailable(p.getRoomSlotId());
+                }
             }
-        }
-        return "Canceled lecture";
+            return "Canceled lecture";
+        } else throw new RuntimeException("You do not have the privilege to perform " +
+                "this action.");
     }
 
 
@@ -218,8 +227,11 @@ public class RoomScheduleController {
      */
     @GetMapping(path = "/allroomsschedules")
     public @ResponseBody
-    Iterable<RoomSchedule> getAllRoomsSchedules() {
-        return roomScheduleRepository.findAll();
+    Iterable<RoomSchedule> getAllRoomsSchedules(@RequestHeader String token) {
+        if (Authorization.authorize(token, "Student")) {
+            return roomScheduleRepository.findAll();
+        } else throw new RuntimeException("You do not have the privilege to perform " +
+                "this action.");
     }
 
     /**
@@ -230,13 +242,16 @@ public class RoomScheduleController {
      */
     @GetMapping(path = "/roomschedule/{id}")
     public @ResponseBody
-    RoomSchedule getRoomSchedule(@PathVariable int id) {
-        Optional<RoomSchedule> roomSchedule = roomScheduleRepository.findById(id);
-        if (roomSchedule.isPresent()) {
-            return roomSchedule.get();
-        } else {
-            throw new RuntimeException("Room Schedule not found for the id " + id);
-        }
+    RoomSchedule getRoomSchedule(@RequestHeader String token, @PathVariable int id) {
+        if (Authorization.authorize(token, "Student")) {
+            Optional<RoomSchedule> roomSchedule = roomScheduleRepository.findById(id);
+            if (roomSchedule.isPresent()) {
+                return roomSchedule.get();
+            } else {
+                throw new RuntimeException("Room Schedule not found for the id " + id);
+            }
+        } else throw new RuntimeException("You do not have the privilege to perform " +
+                "this action.");
     }
 
 }
