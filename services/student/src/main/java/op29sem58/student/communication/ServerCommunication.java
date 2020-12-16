@@ -51,12 +51,13 @@ public class ServerCommunication {
     }
 
     /**
-     * Uses the `/getMyCourses` endpoint from the Courses service to get all the courses the student is enrol
+     * Uses the `/getAllCourses` endpoint from the Courses service to get all the courses with their
+     * lectures.
      *
      * @return List of course lectures.
      */
-    public List<Course> getAllLectures() {
-        String url = ServerCommunication.COURSES_SERVICE_URL + "/getAllLectures";
+    public List<Course> getAllCourse() {
+        String url = ServerCommunication.COURSES_SERVICE_URL + "/getAllCourses";
         Course[] result = this.makeGetRequest(url, Course[].class);
         if (result == null) {
             return new ArrayList<Course>();

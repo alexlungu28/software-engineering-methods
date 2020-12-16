@@ -14,7 +14,18 @@ public class Course {
     private String code;
     private int yearOfStudy;
 
-    public Course(int courseId, int[] lectureIds, String teacherNetId, String name, String code, int yearOfStudy) {
+    /**
+     * Basis constructor to create a course object.
+     *
+     * @param courseId Well the courseId.
+     * @param lectureIds The Id's of the lectures
+     * @param teacherNetId the NetId of the teacher
+     * @param name the name of the course
+     * @param code the course code
+     * @param yearOfStudy For what year this course is held.
+     */
+    public Course(int courseId, int[] lectureIds, String teacherNetId, String name, String code,
+                  int yearOfStudy) {
         this.courseId = courseId;
         this.lectureIds = lectureIds;
         this.teacherNetId = teacherNetId;

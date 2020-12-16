@@ -2,7 +2,6 @@ package op29sem58.student.controllers;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -17,7 +16,7 @@ import op29sem58.student.database.repos.StudentEnrollmentRepo;
 import op29sem58.student.database.repos.StudentRepo;
 import op29sem58.student.local.entities.Course;
 import op29sem58.student.local.entities.Lecture;
-import op29sem58.student.local.entities.lectureDetails;
+import op29sem58.student.local.entities.LectureDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -66,37 +65,62 @@ public class StudentController {
     }
 
     /**
+     * This should return all the lectures of the student sending the request,
+     * This however is not the most optimal solution I could think of. But
+     * will have to due, because of time constraint.
      *
-     * @param studentID This is temporarily, should get the studentID by the token
+     * @param studentId This is temporarily, should get the studentID by the token
      * @return a list with all it's lecture sorted ascending by date.
      */
     @PostMapping(path = "/AllMyLectures")
-    public List<lectureDetails> getMyLectures(@RequestBody String studentID){
-        List<lectureDetails> result = new ArrayList<lectureDetails>();
-        Student currentStudent = students.getOne(studentID);
-        List<RoomSchedule> scheduledOnCampus = studentBookings.findByStudents(currentStudent);
+    @SuppressWarnings("PMD") //DU anomaly
+    public List<LectureDetails> getMyLectures(@RequestBody String studentId) {
+        // We first create an empty ArrayList, We then get the student by studentID.
+        List<LectureDetails> result = new ArrayList<LectureDetails>();
+        Student currentStudent = students.getOne(studentId);
+
+        // Here we iterate through all the allocated rooms for the student.
+        // We then just add it to our lectureDetail list(This will be sorted by date).
         Iterator<RoomSchedule> i = studentBookings.findByStudents(currentStudent).iterator();
         while (i.hasNext()) {
             RoomSchedule roomSchedule = i.next();
             String courseName = getCourseName(roomSchedule.getLectureId());
-            lectureDetails tempDetails = new lectureDetails(
-                    roomSchedule.getLectureId(), courseName, roomSchedule.getRoomId(), currentStudent.getWantsToGo());
+            LectureDetails tempDetails = new LectureDetails(
+                    roomSchedule.getLectureId(), courseName, roomSchedule.getRoomId(), true);
             result.add(tempDetails);
             i.remove();
         }
-
-        //todo contact with courses service so that off campus lectures are added.
+        // Now comes the hard part, we will iterate through all the course
+        Iterator<Course> p = courseList.iterator();
+        while (i.hasNext()) {
+            Course course = p.next();
+            if (!studentEnrollments
+                    .findByCourseIdAndStudent(course.getCourseId(), currentStudent).isEmpty()) {
+                for (int lecId : course.getLectureIds()) {
+                    Optional<LectureDetails> alreadyAssigned = result.stream()
+                            .filter(e -> e.getLectureId() == lecId).findFirst();
+                    if (alreadyAssigned.isPresent()) {
+                        continue;
+                    }
+                    LectureDetails tempDetails = new LectureDetails(
+                            lecId, course.getName(), 0, false);
+                    result.add(tempDetails);
+                }
+            }
+            p.remove();
+        }
         return result;
     }
 
     /**
      * inefficient code just to get the courseName, due to lack of time this is the way we do it.
-     * @param lectureID to find the courseName
+     *
+     * @param lectureId to find the courseName
      * @return name of the course.
      */
-    public String getCourseName(int lectureID){
+    public String getCourseName(int lectureId) {
         for (Course c : courseList) {
-            if (c.courseHasLecture(lectureID)) {
+            if (c.courseHasLecture(lectureId)) {
                 return c.getName();
             }
         }
@@ -165,7 +189,7 @@ public class StudentController {
      */
     @SuppressWarnings("PMD") //DU anomaly
     private void initializeCourses() {
-        courseList = this.serverCommunication.getAllLectures();
+        courseList = this.serverCommunication.getAllCourse();
     }
 
     /**
@@ -185,10 +209,26 @@ public class StudentController {
         if (courseLecture.isEmpty()) {
             return false;
         }
-        final Optional<StudentEnrollment> maybeStudentEnrollment =
+        final List<StudentEnrollment> maybeStudentEnrollment =
             this.studentEnrollments.findByCourseIdAndStudent(courseLecture.get()
                     .getCourseId(), student);
-        return maybeStudentEnrollment.isPresent();
+        return !maybeStudentEnrollment.isEmpty();
+    }
+
+    /**
+     * This checks if the student is enrolled for the lecture, by iterating though the
+     * list of courseLectures and retrieving the courseID by the use of the lectureID.
+     * Then send a request to enrollments with the courseID and student.
+     * If student is enrolled a boolean true will be returned.
+     *
+     * @param student a Student to check if enrolled
+     * @param course a course to check if the student is enrolled
+     * @return a boolean if the student is enrolled.
+     */
+    private boolean studentIsEnrolledFor(Student student, Course course) {
+        final List<StudentEnrollment> maybeStudentEnrollment =
+                this.studentEnrollments.findByCourseIdAndStudent(course.getCourseId(), student);
+        return !maybeStudentEnrollment.isEmpty();
     }
 
     /**
