@@ -12,12 +12,7 @@ import java.util.Optional;
 import java.util.TimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import roomscheduler.communication.RoomScheduleCommunication;
 import roomscheduler.entities.IdNamePair;
 import roomscheduler.entities.IntPair;
@@ -41,6 +36,15 @@ public class RoomScheduleController {
     @Autowired
     private RoomScheduleRepository roomScheduleRepository;
 
+    private boolean isAuthorized(String token, String role) {
+        token = token.replace("Bearer ", "");
+        if (!Authorization.authorize(token, role)) {
+            throw new RuntimeException("You do not have the privilege to perform " +
+                    "this action.");
+        }
+        return true;
+    }
+
     public RoomScheduleRepository getRoomScheduleRepository() {
         return roomScheduleRepository;
     }
@@ -51,7 +55,7 @@ public class RoomScheduleController {
 
     @PostMapping(path = "/addroomschedule") // Map ONLY POST Requests
     public @ResponseBody
-    String addNewRoomSchedule(@RequestBody RoomSchedule r) {
+    String addNewRoomSchedule(@RequestHeader String token, @RequestBody RoomSchedule r) {
         roomScheduleRepository.saveAndFlush(r);
         return "Saved room schedule";
     }
