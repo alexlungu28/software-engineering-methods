@@ -79,7 +79,7 @@ public class StudentController {
     @SuppressWarnings("PMD") //DU anomaly
     public List<LectureDetails> getMyLectures(@RequestBody String studentId) {
         // We first create an empty ArrayList, We then get the student by studentID.
-        List<LectureDetails> result = new ArrayList<LectureDetails>();
+        List<LectureDetails> campusLectures = new ArrayList<LectureDetails>();
         Student currentStudent = students.getOne(studentId);
 
         // Here we iterate through all the allocated rooms for the student.
@@ -91,15 +91,20 @@ public class StudentController {
             LectureDetails tempDetails = new LectureDetails(
                     roomSchedule.getLectureId(), courseName, roomSchedule.getRoomId(), true,
                     roomSchedule.getStartTime(), roomSchedule.getEndTime());
-            result.add(tempDetails);
+            campusLectures.add(tempDetails);
             i.remove();
         }
-        // Now comes the hard part, we will iterate through all the course
+        // We iterate through the list of lectures already sorted by date.
+        // For every lecture we check if the student is enrolled.
+        // If student is enrolled we check if we already had a lecture scheduled in a room
+        // for the student, if not we can add the lecture to a list of onlineLectures.
+        // we end by calling a helper function to merge the two lists.
+        List<LectureDetails> onlineLectures = new ArrayList<>();
         Iterator<Lecture> p = lectureList.iterator();
         while (p.hasNext()) {
             Lecture lecture = p.next();
             if (studentIsEnrolledFor(currentStudent, lecture)) {
-                Optional<LectureDetails> alreadyAssigned = result.stream()
+                Optional<LectureDetails> alreadyAssigned = campusLectures.stream()
                         .filter(e -> e.getLectureId() == lecture.getId()).findFirst();
                 if (alreadyAssigned.isPresent()) {
                     continue;
@@ -108,11 +113,29 @@ public class StudentController {
                 RoomSchedule rs = lecture.getRoomSchedule();
                 LectureDetails tempDetails = new LectureDetails(lecture.getId(), courseName,
                         0, false, rs.getStartTime(), rs.getEndTime());
-                result.add(tempDetails);
+                onlineLectures.add(tempDetails);
             }
             p.remove();
         }
-        return result;
+        merge(campusLectures, onlineLectures);
+
+        return campusLectures;
+    }
+
+    /**
+     * To merge two LectureDetails list into one, so that it stay's sorted.
+     *
+     * @param l1 first list.
+     * @param l2 second list to merge.
+     */
+    @SuppressWarnings("PMD") //DU anomaly
+    public static void merge(List<LectureDetails> l1, List<LectureDetails> l2) {
+        for (int i = 0, j = 0; j < l2.size(); i++) {
+            if (i == l1.size() ||
+                    l1.get(i).getStartTime().isAfter(l2.get(j).getStartTime())) {
+                l1.add(i, l2.get(j++));
+            }
+        }
     }
 
     /**
