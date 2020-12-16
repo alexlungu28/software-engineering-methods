@@ -46,7 +46,7 @@ public class RoomScheduleController {
 
     @PostMapping(path = "/addroomschedule") // Map ONLY POST Requests
     public @ResponseBody
-    String addNewRoomSchedule(@RequestHeader String token, @RequestBody RoomSchedule r) {
+    String addNewRoomSchedule(@RequestHeader("Authorization") String token, @RequestBody RoomSchedule r) {
         if (Authorization.authorize(token, "Admin")) {
             roomScheduleRepository.saveAndFlush(r);
             return "Saved room schedule";
@@ -63,7 +63,7 @@ public class RoomScheduleController {
      */
     @GetMapping(path = "/getSchedule")
     public @ResponseBody
-    List<ScheduleInformation> getAllSchedules(@RequestHeader String token) throws IOException {
+    List<ScheduleInformation> getAllSchedules(@RequestHeader("Authorization") String token) throws IOException {
         if (Authorization.authorize(token, "Student")) {
             Integer breakDuration = roomScheduleRepository.getBreakDuration();
             Integer slotDuration = roomScheduleRepository.getSlotDuration();
@@ -86,7 +86,7 @@ public class RoomScheduleController {
 
     @GetMapping(path = "/availableSlots/{prefDate}/{numSlots}/{lunchTime}")
     public @ResponseBody
-    Iterable<RoomSlotStat> getAvailableSlots(@RequestHeader String token,
+    Iterable<RoomSlotStat> getAvailableSlots(@RequestHeader("Authorization") String token,
                                        @PathVariable Date prefDate,
                                        @PathVariable Integer numSlots,
                                        @PathVariable Time lunchTime) {
@@ -113,7 +113,7 @@ public class RoomScheduleController {
             + "{numSlots}/{numOfStudents}/{lectureId}/{yearOfStudy}")
     @SuppressWarnings("PMD")
     public @ResponseBody
-    String scheduleNewLecture(@RequestHeader String token,
+    String scheduleNewLecture(@RequestHeader("Authorization") String token,
                                     @PathVariable Date prefDate,
                                     @PathVariable Integer numSlots,
                                     @PathVariable Integer numOfStudents,
@@ -200,7 +200,7 @@ public class RoomScheduleController {
      */
     @DeleteMapping(path = "/cancelLecture/{id}")
     public @ResponseBody
-    String deleteLecture(@RequestHeader String token, @PathVariable int id) throws IOException {
+    String deleteLecture(@RequestHeader("Authorization") String token, @PathVariable int id) throws IOException {
         if (Authorization.authorize(token, "Teacher")) {
             List<IntPair> values = roomScheduleRepository.getSlotIdAndRoomSlotId(id);
             if (values.size() == 0) {
@@ -227,7 +227,7 @@ public class RoomScheduleController {
      */
     @GetMapping(path = "/allroomsschedules")
     public @ResponseBody
-    Iterable<RoomSchedule> getAllRoomsSchedules(@RequestHeader String token) {
+    Iterable<RoomSchedule> getAllRoomsSchedules(@RequestHeader("Authorization") String token) {
         if (Authorization.authorize(token, "Student")) {
             return roomScheduleRepository.findAll();
         } else throw new RuntimeException("You do not have the privilege to perform " +
@@ -242,7 +242,7 @@ public class RoomScheduleController {
      */
     @GetMapping(path = "/roomschedule/{id}")
     public @ResponseBody
-    RoomSchedule getRoomSchedule(@RequestHeader String token, @PathVariable int id) {
+    RoomSchedule getRoomSchedule(@RequestHeader("Authorization") String token, @PathVariable int id) {
         if (Authorization.authorize(token, "Student")) {
             Optional<RoomSchedule> roomSchedule = roomScheduleRepository.findById(id);
             if (roomSchedule.isPresent()) {
