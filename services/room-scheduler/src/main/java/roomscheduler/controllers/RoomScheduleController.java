@@ -12,7 +12,13 @@ import java.util.Optional;
 import java.util.TimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.ResponseBody;
 import roomscheduler.communication.RoomScheduleCommunication;
 import roomscheduler.entities.IdNamePair;
 import roomscheduler.entities.IntPair;
@@ -44,14 +50,24 @@ public class RoomScheduleController {
         this.roomScheduleRepository = roomScheduleRepository;
     }
 
+    /**
+     * Add a new room schedule.
+     *
+     * @param token jwt token
+     * @param r room schedule
+     * @return saved if successful, throw exception otherwise
+     */
     @PostMapping(path = "/addroomschedule") // Map ONLY POST Requests
     public @ResponseBody
-    String addNewRoomSchedule(@RequestHeader("Authorization") String token, @RequestBody RoomSchedule r) {
+    String addNewRoomSchedule(@RequestHeader("Authorization") String token,
+                              @RequestBody RoomSchedule r) {
         if (Authorization.authorize(token, "Admin")) {
             roomScheduleRepository.saveAndFlush(r);
             return "Saved room schedule";
-        } else throw new RuntimeException("You do not have the privilege to perform " +
-                "this action.");
+        } else {
+            throw new RuntimeException("You do not have the privilege to perform " +
+                    "this action.");
+        }
     }
 
     /**
@@ -63,7 +79,8 @@ public class RoomScheduleController {
      */
     @GetMapping(path = "/getSchedule")
     public @ResponseBody
-    List<ScheduleInformation> getAllSchedules(@RequestHeader("Authorization") String token) throws IOException {
+    List<ScheduleInformation> getAllSchedules(@RequestHeader("Authorization") String token)
+            throws IOException {
         if (Authorization.authorize(token, "Student")) {
             Integer breakDuration = roomScheduleRepository.getBreakDuration();
             Integer slotDuration = roomScheduleRepository.getSlotDuration();
@@ -79,11 +96,21 @@ public class RoomScheduleController {
             }
             System.out.println(finalRes);
             return finalRes;
-        } else throw new RuntimeException("You do not have the privilege to perform " +
-                "this action.");
+        } else {
+            throw new RuntimeException("You do not have the privilege to perform " +
+                    "this action.");
+        }
     }
 
-
+    /**
+     * Get the available slots.
+     *
+     * @param token jwt token
+     * @param prefDate pref date
+     * @param numSlots number of slots
+     * @param lunchTime time of lunch
+     * @return a list of available slots
+     */
     @GetMapping(path = "/availableSlots/{prefDate}/{numSlots}/{lunchTime}")
     public @ResponseBody
     Iterable<RoomSlotStat> getAvailableSlots(@RequestHeader("Authorization") String token,
@@ -92,8 +119,10 @@ public class RoomScheduleController {
                                        @PathVariable Time lunchTime) {
         if (Authorization.authorize(token, "Student")) {
             return roomScheduleRepository.availableSlots(prefDate, numSlots, lunchTime);
-        } else throw new RuntimeException("You do not have the privilege to perform " +
-                "this action.");
+        } else {
+            throw new RuntimeException("You do not have the privilege to perform " +
+                    "this action.");
+        }
     }
 
     /**
@@ -168,11 +197,14 @@ public class RoomScheduleController {
                             + (i + 1) * 20, lectureId, yearOfStudy));
                 }
                 RoomScheduleCommunication.makeRoomSlotsOccupied(result.getRoomSlotId(), numSlots);
-                return "Your lecture was successfully scheduled for: " + result.getDate().toString() +
+                return "Your lecture was successfully scheduled for: " +
+                        result.getDate().toString() +
                         " in the room with name: " + result.getRoomName();
             }
-        } else throw new RuntimeException("You do not have the privilege to perform " +
-                "this action.");
+        } else {
+            throw new RuntimeException("You do not have the privilege to perform " +
+                    "this action.");
+        }
     }
 
     /**
@@ -200,7 +232,8 @@ public class RoomScheduleController {
      */
     @DeleteMapping(path = "/cancelLecture/{id}")
     public @ResponseBody
-    String deleteLecture(@RequestHeader("Authorization") String token, @PathVariable int id) throws IOException {
+    String deleteLecture(@RequestHeader("Authorization") String token,
+                         @PathVariable int id) throws IOException {
         if (Authorization.authorize(token, "Teacher")) {
             List<IntPair> values = roomScheduleRepository.getSlotIdAndRoomSlotId(id);
             if (values.size() == 0) {
@@ -212,8 +245,10 @@ public class RoomScheduleController {
                 }
             }
             return "Canceled lecture";
-        } else throw new RuntimeException("You do not have the privilege to perform " +
-                "this action.");
+        } else {
+            throw new RuntimeException("You do not have the privilege to perform " +
+                    "this action.");
+        }
     }
 
 
@@ -230,8 +265,10 @@ public class RoomScheduleController {
     Iterable<RoomSchedule> getAllRoomsSchedules(@RequestHeader("Authorization") String token) {
         if (Authorization.authorize(token, "Student")) {
             return roomScheduleRepository.findAll();
-        } else throw new RuntimeException("You do not have the privilege to perform " +
-                "this action.");
+        } else {
+            throw new RuntimeException("You do not have the privilege to perform " +
+                    "this action.");
+        }
     }
 
     /**
@@ -242,7 +279,8 @@ public class RoomScheduleController {
      */
     @GetMapping(path = "/roomschedule/{id}")
     public @ResponseBody
-    RoomSchedule getRoomSchedule(@RequestHeader("Authorization") String token, @PathVariable int id) {
+    RoomSchedule getRoomSchedule(@RequestHeader("Authorization") String token,
+                                 @PathVariable int id) {
         if (Authorization.authorize(token, "Student")) {
             Optional<RoomSchedule> roomSchedule = roomScheduleRepository.findById(id);
             if (roomSchedule.isPresent()) {
@@ -250,8 +288,10 @@ public class RoomScheduleController {
             } else {
                 throw new RuntimeException("Room Schedule not found for the id " + id);
             }
-        } else throw new RuntimeException("You do not have the privilege to perform " +
-                "this action.");
+        } else {
+            throw new RuntimeException("You do not have the privilege to perform " +
+                    "this action.");
+        }
     }
 
 }

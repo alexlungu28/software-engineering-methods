@@ -12,7 +12,13 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.ResponseBody;
 import roomscheduler.communication.RoomSlotCommunication;
 import roomscheduler.entities.RoomSlot;
 import roomscheduler.entities.Rule;
@@ -48,7 +54,8 @@ public class RoomSlotController {
      */
     @PostMapping(path = "/addroomslot") // Map ONLY POST Requests
     public @ResponseBody
-    String addNewRoomSlot(@RequestHeader("Authorization") String token, @RequestBody RoomSlot r) throws IOException {
+    String addNewRoomSlot(@RequestHeader("Authorization") String token,
+                          @RequestBody RoomSlot r) throws IOException {
         if (Authorization.authorize(token, "Teacher")) {
             Object a = RoomSlotCommunication.getRoom(r.getRooms_id());
             if (a.toString().equals("not found")) {
@@ -57,18 +64,29 @@ public class RoomSlotController {
                 roomSlotRepository.saveAndFlush(r);
                 return "Saved room slot";
             }
-        } else throw new RuntimeException("You do not have the privilege to perform " +
-                "this action.");
+        } else {
+            throw new RuntimeException("You do not have the privilege to perform " +
+                    "this action.");
+        }
     }
 
+    /**
+     * Get the number of rooms.
+     *
+     * @param token jwt token
+     * @return the number of rooms
+     * @throws IOException in case something goes wrong
+     */
     @GetMapping(path = "/countRooms") // Map ONLY POST Requests
     public @ResponseBody
     Long getNumberOfRooms(@RequestHeader("Authorization") String token) throws IOException {
         if (Authorization.authorize(token, "Student")) {
             Long count = RoomSlotCommunication.numberOfRooms();
             return count;
-        } else throw new RuntimeException("You do not have the privilege to perform " +
-                "this action.");
+        } else {
+            throw new RuntimeException("You do not have the privilege to perform " +
+                    "this action.");
+        }
     }
 
     /**
@@ -91,10 +109,13 @@ public class RoomSlotController {
                 rules.put(r.getName(), Integer.parseInt(r.getValue()));
             }
             int breakSlot = rules.get("lunch slot");
-            int timeBetweenSlotsInHours = (rules.get("slot duration") + rules.get("break time")) / 60;
-            int timeBetweenSlotsInMin = (rules.get("slot duration") + rules.get("break time")) % 60;
+            int timeBetweenSlotsInHours = (rules.get("slot duration") +
+                    rules.get("break time")) / 60;
+            int timeBetweenSlotsInMin = (rules.get("slot duration") +
+                    rules.get("break time")) % 60;
             int slotsPerDay = rules.get("slots per day");
-            DateTimeFormatter formatter = org.joda.time.format.DateTimeFormat.forPattern("HH:mm:ss");
+            DateTimeFormatter formatter
+                    = org.joda.time.format.DateTimeFormat.forPattern("HH:mm:ss");
             String s;
             if (timeBetweenSlotsInMin / 10 == 0) {
                 s = "0";
@@ -108,8 +129,10 @@ public class RoomSlotController {
             return roomSlotRepository.createRoomSlots(slotsPerDay, numDays,
                     firstSlotDateTime, timeBetweenSlotsTime,
                     breakSlot, numberOfRooms);
-        } else throw new RuntimeException("You do not have the privilege to perform " +
-                "this action.");
+        } else {
+            throw new RuntimeException("You do not have the privilege to perform " +
+                    "this action.");
+        }
     }
 
     /**
@@ -145,8 +168,10 @@ public class RoomSlotController {
             } else {
                 throw new RuntimeException("Room slot not found for the id " + id);
             }
-        } else throw new RuntimeException("You do not have the privilege to perform " +
-                "this action.");
+        } else {
+            throw new RuntimeException("You do not have the privilege to perform " +
+                    "this action.");
+        }
     }
 
     /**
@@ -176,8 +201,10 @@ public class RoomSlotController {
             } else {
                 throw new RuntimeException("Room slot not found for the id " + id);
             }
-        } else throw new RuntimeException("You do not have the privilege to perform " +
-                "this action.");
+        } else {
+            throw new RuntimeException("You do not have the privilege to perform " +
+                    "this action.");
+        }
     }
 
 
@@ -189,10 +216,12 @@ public class RoomSlotController {
     @GetMapping(path = "/allroomslots")
     public @ResponseBody
     Iterable<RoomSlot> getAllRoomsSlots(@RequestHeader("Authorization") String token) {
-        if (Authorization.authorize(token,"Student")) {
+        if (Authorization.authorize(token, "Student")) {
             return roomSlotRepository.findAll();
-        } else throw new RuntimeException("You do not have the privilege to perform " +
-                "this action.");
+        } else {
+            throw new RuntimeException("You do not have the privilege to perform " +
+                    "this action.");
+        }
     }
 
     /**
@@ -212,8 +241,10 @@ public class RoomSlotController {
             } else {
                 throw new RuntimeException("Room Slot not found for the id " + id);
             }
-        } else throw new RuntimeException("You do not have the privilege to perform " +
-                "this action.");
+        } else {
+            throw new RuntimeException("You do not have the privilege to perform " +
+                    "this action.");
+        }
     }
 
 }
