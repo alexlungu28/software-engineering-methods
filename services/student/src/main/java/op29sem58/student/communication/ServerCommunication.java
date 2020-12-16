@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import op29sem58.student.communication.adapters.LocalDateTimeAdapter;
 import op29sem58.student.database.entities.RoomSchedule;
-import op29sem58.student.local.entities.CourseLectures;
+import op29sem58.student.local.entities.Course;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -51,15 +51,15 @@ public class ServerCommunication {
     }
 
     /**
-     * Uses the `/getAllLectures` endpoint from the Courses service to get all lectures.
+     * Uses the `/getMyCourses` endpoint from the Courses service to get all the courses the student is enrol
      *
      * @return List of course lectures.
      */
-    public List<CourseLectures> getAllLectures() {
+    public List<Course> getAllLectures() {
         String url = ServerCommunication.COURSES_SERVICE_URL + "/getAllLectures";
-        CourseLectures[] result = this.makeGetRequest(url, CourseLectures[].class);
+        Course[] result = this.makeGetRequest(url, Course[].class);
         if (result == null) {
-            return new ArrayList<CourseLectures>();
+            return new ArrayList<Course>();
         }
 
         return Arrays.asList(result);
@@ -79,4 +79,6 @@ public class ServerCommunication {
 
         return Arrays.asList(result);
     }
+
+
 }

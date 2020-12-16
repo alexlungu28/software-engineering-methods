@@ -2,6 +2,7 @@ package op29sem58.student.controllers;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -14,8 +15,9 @@ import op29sem58.student.database.entities.StudentEnrollment;
 import op29sem58.student.database.repos.StudentBookingRepo;
 import op29sem58.student.database.repos.StudentEnrollmentRepo;
 import op29sem58.student.database.repos.StudentRepo;
-import op29sem58.student.local.entities.CourseLectures;
+import op29sem58.student.local.entities.Course;
 import op29sem58.student.local.entities.Lecture;
+import op29sem58.student.local.entities.lectureDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,7 +41,7 @@ public class StudentController {
     private transient StudentEnrollmentRepo studentEnrollments;
 
     //This is a list consisting of all the courses with their lectures.
-    private transient List<CourseLectures> courseLecturesList;
+    private transient List<Course> courseList;
 
     //This is our class to communicate with other microservices
     private transient ServerCommunication serverCommunication = new ServerCommunication();
@@ -61,6 +63,44 @@ public class StudentController {
     @GetMapping(path = "/getStudents")
     public List<Student> getStudents() {
         return this.students.findAll();
+    }
+
+    /**
+     *
+     * @param studentID This is temporarily, should get the studentID by the token
+     * @return a list with all it's lecture sorted ascending by date.
+     */
+    @PostMapping(path = "/AllMyLectures")
+    public List<lectureDetails> getMyLectures(@RequestBody String studentID){
+        List<lectureDetails> result = new ArrayList<lectureDetails>();
+        Student currentStudent = students.getOne(studentID);
+        List<RoomSchedule> scheduledOnCampus = studentBookings.findByStudents(currentStudent);
+        Iterator<RoomSchedule> i = studentBookings.findByStudents(currentStudent).iterator();
+        while (i.hasNext()) {
+            RoomSchedule roomSchedule = i.next();
+            String courseName = getCourseName(roomSchedule.getLectureId());
+            lectureDetails tempDetails = new lectureDetails(
+                    roomSchedule.getLectureId(), courseName, roomSchedule.getRoomId(), currentStudent.getWantsToGo());
+            result.add(tempDetails);
+            i.remove();
+        }
+
+        //todo contact with courses service so that off campus lectures are added.
+        return result;
+    }
+
+    /**
+     * inefficient code just to get the courseName, due to lack of time this is the way we do it.
+     * @param lectureID to find the courseName
+     * @return name of the course.
+     */
+    public String getCourseName(int lectureID){
+        for (Course c : courseList) {
+            if (c.courseHasLecture(lectureID)) {
+                return c.getName();
+            }
+        }
+        return "Course less";
     }
 
     /**
@@ -125,7 +165,7 @@ public class StudentController {
      */
     @SuppressWarnings("PMD") //DU anomaly
     private void initializeCourses() {
-        courseLecturesList = this.serverCommunication.getAllLectures();
+        courseList = this.serverCommunication.getAllLectures();
     }
 
     /**
@@ -139,7 +179,7 @@ public class StudentController {
      * @return a boolean if the student is enrolled.
      */
     private boolean studentIsEnrolledFor(Student student, Lecture lecture) {
-        Optional<CourseLectures> courseLecture = courseLecturesList.stream()
+        Optional<Course> courseLecture = courseList.stream()
                 .filter(e -> e.courseHasLecture(lecture.getId()))
                 .findFirst();
         if (courseLecture.isEmpty()) {

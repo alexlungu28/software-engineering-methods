@@ -26,7 +26,6 @@ public class RoomSchedule {
     @ManyToMany()
     private Set<Student> students;
 
-    @Transient
     private int lectureId;
     @Transient
     private int roomId;

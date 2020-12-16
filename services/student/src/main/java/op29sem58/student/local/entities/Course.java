@@ -5,13 +5,22 @@ package op29sem58.student.local.entities;
  * which are only the courses with their lectures. This helps with assigning the students
  * as we can check if they are enrolled for the course.
  */
-public class CourseLectures {
+public class Course {
     private int courseId;
     private int[] lectureIds;
 
-    public CourseLectures(int courseId, int[] lectureIds) {
+    private String teacherNetId;
+    private String name;
+    private String code;
+    private int yearOfStudy;
+
+    public Course(int courseId, int[] lectureIds, String teacherNetId, String name, String code, int yearOfStudy) {
         this.courseId = courseId;
         this.lectureIds = lectureIds;
+        this.teacherNetId = teacherNetId;
+        this.name = name;
+        this.code = code;
+        this.yearOfStudy = yearOfStudy;
     }
 
     /**
@@ -27,6 +36,38 @@ public class CourseLectures {
             }
         }
         return false;
+    }
+
+    public String getTeacherNetId() {
+        return teacherNetId;
+    }
+
+    public void setTeacherNetId(String teacherNetId) {
+        this.teacherNetId = teacherNetId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public int getYearOfStudy() {
+        return yearOfStudy;
+    }
+
+    public void setYearOfStudy(int yearOfStudy) {
+        this.yearOfStudy = yearOfStudy;
     }
 
     public int getCourseId() {
