@@ -41,7 +41,7 @@ public class ApiTest {
             .create();
     
     @Test
-    public void exampleTest() throws Exception {
+    public void initializingStudentsTest() throws Exception {
         List<Student> students = new ArrayList<>();
         for (int i = 0; i < 8; i++) {
             Student student = new Student();

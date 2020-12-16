@@ -215,21 +215,6 @@ public class StudentController {
         return !maybeStudentEnrollment.isEmpty();
     }
 
-    /**
-     * This checks if the student is enrolled for the lecture, by iterating though the
-     * list of courseLectures and retrieving the courseID by the use of the lectureID.
-     * Then send a request to enrollments with the courseID and student.
-     * If student is enrolled a boolean true will be returned.
-     *
-     * @param student a Student to check if enrolled
-     * @param course a course to check if the student is enrolled
-     * @return a boolean if the student is enrolled.
-     */
-    private boolean studentIsEnrolledFor(Student student, Course course) {
-        final List<StudentEnrollment> maybeStudentEnrollment =
-                this.studentEnrollments.findByCourseIdAndStudent(course.getCourseId(), student);
-        return !maybeStudentEnrollment.isEmpty();
-    }
 
     /**
      * This gets a sorted list of lectures sorted by upcoming.
