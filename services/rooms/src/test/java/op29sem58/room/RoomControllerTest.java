@@ -14,7 +14,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,11 +40,7 @@ class RoomControllerTest {
 
     @Autowired
     private transient MockMvc mockMvc;
-
-    @InjectMocks
     private transient RoomController roomController;
-
-
     final transient Gson gson = new GsonBuilder().create();
     final transient String createRoom = "/createRoom";
     final transient String authorization = "Authorization";
@@ -218,28 +213,4 @@ class RoomControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.is(1)));
     }
-
-    //still need to test getCoronaCapacityTest
-    //    @Test
-    //    public void getCoronaCapacityTest() throws Exception {
-    //        Room room = new Room("tz2", 100);
-    //        this.mockMvc.perform(MockMvcRequestBuilders.post(createRoom)
-    //                .contentType(MediaType.APPLICATION_JSON)
-    //                .content(gson.toJson(room))).andExpect(status().isOk());
-    //
-    //        String req = "/getCoronaCapacity/" + 1 + "/" + 10 + "/" + 60;
-    //            this.mockMvc.perform(MockMvcRequestBuilders.get(req))
-    //                    .andDo(print());
-    //    }
-    //
-    //    @Test
-    //    public void getRoomsWithCapacityAtleastTest() throws Exception {
-    //        Room room = new Room("tz2", 100);
-    //        this.mockMvc.perform(MockMvcRequestBuilders.post(createRoom)
-    //                .contentType(MediaType.APPLICATION_JSON)
-    //                .content(gson.toJson(room))).andExpect(status().isOk());
-    //
-    //        String req = "/getRoomsWithCapacityAtLeast/" + "50" + "/" + "10" + "/" + "60";
-    //        this.mockMvc.perform(MockMvcRequestBuilders.get(req))
-    //                .andDo(print());  }
 }
