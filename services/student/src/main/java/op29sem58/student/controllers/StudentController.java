@@ -3,7 +3,6 @@ package op29sem58.student.controllers;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -17,7 +16,6 @@ import op29sem58.student.database.repos.StudentRepo;
 import op29sem58.student.local.entities.Course;
 import op29sem58.student.local.entities.Lecture;
 import op29sem58.student.local.entities.LectureDetails;
-import op29sem58.student.local.entities.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -87,15 +85,12 @@ public class StudentController {
 
         // Here we iterate through all the allocated rooms for the student.
         // We then just add it to our lectureDetail list(This will be sorted by date).
-        Iterator<RoomSchedule> i = studentBookings.findByStudents(currentStudent).iterator();
-        while (i.hasNext()) {
-            RoomSchedule roomSchedule = i.next();
+        for (RoomSchedule roomSchedule : this.studentBookings.findByStudents(currentStudent)) {
             String courseName = getCourseName(roomSchedule.getLectureId());
             LectureDetails tempDetails = new LectureDetails(
                     roomSchedule.getLectureId(), courseName, roomSchedule.getRoomId(), true,
                     roomSchedule.getStartTime(), roomSchedule.getEndTime());
             campusLectures.add(tempDetails);
-            i.remove();
         }
         // We iterate through the list of lectures already sorted by date.
         // For every lecture we check if the student is enrolled.
@@ -103,9 +98,7 @@ public class StudentController {
         // for the student, if not we can add the lecture to a list of onlineLectures.
         // we end by calling a helper function to merge the two lists.
         List<LectureDetails> onlineLectures = new ArrayList<>();
-        Iterator<Lecture> p = lectureList.iterator();
-        while (p.hasNext()) {
-            Lecture lecture = p.next();
+        for (Lecture lecture : this.lectureList) {
             if (studentIsEnrolledFor(currentStudent, lecture)) {
                 Optional<LectureDetails> alreadyAssigned = campusLectures.stream()
                         .filter(e -> e.getLectureId() == lecture.getId()).findFirst();
@@ -118,7 +111,6 @@ public class StudentController {
                         0, false, rs.getStartTime(), rs.getEndTime());
                 onlineLectures.add(tempDetails);
             }
-            p.remove();
         }
         merge(campusLectures, onlineLectures);
 
@@ -133,7 +125,7 @@ public class StudentController {
      */
     public Student getStudentbyToken(String token) {
         String studentId = serverCommunication.getUserId(token);
-        return students.getOne(studentId);
+        return this.students.getOne(studentId);
     }
 
     /**
@@ -158,13 +150,13 @@ public class StudentController {
      * @param lectureId to find the courseName
      * @return name of the course.
      */
-    public String getCourseName(int lectureId) {
-        for (Course c : courseList) {
+    public String getCourseName(int lectureId) throws IllegalStateException {
+        for (Course c : this.courseList) {
             if (c.courseHasLecture(lectureId)) {
                 return c.getName();
             }
         }
-        return "No course";
+        throw new IllegalStateException("Lecture must be linked with a course.");
     }
 
     /**
@@ -181,7 +173,7 @@ public class StudentController {
         this.initializeCourses(token);
 
         // get all lectures to assign students to, sorted by their startTime
-        this.getAllScheduledSortedLecturesUntil(date, token);
+        this.initializeAllScheduledLecturesUntil(date, token);
 
         // Now that we have a list with all upcoming lectures sorted by earliest startTime.
         // We can allocate students to them. We do this by iterating through the lectures and 
@@ -197,16 +189,14 @@ public class StudentController {
         // list in the database. This Creates the many to many relationship in the database.
         // To be clear this stores all the students who go to campus.
         final List<RoomSchedule> studentSchedule = new ArrayList<>();
-        for (final Lecture lecture : lectureList) {
+        for (final Lecture lecture : this.lectureList) {
             // get all students, where the highest priority students are at the start
             final List<Student> students = this.students.findByWantsToGoTrueOrderByLastVisitedAsc();
             final RoomSchedule roomSchedule = lecture.getRoomSchedule();
 
             int assignedStudents = 0;
             final int allowedStudents = roomSchedule.getCoronaCapacity();
-            Iterator<Student> i = students.iterator();
-            while (i.hasNext()) {
-                Student student = i.next();
+            for (Student student : students) {
                 if (this.studentIsEnrolledFor(student, lecture)) {
                     roomSchedule.addStudent(student);
                     student.setLastVisited(lecture.getRoomSchedule().getStartTime());
@@ -216,7 +206,6 @@ public class StudentController {
                         break;
                     }
                 }
-                i.remove();
             }
             studentSchedule.add(roomSchedule);
         }
@@ -244,7 +233,7 @@ public class StudentController {
      * @return a boolean if the student is enrolled.
      */
     private boolean studentIsEnrolledFor(Student student, Lecture lecture) {
-        Optional<Course> courseLecture = courseList.stream()
+        Optional<Course> courseLecture = this.courseList.stream()
                 .filter(e -> e.courseHasLecture(lecture.getId()))
                 .findFirst();
         if (courseLecture.isEmpty()) {
@@ -263,8 +252,8 @@ public class StudentController {
      * @param date to get all lectures before date
      * @return return all lecture before date
      */
-    private void getAllScheduledSortedLecturesUntil(LocalDateTime date,
-                                                    @RequestHeader("Authorization") String token) {
+    private void initializeAllScheduledLecturesUntil(LocalDateTime date,
+                                                     @RequestHeader("Authorization") String token) {
         // get the schedule via getSchedule endpoint
         final List<RoomSchedule> schedule = this.serverCommunication.getSchedule(token);
 
@@ -272,7 +261,7 @@ public class StudentController {
         schedule.sort(Comparator.comparing(RoomSchedule::getStartTime));
 
         // collect lectures that matter
-        lectureList = schedule.stream()
+        this.lectureList = schedule.stream()
             .filter(roomSchedule -> roomSchedule.getStartTime().isBefore(date))
             .map(roomSchedule -> new Lecture(roomSchedule.getLectureId(), roomSchedule))
             .collect(Collectors.toList());
