@@ -100,16 +100,12 @@ public class RoomController {
      */
     @GetMapping(path = "/room/{id}")
     public @ResponseBody
-    Room getRoom(@RequestHeader(authHeader) String token, @PathVariable int id) {
-        if (Authorization.authorize(token, student)) {
-            Optional<Room> room = roomRepository.findById(id);
-            if (room.isPresent()) {
-                return room.get();
-            } else {
-                throw new RuntimeException("Room not found for the id " + id);
-            }
+    Room getRoom(@PathVariable int id) {
+        Optional<Room> room = roomRepository.findById(id);
+        if (room.isPresent()) {
+            return room.get();
         } else {
-            throw new RuntimeException(errorMessage);
+            throw new RuntimeException("Room not found for the id " + id);
         }
     }
 

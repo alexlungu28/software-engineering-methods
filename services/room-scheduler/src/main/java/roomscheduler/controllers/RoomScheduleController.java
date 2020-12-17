@@ -84,32 +84,27 @@ public class RoomScheduleController {
      */
     @GetMapping(path = "/getSchedule")
     public @ResponseBody
-    List<ScheduleInformation> getAllSchedules(@RequestHeader(authHeader) String token)
-            throws IOException {
-        if (Authorization.authorize(token, student)) {
-            Integer breakDuration = roomScheduleRepository.getBreakDuration();
-            Integer slotDuration = roomScheduleRepository.getSlotDuration();
-            List<ScheduleInfo> result = roomScheduleRepository
-                    .getScheduleInfo(slotDuration, breakDuration);
-            System.out.println(result);
-            List<ScheduleInformation> finalRes = new ArrayList<>();
-            for (ScheduleInfo s : result) {
-                finalRes.add(new ScheduleInformation(s.getRoomScheduleId(), s.getStartTime(),
-                        s.getEndTime(), s.getLectureId(), s.getRoomId(), RoomScheduleCommunication
-                        .getCoronaCapacity(s.getRoomId(), roomScheduleRepository.getMinPerc(),
-                                roomScheduleRepository.getMaxPerc())));
-            }
-            System.out.println(finalRes);
-            return finalRes;
-        } else {
-            throw new RuntimeException(errorMessage);
+    List<ScheduleInformation> getAllSchedules()
+        throws IOException {
+        Integer breakDuration = roomScheduleRepository.getBreakDuration();
+        Integer slotDuration = roomScheduleRepository.getSlotDuration();
+        List<ScheduleInfo> result = roomScheduleRepository
+                .getScheduleInfo(slotDuration, breakDuration);
+        System.out.println(result);
+        List<ScheduleInformation> finalRes = new ArrayList<>();
+        for (ScheduleInfo s : result) {
+            finalRes.add(new ScheduleInformation(s.getRoomScheduleId(), s.getStartTime(),
+                    s.getEndTime(), s.getLectureId(), s.getRoomId(), RoomScheduleCommunication
+                    .getCoronaCapacity(s.getRoomId(), roomScheduleRepository.getMinPerc(),
+                            roomScheduleRepository.getMaxPerc())));
         }
+        System.out.println(finalRes);
+        return finalRes;
     }
 
     /**
      * Get the available slots.
      *
-     * @param token jwt token
      * @param prefDate pref date
      * @param numSlots number of slots
      * @param lunchTime time of lunch
@@ -117,15 +112,10 @@ public class RoomScheduleController {
      */
     @GetMapping(path = "/availableSlots/{prefDate}/{numSlots}/{lunchTime}")
     public @ResponseBody
-    Iterable<RoomSlotStat> getAvailableSlots(@RequestHeader(authHeader) String token,
-                                       @PathVariable Date prefDate,
+    Iterable<RoomSlotStat> getAvailableSlots(@PathVariable Date prefDate,
                                        @PathVariable Integer numSlots,
                                        @PathVariable Time lunchTime) {
-        if (Authorization.authorize(token, student)) {
-            return roomScheduleRepository.availableSlots(prefDate, numSlots, lunchTime);
-        } else {
-            throw new RuntimeException(errorMessage);
-        }
+        return roomScheduleRepository.availableSlots(prefDate, numSlots, lunchTime);
     }
 
     /**
@@ -145,67 +135,62 @@ public class RoomScheduleController {
             + "{numSlots}/{numOfStudents}/{lectureId}/{yearOfStudy}")
     @SuppressWarnings("PMD")
     public @ResponseBody
-    String scheduleNewLecture(@RequestHeader(authHeader) String token,
-                                    @PathVariable Date prefDate,
+    String scheduleNewLecture(@PathVariable Date prefDate,
                                     @PathVariable Integer numSlots,
                                     @PathVariable Integer numOfStudents,
                               @PathVariable Integer lectureId,
                               @PathVariable Integer yearOfStudy)
-            throws IOException, ParseException {
-        if (Authorization.authorize(token, "Teacher")) {
-            List<RoomSchedule> roomScheduleWithGivenLectureId = roomScheduleRepository
-                    .getRoomScheduleWithLectureId(lectureId);
-            //it should not be possible to schedule a lecture that is already scheduled
-            if (!roomScheduleWithGivenLectureId.isEmpty()) {
-                throw new RuntimeException("The lecture with id " + lectureId + " has" +
-                        " been already scheduled!");
-            }
-            Integer lunchHour = 7 + roomScheduleRepository.getLunchSlot();
-            Time lunchTime = utcTime("" + lunchHour + ":45:00");
-            int minPercentage = roomScheduleRepository.getMinPerc();
-            int maxPercentage = roomScheduleRepository.getMaxPerc();
-            List<IdNamePair> roomInfoWithRequiredCapacity =
-                    RoomScheduleCommunication.getRoomsIdsWithRequiredCapacity(numOfStudents,
-                            minPercentage, maxPercentage);
-            List<SlotInfo> dateIntPairs = RoomScheduleCommunication
-                    .getAvailableRoomsSlots(prefDate, numSlots, lunchTime);
+        throws IOException, ParseException {
+        List<RoomSchedule> roomScheduleWithGivenLectureId = roomScheduleRepository
+                .getRoomScheduleWithLectureId(lectureId);
+        //it should not be possible to schedule a lecture that is already scheduled
+        if (!roomScheduleWithGivenLectureId.isEmpty()) {
+            throw new RuntimeException("The lecture with id " + lectureId + " has" +
+                    " been already scheduled!");
+        }
+        Integer lunchHour = 7 + roomScheduleRepository.getLunchSlot();
+        Time lunchTime = utcTime("" + lunchHour + ":45:00");
+        int minPercentage = roomScheduleRepository.getMinPerc();
+        int maxPercentage = roomScheduleRepository.getMaxPerc();
+        List<IdNamePair> roomInfoWithRequiredCapacity =
+                RoomScheduleCommunication.getRoomsIdsWithRequiredCapacity(numOfStudents,
+                        minPercentage, maxPercentage);
+        List<SlotInfo> dateIntPairs = RoomScheduleCommunication
+                .getAvailableRoomsSlots(prefDate, numSlots, lunchTime);
 
-            List<Integer> slotIdsToNotOverlapSameYear = roomScheduleRepository
-                    .getSlotIdsToNotOverlapSameYear(yearOfStudy);
+        List<Integer> slotIdsToNotOverlapSameYear = roomScheduleRepository
+                .getSlotIdsToNotOverlapSameYear(yearOfStudy);
 
 
-            List<NameDateInfo> finalResult = new ArrayList<>();
-            outer:
-            for (IdNamePair i : roomInfoWithRequiredCapacity) {
-                for (SlotInfo pair : dateIntPairs) {
-                    if (i.getId() == pair.getRoomId() && !slotIdsToNotOverlapSameYear
-                            .contains(pair.roomSlotId)) {
-                        finalResult.add(new NameDateInfo(pair.getDate(),
-                                i.getName(), pair.getRoomSlotId()));
-                        //once we found one room slot to schedule the lecture, we can
-                        //stop searching
-                        break outer;
-                    }
+        List<NameDateInfo> finalResult = new ArrayList<>();
+        outer:
+        for (IdNamePair i : roomInfoWithRequiredCapacity) {
+            for (SlotInfo pair : dateIntPairs) {
+                if (i.getId() == pair.getRoomId() && !slotIdsToNotOverlapSameYear
+                        .contains(pair.roomSlotId)) {
+                    finalResult.add(new NameDateInfo(pair.getDate(),
+                            i.getName(), pair.getRoomSlotId()));
+                    //once we found one room slot to schedule the lecture, we can
+                    //stop searching
+                    break outer;
                 }
             }
-            if (finalResult.size() == 0) { //no available slots for the input given
-                return "There are no available slots for the input given. Try again!";
-            } else {
-                NameDateInfo result = finalResult.get(0);
-                roomScheduleRepository.saveAndFlush(new RoomSchedule(
-                        result.getRoomSlotId(), lectureId, yearOfStudy));
-                for (int i = 0; i < numSlots; i++) {
-                    roomScheduleRepository.saveAndFlush(new
-                            RoomSchedule(result.getRoomSlotId()
-                            + (i + 1) * 20, lectureId, yearOfStudy));
-                }
-                RoomScheduleCommunication.makeRoomSlotsOccupied(result.getRoomSlotId(), numSlots);
-                return "Your lecture was successfully scheduled for: " +
-                        result.getDate().toString() +
-                        " in the room with name: " + result.getRoomName();
-            }
+        }
+        if (finalResult.size() == 0) { //no available slots for the input given
+            return "There are no available slots for the input given. Try again!";
         } else {
-            throw new RuntimeException(errorMessage);
+            NameDateInfo result = finalResult.get(0);
+            roomScheduleRepository.saveAndFlush(new RoomSchedule(
+                    result.getRoomSlotId(), lectureId, yearOfStudy));
+            for (int i = 0; i < numSlots; i++) {
+                roomScheduleRepository.saveAndFlush(new
+                        RoomSchedule(result.getRoomSlotId()
+                        + (i + 1) * 20, lectureId, yearOfStudy));
+            }
+            RoomScheduleCommunication.makeRoomSlotsOccupied(result.getRoomSlotId(), numSlots);
+            return "Your lecture was successfully scheduled for: " +
+                    result.getDate().toString() +
+                    " in the room with name: " + result.getRoomName();
         }
     }
 

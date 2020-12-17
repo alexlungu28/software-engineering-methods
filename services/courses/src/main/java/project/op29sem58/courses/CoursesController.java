@@ -51,16 +51,11 @@ public class CoursesController {
     /**
      * Retrieve a list of all lectures.
      *
-     * @param token jwt token
      * @return all lectures
      */
     @GetMapping(path = "/getAllLectures")
-    public @ResponseBody Iterable<Lecture> getAllLectures(@RequestHeader(authHeader) String token) {
-        if (Authorization.authorize(token, "Student")) {
-            return lecturesRepo.findAll();
-        } else {
-            throw new RuntimeException(errorMessage);
-        }
+    public @ResponseBody Iterable<Lecture> getAllLectures() {
+        return lecturesRepo.findAll();
     }
 
     /**
@@ -120,37 +115,31 @@ public class CoursesController {
      * @return A string with a message about the status of the request
      */
     @PostMapping(path = "/scheduleLecturesUntil")
-    public @ResponseBody String scheduleLecturesUntil(@RequestHeader(authHeader) String token,
-                                                      @RequestBody LocalDate date) {
-        if ((token.equals("verySecretToken") && date.equals(this.date)) ||
-                Authorization.authorize(token, teacher)) {
-            if (date.isBefore(LocalDate.now())) {
-                return "Please specify a date after the current date.";
-            }
-
-            List<Lecture> lectures = lecturesRepo.findAll();
-
-            lectures.removeIf(lecture -> lecture.getDate().isAfter(date));
-
-            if (lectures.size() == 0) {
-                return "There are no lectures planned in the coming two weeks.";
-            }
-
-            for (Lecture l : lectures) {
-                String path = ServerCommunication.getRoomScheduleServiceUrl() + "/scheduleLecture/"
-                        + l.getDate() + "/" + l.getNumberOfTimeslots() + "/" + l.getMinNoStudents()
-                        + "/" + l.getId() + "/" + l.getCourse().getYearOfStudy();
-                System.out.println(path);
-                String response = ServerCommunication.makeGetRequest(path);
-                if (response == null) {
-                    return "Something went wrong on our end. Please try again later.";
-                }
-            }
-
-            return "Lectures until " + date.toString() + " are scheduled!";
-        } else {
-            throw new RuntimeException(errorMessage);
+    public @ResponseBody String scheduleLecturesUntil(@RequestBody LocalDate date) {
+        if (date.isBefore(LocalDate.now())) {
+            return "Please specify a date after the current date.";
         }
+
+        List<Lecture> lectures = lecturesRepo.findAll();
+
+        lectures.removeIf(lecture -> lecture.getDate().isAfter(date));
+
+        if (lectures.size() == 0) {
+            return "There are no lectures planned in the coming two weeks.";
+        }
+
+        for (Lecture l : lectures) {
+            String path = ServerCommunication.getRoomScheduleServiceUrl() + "/scheduleLecture/"
+                    + l.getDate() + "/" + l.getNumberOfTimeslots() + "/" + l.getMinNoStudents()
+                    + "/" + l.getId() + "/" + l.getCourse().getYearOfStudy();
+            System.out.println(path);
+            String response = ServerCommunication.makeGetRequest(path);
+            if (response == null) {
+                return "Something went wrong on our end. Please try again later.";
+            }
+        }
+
+        return "Lectures until " + date.toString() + " are scheduled!";
     }
 
     /**
@@ -160,27 +149,22 @@ public class CoursesController {
      * @return A string with info about the status of the request
      */
     @GetMapping(path = "/scheduleLecture/{lectureId}")
-    public @ResponseBody String scheduleLecture(@RequestHeader(authHeader) String token,
-                                                @PathVariable int lectureId) {
-        if (Authorization.authorize(token, teacher)) {
-            Optional<Lecture> lecture = lecturesRepo.findById(lectureId);
-            if (lecture.isEmpty()) {
-                return "There is no lecture with this id, please check if the id is correct.";
-            }
-
-            Lecture l = lecture.get();
-            String path = ServerCommunication.getRoomScheduleServiceUrl() + "/scheduleLecture/"
-                    + l.getDate() + "/" + l.getNumberOfTimeslots() + "/" + l.getMinNoStudents()
-                    + "/" + l.getId() + "/" + l.getCourse().getYearOfStudy();
-            String response = ServerCommunication.makeGetRequest(path);
-            if (response == null) {
-                return "Something went wrong on our end. Please try again later.";
-            }
-
-            return response;
-        } else {
-            throw new RuntimeException(errorMessage);
+    public @ResponseBody String scheduleLecture(@PathVariable int lectureId) {
+        Optional<Lecture> lecture = lecturesRepo.findById(lectureId);
+        if (lecture.isEmpty()) {
+            return "There is no lecture with this id, please check if the id is correct.";
         }
+
+        Lecture l = lecture.get();
+        String path = ServerCommunication.getRoomScheduleServiceUrl() + "/scheduleLecture/"
+                + l.getDate() + "/" + l.getNumberOfTimeslots() + "/" + l.getMinNoStudents()
+                + "/" + l.getId() + "/" + l.getCourse().getYearOfStudy();
+        String response = ServerCommunication.makeGetRequest(path);
+        if (response == null) {
+            return "Something went wrong on our end. Please try again later.";
+        }
+
+        return response;
     }
 
     /**
@@ -190,8 +174,7 @@ public class CoursesController {
      */
     @GetMapping(path = "/scheduleForTwoWeeks")
     public @ResponseBody String scheduleForTwoWeeks() {
-        date = LocalDate.now().plusWeeks(2);
-        String s = scheduleLecturesUntil("verySecretToken", date);
+        String s = scheduleLecturesUntil(LocalDate.now().plusWeeks(2));
         String correctReturn = "Lectures until " + LocalDate.now().plusWeeks(2).toString()
                 + " are scheduled!";
 

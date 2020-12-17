@@ -76,19 +76,14 @@ public class RoomSlotController {
     /**
      * Get the number of rooms.
      *
-     * @param token jwt token
      * @return the number of rooms
      * @throws IOException in case something goes wrong
      */
     @GetMapping(path = "/countRooms") // Map ONLY POST Requests
     public @ResponseBody
-    Long getNumberOfRooms(@RequestHeader(authHeader) String token) throws IOException {
-        if (Authorization.authorize(token, "Student")) {
-            Long count = RoomSlotCommunication.numberOfRooms();
-            return count;
-        } else {
-            throw new RuntimeException(errorMessage);
-        }
+    Long getNumberOfRooms() throws IOException {
+        Long count = RoomSlotCommunication.numberOfRooms();
+        return count;
     }
 
     /**
@@ -145,32 +140,27 @@ public class RoomSlotController {
      */
     @PostMapping(path = "/updateRoomSlot/{id}/{numOfSlots}")
     public @ResponseBody
-    String makeRoomSlotsOccupied(@RequestHeader(authHeader) String token,
-                                 @PathVariable Integer id,
+    String makeRoomSlotsOccupied(@PathVariable Integer id,
                                  @PathVariable Integer numOfSlots) {
-        if (Authorization.authorize(token, "Teacher")) {
-            Optional<RoomSlot> roomSlot = roomSlotRepository.findById(id);
-            if (roomSlot.isPresent()) {
-                roomSlot.get().setOccupied(1);
-                roomSlotRepository.saveAndFlush(roomSlot.get());
-                for (int i = 0; i < numOfSlots; i++) {
-                    if (i < numOfSlots - 1) {
-                        Optional<RoomSlot> next = roomSlotRepository.findById(id + (i + 1) * 20);
-                        next.get().setOccupied(1);
-                        roomSlotRepository.saveAndFlush(next.get());
-                    } else {
-                        Optional<RoomSlot> next = roomSlotRepository.findById(id + (i + 1) * 20);
-                        next.get().setOccupied(3);
-                        roomSlotRepository.saveAndFlush(next.get());
-                    }
-
+        Optional<RoomSlot> roomSlot = roomSlotRepository.findById(id);
+        if (roomSlot.isPresent()) {
+            roomSlot.get().setOccupied(1);
+            roomSlotRepository.saveAndFlush(roomSlot.get());
+            for (int i = 0; i < numOfSlots; i++) {
+                if (i < numOfSlots - 1) {
+                    Optional<RoomSlot> next = roomSlotRepository.findById(id + (i + 1) * 20);
+                    next.get().setOccupied(1);
+                    roomSlotRepository.saveAndFlush(next.get());
+                } else {
+                    Optional<RoomSlot> next = roomSlotRepository.findById(id + (i + 1) * 20);
+                    next.get().setOccupied(3);
+                    roomSlotRepository.saveAndFlush(next.get());
                 }
-                return "Marked room slots as occupied!";
-            } else {
-                throw new RuntimeException("Room slot not found for the id " + id);
+
             }
+            return "Marked room slots as occupied!";
         } else {
-            throw new RuntimeException(errorMessage);
+            throw new RuntimeException("Room slot not found for the id " + id);
         }
     }
 
@@ -182,27 +172,22 @@ public class RoomSlotController {
      */
     @PostMapping(path = "/makeRoomSlotAvailable/{id}")
     public @ResponseBody
-    String makeRoomSlotAvail(@RequestHeader(authHeader) String token,
-                             @PathVariable Integer id) {
-        if (Authorization.authorize(token, "Teacher")) {
-            Optional<RoomSlot> roomSlot = roomSlotRepository.findById(id);
-            if (roomSlot.isPresent()) {
-                Timestamp timestamp = roomSlot.get().getDate_time();
-                String date = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
-                        .format(new Date(timestamp.getTime()));
-                Timestamp b = Timestamp.valueOf(date + " 12:45:00");
-                if (b.getTime() == timestamp.getTime()) { //it is a lunch slot
-                    roomSlot.get().setOccupied(2);
-                } else {
-                    roomSlot.get().setOccupied(0);
-                }
-                roomSlotRepository.saveAndFlush(roomSlot.get());
-                return "Marked room slot as available!";
+    String makeRoomSlotAvail(@PathVariable Integer id) {
+        Optional<RoomSlot> roomSlot = roomSlotRepository.findById(id);
+        if (roomSlot.isPresent()) {
+            Timestamp timestamp = roomSlot.get().getDate_time();
+            String date = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+                    .format(new Date(timestamp.getTime()));
+            Timestamp b = Timestamp.valueOf(date + " 12:45:00");
+            if (b.getTime() == timestamp.getTime()) { //it is a lunch slot
+                roomSlot.get().setOccupied(2);
             } else {
-                throw new RuntimeException("Room slot not found for the id " + id);
+                roomSlot.get().setOccupied(0);
             }
+            roomSlotRepository.saveAndFlush(roomSlot.get());
+            return "Marked room slot as available!";
         } else {
-            throw new RuntimeException(errorMessage);
+            throw new RuntimeException("Room slot not found for the id " + id);
         }
     }
 

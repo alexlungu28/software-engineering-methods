@@ -60,12 +60,8 @@ public class RuleController {
      * @return Array List with all rules
      */
     @GetMapping(path = "/allRules")
-    public @ResponseBody List<Rule> getAllRules(@RequestHeader(authHeader) String token) {
-        if (Authorization.authorize(token, "Student")) {
-            return ruleRepository.findAll();
-        } else {
-            throw new RuntimeException(errorMessage);
-        }
+    public @ResponseBody List<Rule> getAllRules() {
+        return ruleRepository.findAll();
     }
 
     /**
