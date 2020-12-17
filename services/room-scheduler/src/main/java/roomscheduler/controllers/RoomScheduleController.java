@@ -238,9 +238,6 @@ public class RoomScheduleController {
     }
 
 
-
-
-
     /**
      * Retrieve all Rooms Schedules.
      *
