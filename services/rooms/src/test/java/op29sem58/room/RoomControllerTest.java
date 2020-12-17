@@ -1,11 +1,14 @@
 package op29sem58.room;
 
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import op29sem58.room.controllers.Authorization;
 import op29sem58.room.controllers.RoomController;
 import op29sem58.room.entities.Room;
 import org.hamcrest.Matchers;
@@ -13,11 +16,18 @@ import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -26,9 +36,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 
 @SpringBootTest(classes = RoomService.class)
+@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 @RunWith(SpringRunner.class)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureMockMvc
+@AutoConfigureTestDatabase(replace = Replace.ANY)
 class RoomControllerTest {
 
     @Autowired
@@ -44,22 +55,29 @@ class RoomControllerTest {
 
     final transient Gson gson = new GsonBuilder().create();
     final transient String createRoom = "/createRoom";
+
     /**
      * Testing the controller RoomController's createRoom method.
      * Checking to see if a Room instance can be saved.
      */
     @Test
     public void saveRoomTest() throws Exception {
-        String requestJson = gson.toJson(new Room("tz90", 100));
+        MockedStatic<Authorization> mockedAuth = Mockito.mockStatic(Authorization.class);
+        mockedAuth.when(() -> Authorization.authorize("token", "Admin")).thenReturn(true);
 
-        this.mockMvc.perform(MockMvcRequestBuilders.post(createRoom)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestJson))
+        String requestJson = gson.toJson(new Room("tz90", 100));
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.post(createRoom).header("Authorization", "Bearer token")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson)
+        )
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().string("Saved room"));
 
         String req = "/room/" + "1";
-        this.mockMvc.perform(MockMvcRequestBuilders.get(req))
+        this.mockMvc.perform(
+                MockMvcRequestBuilders.get(req).header("Authorization", "Bearer token")
+        )
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("tz90"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.capacity").value(100));
@@ -112,8 +130,8 @@ class RoomControllerTest {
         for (int i = 0; i < 8; i++) {
             Room room = new Room("room" + i, i + 5);
             this.mockMvc.perform(MockMvcRequestBuilders.post(createRoom)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(gson.toJson(room))).andExpect(status().isOk());
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(gson.toJson(room))).andExpect(status().isOk());
         }
 
         this.mockMvc.perform(MockMvcRequestBuilders.get("/countRooms"))
