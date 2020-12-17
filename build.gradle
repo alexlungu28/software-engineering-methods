@@ -25,8 +25,10 @@ allprojects {
 		testImplementation 'org.hibernate:hibernate-entitymanager'
 		testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
 		testImplementation 'org.springframework.boot:spring-boot-starter-test'
+		testImplementation 'org.mockito:mockito-core:3.6.28'
+		testImplementation 'org.mockito:mockito-inline:3.6.28'
 
-		testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine' 
+		testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 	}
 
 	repositories {
@@ -66,11 +68,11 @@ allprojects {
 		toolVersion "8.37"
 		configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
 		configProperties = [
-			'checkstyle.cache.file': "${buildDir}/checkstyle.cache",
+				'checkstyle.cache.file': "${buildDir}/checkstyle.cache",
 		]
-        ignoreFailures = false
-        maxErrors = 0
-        maxWarnings = 0
+		ignoreFailures = false
+		maxErrors = 0
+		maxWarnings = 0
 		sourceSets = []
 	}
 
