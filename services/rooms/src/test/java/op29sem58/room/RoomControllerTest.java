@@ -55,7 +55,7 @@ class RoomControllerTest {
     @BeforeAll
     public static void mockAuthorization() {
         mockedAuth = Mockito.mockStatic(Authorization.class);
-        mockedAuth.when(() -> Authorization.authorize("token", "Admin")).thenReturn(true);
+        mockedAuth.when(() -> Authorization.authorize("Bearer token", "Admin")).thenReturn(true);
     }
 
     @AfterAll
