@@ -120,18 +120,13 @@ public class RoomController {
      */
     @GetMapping(path = "/countRooms")
     public @ResponseBody
-    Long getNumberOfRooms(@RequestHeader(authHeader) String token) {
-        if (Authorization.authorize(token, student)) {
-            return roomRepository.count();
-        } else {
-            throw new RuntimeException(errorMessage);
-        }
+    Long getNumberOfRooms() {
+        return roomRepository.count();
     }
 
     /**
      * Get rooms with capacity that's at least a set amount.
      *
-     * @param token jwt token
      * @param numOfStudents number of students
      * @param minPer minimum persons
      * @param maxPer maximum persons
@@ -139,15 +134,10 @@ public class RoomController {
      */
     @GetMapping(path = "/getRoomsWithCapacityAtLeast/{numOfStudents}/{minPer}/{maxPer}")
     public @ResponseBody
-    List<RoomInfo> getRoomWithCapAtLeast(@RequestHeader(authHeader) String token,
-                                         @PathVariable Integer numOfStudents,
+    List<RoomInfo> getRoomWithCapAtLeast(@PathVariable Integer numOfStudents,
                                          @PathVariable Integer minPer,
                                          @PathVariable Integer maxPer) {
-        if (Authorization.authorize(token, student)) {
-            return roomRepository.getRoomsWithCapacityAtLeast(numOfStudents, minPer, maxPer);
-        } else {
-            throw new RuntimeException(errorMessage);
-        }
+        return roomRepository.getRoomsWithCapacityAtLeast(numOfStudents, minPer, maxPer);
     }
 
     /**
@@ -159,7 +149,7 @@ public class RoomController {
     @PutMapping(path = "/modifyRoom")
     public @ResponseBody
     String editRoom(@RequestHeader(authHeader) String token, @RequestBody Room r) {
-        if (Authorization.authorize(token, "Teacher")) {
+        if (Authorization.authorize(token, admin)) {
             Optional<Room> room = roomRepository.findById(r.getId());
             if (room.isPresent()) {
                 room.get().setName(r.getName());
@@ -177,7 +167,6 @@ public class RoomController {
     /**
      * Get the corona capacity of a room.
      *
-     * @param token jwt token
      * @param roomId id of room
      * @param minPerc min people
      * @param maxPerc max people
@@ -185,15 +174,10 @@ public class RoomController {
      */
     @GetMapping(path = "/getCoronaCapacity/{roomId}/{minPerc}/{maxPerc}")
     public @ResponseBody
-    Integer coronaCapacity(@RequestHeader(authHeader) String token,
-                           @PathVariable Integer roomId,
+    Integer coronaCapacity(@PathVariable Integer roomId,
                              @PathVariable Integer minPerc,
                              @PathVariable Integer maxPerc) {
-        if (Authorization.authorize(token, student)) {
-            return roomRepository.getCoronaCapacity(roomId, minPerc, maxPerc);
-        } else {
-            throw new RuntimeException(errorMessage);
-        }
+        return roomRepository.getCoronaCapacity(roomId, minPerc, maxPerc);
     }
 
 
