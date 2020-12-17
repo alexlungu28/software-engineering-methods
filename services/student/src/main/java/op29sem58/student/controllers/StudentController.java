@@ -17,10 +17,12 @@ import op29sem58.student.database.repos.StudentRepo;
 import op29sem58.student.local.entities.Course;
 import op29sem58.student.local.entities.Lecture;
 import op29sem58.student.local.entities.LectureDetails;
+import op29sem58.student.local.entities.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 // Here is the main Student Service code. This handles all the requests required to assign students.
@@ -42,7 +44,7 @@ public class StudentController {
     //This is a list consisting of all the courses with their lectures.
     private transient List<Course> courseList;
 
-    //This is a list consisting of all the courses with their lectures.
+    //This is a list consisting of all the lectures.
     private transient List<Lecture> lectureList;
 
     //This is our class to communicate with other microservices
@@ -67,20 +69,21 @@ public class StudentController {
         return this.students.findAll();
     }
 
+
     /**
      * This should return all the lectures of the student sending the request,
      * This however is not the most optimal solution I could think of. But
-     * will have to due, because of time constraint.
+     * will have to do, because of time constraint.
      *
-     * @param studentId This is temporarily, should get the studentID by the token
+     * @param token This is used to retrieve the user name.
      * @return a list with all it's lecture sorted ascending by date.
      */
-    @PostMapping(path = "/AllMyLectures")
+    @GetMapping(path = "/allMyLectures")
     @SuppressWarnings("PMD") //DU anomaly
-    public List<LectureDetails> getMyLectures(@RequestBody String studentId) {
+    public List<LectureDetails> getMyLectures(@RequestHeader("Authorization") String token) {
         // We first create an empty ArrayList, We then get the student by studentID.
-        List<LectureDetails> campusLectures = new ArrayList<LectureDetails>();
-        Student currentStudent = students.getOne(studentId);
+        List<LectureDetails> campusLectures = new ArrayList<>();
+        Student currentStudent = getStudentbyToken(token);
 
         // Here we iterate through all the allocated rooms for the student.
         // We then just add it to our lectureDetail list(This will be sorted by date).
@@ -123,6 +126,17 @@ public class StudentController {
     }
 
     /**
+     * Small helper function to get the student by token.
+     *
+     * @param token required to send to the auth server
+     * @return the student using the token
+     */
+    public Student getStudentbyToken(String token) {
+        String studentId = serverCommunication.getUserId(token);
+        return students.getOne(studentId);
+    }
+
+    /**
      * To merge two LectureDetails list into one, so that it stay's sorted.
      *
      * @param l1 first list.
@@ -150,7 +164,7 @@ public class StudentController {
                 return c.getName();
             }
         }
-        return "Course less";
+        return "No course";
     }
 
     /**
@@ -160,13 +174,14 @@ public class StudentController {
      */
     @PostMapping(path = "/assignStudentsUntil")
     @SuppressWarnings("PMD") //DU anomaly
-    public void assignStudentsUntil(@RequestBody LocalDateTime date) {
+    public void assignStudentsUntil(@RequestBody LocalDateTime date,
+                                    @RequestHeader("Authorization") String token) {
         // Request all courses with their lectures from coursesService,
         // so courseLecturesList is initialized.
-        this.initializeCourses();
+        this.initializeCourses(token);
 
         // get all lectures to assign students to, sorted by their startTime
-        this.getAllScheduledSortedLecturesUntil(date);
+        this.getAllScheduledSortedLecturesUntil(date, token);
 
         // Now that we have a list with all upcoming lectures sorted by earliest startTime.
         // We can allocate students to them. We do this by iterating through the lectures and 
@@ -214,8 +229,8 @@ public class StudentController {
      * This initializes all courses, by sending a request to the Courses Service.
      */
     @SuppressWarnings("PMD") //DU anomaly
-    private void initializeCourses() {
-        courseList = this.serverCommunication.getAllCourse();
+    private void initializeCourses(String token) {
+        courseList = this.serverCommunication.getAllCourses(token);
     }
 
     /**
@@ -248,9 +263,10 @@ public class StudentController {
      * @param date to get all lectures before date
      * @return return all lecture before date
      */
-    private void getAllScheduledSortedLecturesUntil(LocalDateTime date) {
+    private void getAllScheduledSortedLecturesUntil(LocalDateTime date,
+                                                    @RequestHeader("Authorization") String token) {
         // get the schedule via getSchedule endpoint
-        final List<RoomSchedule> schedule = this.serverCommunication.getSchedule();
+        final List<RoomSchedule> schedule = this.serverCommunication.getSchedule(token);
 
         // sort the lectures by their start time
         schedule.sort(Comparator.comparing(RoomSchedule::getStartTime));

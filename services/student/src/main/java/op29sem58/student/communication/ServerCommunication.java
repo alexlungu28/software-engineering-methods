@@ -34,9 +34,11 @@ public class ServerCommunication {
         .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
         .create();
 
-    private <T> T makeGetRequest(String url, Class<T> classOf) {
+    private <T> T makeGetRequest(String url, Class<T> classOf, String token) {
+        HttpGet request = new HttpGet((url));
+        request.addHeader("Authorization", token);
         try (
-            CloseableHttpResponse response = ServerCommunication.client.execute(new HttpGet(url))
+            CloseableHttpResponse response = ServerCommunication.client.execute(request)
         ) {
             String body = EntityUtils.toString(response.getEntity());
             response.close();
@@ -56,14 +58,29 @@ public class ServerCommunication {
      *
      * @return List of course lectures.
      */
-    public List<Course> getAllCourse() {
+    public List<Course> getAllCourses(String token) {
         String url = ServerCommunication.COURSES_SERVICE_URL + "/getAllCourses";
-        Course[] result = this.makeGetRequest(url, Course[].class);
+        Course[] result = this.makeGetRequest(url, Course[].class, token);
         if (result == null) {
             return new ArrayList<Course>();
         }
-
         return Arrays.asList(result);
+    }
+
+    /**
+     * Uses the `/getUsername` endpoint from the Authentication service
+     * to get the username.
+     *
+     * @return the username
+     */
+    public String getUserId(String token) {
+        String url = ServerCommunication.COURSES_SERVICE_URL + "/getUsername";
+        String result = this.makeGetRequest(url, String.class, token);
+        if (result == null) {
+            return "no user";
+        }
+
+        return result;
     }
 
     /**
@@ -71,9 +88,9 @@ public class ServerCommunication {
      *
      * @return List of scheduled rooms.
      */
-    public List<RoomSchedule> getSchedule() {
+    public List<RoomSchedule> getSchedule(String token) {
         String url = ServerCommunication.ROOM_SCHEDULE_SERVICE_URL + "/getSchedule";
-        RoomSchedule[] result = this.makeGetRequest(url, RoomSchedule[].class);
+        RoomSchedule[] result = this.makeGetRequest(url, RoomSchedule[].class, token);
         if (result == null) {
             return new ArrayList<RoomSchedule>();
         }
