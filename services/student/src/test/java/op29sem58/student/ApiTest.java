@@ -15,8 +15,8 @@ import java.util.List;
 import op29sem58.student.communication.adapters.LocalDateTimeAdapter;
 import op29sem58.student.controllers.Authorization;
 import op29sem58.student.database.entities.Student;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.runner.RunWith;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -44,10 +44,14 @@ public class ApiTest {
             .create();
     transient MockedStatic<Authorization> mockedAuth;
 
-    @BeforeAll
+    /**
+     * Initialize the Authorization class to allow admins to perform operations.
+     */
+    @Before
     public void mockAuthorization() {
         this.mockedAuth = Mockito.mockStatic(Authorization.class);
-        this.mockedAuth.when(() -> Authorization.authorize("token", "Admin")).thenReturn(true);
+        this.mockedAuth.when(() -> Authorization.authorize("Bearer token", "Admin"))
+            .thenReturn(true);
     }
 
     @Test
@@ -63,9 +67,9 @@ public class ApiTest {
         gson.toJson(students);
         String requestJson = gson.toJson(students);
         this.mockMvc.perform(post("/initializeStudents").contentType(APPLICATION_JSON)
-            .header("Authorization", "token")
+            .header("Authorization", "Bearer token")
                 .content(requestJson)).andExpect(status().isOk());
-        this.mockMvc.perform(get("/getStudents"))
+        this.mockMvc.perform(get("/getStudents").header("Authorization", "Bearer token"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", hasSize(8)));
     }

@@ -55,7 +55,7 @@ public class StudentController {
     @PostMapping(path = "/initializeStudents")
     public void initializeStudents(@RequestHeader(authHeader) String token,
                                    @RequestBody List<Student> students) {
-        if (Authorization.authorize(token, "Teacher")) {
+        if (Authorization.authorize(token, "Admin")) {
             this.students.saveAll(students);
             this.students.flush();
         } else {
@@ -70,7 +70,7 @@ public class StudentController {
      */
     @GetMapping(path = "/getStudents")
     public List<Student> getStudents(@RequestHeader(authHeader) String token) {
-        if (Authorization.authorize(token, "Student")) {
+        if (Authorization.authorize(token, "Admin")) {
             return this.students.findAll();
         } else {
             throw new RuntimeException(errorMessage);
@@ -86,7 +86,7 @@ public class StudentController {
     @SuppressWarnings("PMD") //DU anomaly
     public void assignStudentsUntil(@RequestHeader(authHeader) String token,
                                     @RequestBody LocalDateTime date) {
-        if (Authorization.authorize(token, "Teacher")) {
+        if (Authorization.authorize(token, "Admin")) {
             // Request all courses with their lectures from coursesService,
             // so courseLecturesList is initialized.
             this.initializeCourses();
