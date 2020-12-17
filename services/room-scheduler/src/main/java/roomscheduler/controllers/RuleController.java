@@ -23,6 +23,10 @@ public class RuleController {
     @Autowired
     private RuleRepository ruleRepository;
 
+    final transient String authHeader = "Authorization";
+
+    transient String errorMessage = "You do not have the privilege to perform this action.";
+
     public RuleRepository getRuleRepository() {
         return ruleRepository;
     }
@@ -40,14 +44,13 @@ public class RuleController {
      * @throws IOException if something goes wrong
      */
     @PostMapping(path = "/createRule") // Map ONLY POST Requests
-    public @ResponseBody String addNewRule(@RequestHeader("Authorization") String token,
+    public @ResponseBody String addNewRule(@RequestHeader(authHeader) String token,
                                            @RequestBody Rule r) throws IOException {
         if (Authorization.authorize(token, "Teacher")) {
             ruleRepository.saveAndFlush(r);
             return "Saved rule";
         } else {
-            throw new RuntimeException("You do not have the privilege to perform " +
-                    "this action.");
+            throw new RuntimeException(errorMessage);
         }
     }
 
@@ -57,12 +60,11 @@ public class RuleController {
      * @return Array List with all rules
      */
     @GetMapping(path = "/allRules")
-    public @ResponseBody List<Rule> getAllRules(@RequestHeader("Authorization") String token) {
+    public @ResponseBody List<Rule> getAllRules(@RequestHeader(authHeader) String token) {
         if (Authorization.authorize(token, "Student")) {
             return ruleRepository.findAll();
         } else {
-            throw new RuntimeException("You do not have the privilege to perform " +
-                    "this action.");
+            throw new RuntimeException(errorMessage);
         }
     }
 
@@ -73,7 +75,7 @@ public class RuleController {
      * @return message
      */
     @PutMapping(path = "/modifyRule")
-    public @ResponseBody String editRule(@RequestHeader("Authorization") String token,
+    public @ResponseBody String editRule(@RequestHeader(authHeader) String token,
                                          @RequestBody Rule r) {
         if (Authorization.authorize(token, "Teacher")) {
             Optional<Rule> rule = ruleRepository.findById(r.getIdrules());
@@ -86,8 +88,7 @@ public class RuleController {
                 throw new RuntimeException("Rule not found for the id " + r.getIdrules());
             }
         } else {
-            throw new RuntimeException("You do not have the privilege to perform " +
-                    "this action.");
+            throw new RuntimeException(errorMessage);
         }
     }
 
@@ -98,7 +99,7 @@ public class RuleController {
      * @return message
      */
     @DeleteMapping(path = "/deleteRule/{id}")
-    public @ResponseBody String deleteRule(@RequestHeader("Authorization") String token,
+    public @ResponseBody String deleteRule(@RequestHeader(authHeader) String token,
                                            @PathVariable int id) {
         if (Authorization.authorize(token, "Teacher")) {
             Optional<Rule> rule = ruleRepository.findById(id);
@@ -109,8 +110,7 @@ public class RuleController {
                 throw new RuntimeException("Rule not found for the id " + id);
             }
         } else {
-            throw new RuntimeException("You do not have the privilege to perform " +
-                    "this action.");
+            throw new RuntimeException(errorMessage);
         }
     }
 

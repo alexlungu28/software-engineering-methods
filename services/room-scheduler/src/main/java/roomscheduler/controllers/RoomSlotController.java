@@ -36,6 +36,10 @@ public class RoomSlotController {
     @Autowired
     private RoomSlotRepository roomSlotRepository;
 
+    final transient String authHeader = "Authorization";
+
+    transient String errorMessage = "You do not have the privilege to perform this action.";
+
     public RoomSlotRepository getRoomSlotRepository() {
         return roomSlotRepository;
     }
@@ -54,7 +58,7 @@ public class RoomSlotController {
      */
     @PostMapping(path = "/addroomslot") // Map ONLY POST Requests
     public @ResponseBody
-    String addNewRoomSlot(@RequestHeader("Authorization") String token,
+    String addNewRoomSlot(@RequestHeader(authHeader) String token,
                           @RequestBody RoomSlot r) throws IOException {
         if (Authorization.authorize(token, "Teacher")) {
             Object a = RoomSlotCommunication.getRoom(r.getRooms_id());
@@ -65,8 +69,7 @@ public class RoomSlotController {
                 return "Saved room slot";
             }
         } else {
-            throw new RuntimeException("You do not have the privilege to perform " +
-                    "this action.");
+            throw new RuntimeException(errorMessage);
         }
     }
 
@@ -79,13 +82,12 @@ public class RoomSlotController {
      */
     @GetMapping(path = "/countRooms") // Map ONLY POST Requests
     public @ResponseBody
-    Long getNumberOfRooms(@RequestHeader("Authorization") String token) throws IOException {
+    Long getNumberOfRooms(@RequestHeader(authHeader) String token) throws IOException {
         if (Authorization.authorize(token, "Student")) {
             Long count = RoomSlotCommunication.numberOfRooms();
             return count;
         } else {
-            throw new RuntimeException("You do not have the privilege to perform " +
-                    "this action.");
+            throw new RuntimeException(errorMessage);
         }
     }
 
@@ -98,7 +100,7 @@ public class RoomSlotController {
      * @throws IOException ioException
      */
     @PutMapping(path = "/generateRoomSlots/{numDays}/{firstSlotDateTime}")
-    public @ResponseBody String generateRoomSlots(@RequestHeader("Authorization") String token,
+    public @ResponseBody String generateRoomSlots(@RequestHeader(authHeader) String token,
                                                   @PathVariable int numDays,
               @PathVariable String firstSlotDateTime) throws IOException {
         if (Authorization.authorize(token, "Admin")) {
@@ -130,8 +132,7 @@ public class RoomSlotController {
                     firstSlotDateTime, timeBetweenSlotsTime,
                     breakSlot, numberOfRooms);
         } else {
-            throw new RuntimeException("You do not have the privilege to perform " +
-                    "this action.");
+            throw new RuntimeException(errorMessage);
         }
     }
 
@@ -144,7 +145,7 @@ public class RoomSlotController {
      */
     @PostMapping(path = "/updateRoomSlot/{id}/{numOfSlots}")
     public @ResponseBody
-    String makeRoomSlotsOccupied(@RequestHeader("Authorization") String token,
+    String makeRoomSlotsOccupied(@RequestHeader(authHeader) String token,
                                  @PathVariable Integer id,
                                  @PathVariable Integer numOfSlots) {
         if (Authorization.authorize(token, "Teacher")) {
@@ -169,8 +170,7 @@ public class RoomSlotController {
                 throw new RuntimeException("Room slot not found for the id " + id);
             }
         } else {
-            throw new RuntimeException("You do not have the privilege to perform " +
-                    "this action.");
+            throw new RuntimeException(errorMessage);
         }
     }
 
@@ -182,7 +182,7 @@ public class RoomSlotController {
      */
     @PostMapping(path = "/makeRoomSlotAvailable/{id}")
     public @ResponseBody
-    String makeRoomSlotAvail(@RequestHeader("Authorization") String token,
+    String makeRoomSlotAvail(@RequestHeader(authHeader) String token,
                              @PathVariable Integer id) {
         if (Authorization.authorize(token, "Teacher")) {
             Optional<RoomSlot> roomSlot = roomSlotRepository.findById(id);
@@ -202,8 +202,7 @@ public class RoomSlotController {
                 throw new RuntimeException("Room slot not found for the id " + id);
             }
         } else {
-            throw new RuntimeException("You do not have the privilege to perform " +
-                    "this action.");
+            throw new RuntimeException(errorMessage);
         }
     }
 
@@ -215,12 +214,11 @@ public class RoomSlotController {
      */
     @GetMapping(path = "/allroomslots")
     public @ResponseBody
-    Iterable<RoomSlot> getAllRoomsSlots(@RequestHeader("Authorization") String token) {
+    Iterable<RoomSlot> getAllRoomsSlots(@RequestHeader(authHeader) String token) {
         if (Authorization.authorize(token, "Student")) {
             return roomSlotRepository.findAll();
         } else {
-            throw new RuntimeException("You do not have the privilege to perform " +
-                    "this action.");
+            throw new RuntimeException(errorMessage);
         }
     }
 
@@ -232,7 +230,7 @@ public class RoomSlotController {
      */
     @GetMapping(path = "/roomslot/{id}")
     public @ResponseBody
-    RoomSlot getRoomSlot(@RequestHeader("Authorization") String token,
+    RoomSlot getRoomSlot(@RequestHeader(authHeader) String token,
                          @PathVariable int id) {
         if (Authorization.authorize(token, "Student")) {
             Optional<RoomSlot> roomSlot = roomSlotRepository.findById(id);
@@ -242,8 +240,7 @@ public class RoomSlotController {
                 throw new RuntimeException("Room Slot not found for the id " + id);
             }
         } else {
-            throw new RuntimeException("You do not have the privilege to perform " +
-                    "this action.");
+            throw new RuntimeException(errorMessage);
         }
     }
 
