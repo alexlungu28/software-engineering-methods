@@ -13,9 +13,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import op29sem58.student.communication.adapters.LocalDateTimeAdapter;
+import op29sem58.student.controllers.Authorization;
 import op29sem58.student.database.entities.Student;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.runner.RunWith;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
@@ -35,11 +39,17 @@ public class ApiTest {
     @Autowired
     protected transient MockMvc mockMvc;
 
-
     final transient Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
             .create();
-    
+    transient MockedStatic<Authorization> mockedAuth;
+
+    @BeforeAll
+    public void mockAuthorization() {
+        this.mockedAuth = Mockito.mockStatic(Authorization.class);
+        this.mockedAuth.when(() -> Authorization.authorize("token", "Admin")).thenReturn(true);
+    }
+
     @Test
     public void exampleTest() throws Exception {
         List<Student> students = new ArrayList<>();
@@ -53,6 +63,7 @@ public class ApiTest {
         gson.toJson(students);
         String requestJson = gson.toJson(students);
         this.mockMvc.perform(post("/initializeStudents").contentType(APPLICATION_JSON)
+            .header("Authorization", "token")
                 .content(requestJson)).andExpect(status().isOk());
         this.mockMvc.perform(get("/getStudents"))
             .andExpect(status().isOk())
