@@ -16,6 +16,7 @@ import op29sem58.student.database.repos.StudentRepo;
 import op29sem58.student.local.entities.Course;
 import op29sem58.student.local.entities.Lecture;
 import op29sem58.student.local.entities.LectureDetails;
+import op29sem58.student.local.entities.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -115,6 +116,33 @@ public class StudentController {
         merge(campusLectures, onlineLectures);
 
         return campusLectures;
+    }
+
+    /**
+     * This should return all the courses the student sending the request,
+     * is enrolled in.
+     *
+     * @param token This is used to retrieve the user name.
+     * @return a list with all the student's courses
+     */
+    @GetMapping(path = "/allMyCourses")
+    @SuppressWarnings("PMD") //DU anomaly
+    public List<Pair<String, Integer>> getMyCourses(@RequestHeader("Authorization") String token) {
+        // We first create an empty ArrayList, We then get the student by the token.
+        List<Pair<String, Integer>> studentCourses = new ArrayList<>();
+        Student currentStudent = getStudentbyToken(token);
+
+        // Here we iterate through all the courses.
+        // We then just create a pair of the name and year and put it in the list
+        for (Course course : this.courseList) {
+            if (this.studentEnrollments.findByCourseIdAndStudent(course.getCourseId(),
+                    currentStudent).isEmpty()) {
+                continue;
+            }
+            Pair<String, Integer> courseY = new Pair<>(course.getName(), course.getYearOfStudy());
+            studentCourses.add(courseY);
+        }
+        return studentCourses;
     }
 
     /**
