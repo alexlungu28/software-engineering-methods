@@ -39,10 +39,9 @@ public class ApiTest {
     final transient Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
             .create();
-
-
+    
     @Test
-    public void initializingStudentsTest() throws Exception {
+    public void exampleTest() throws Exception {
         List<Student> students = new ArrayList<>();
         for (int i = 0; i < 8; i++) {
             Student student = new Student();

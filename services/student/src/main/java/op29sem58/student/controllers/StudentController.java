@@ -3,6 +3,7 @@ package op29sem58.student.controllers;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -13,14 +14,12 @@ import op29sem58.student.database.entities.StudentEnrollment;
 import op29sem58.student.database.repos.StudentBookingRepo;
 import op29sem58.student.database.repos.StudentEnrollmentRepo;
 import op29sem58.student.database.repos.StudentRepo;
-import op29sem58.student.local.entities.Course;
+import op29sem58.student.local.entities.CourseLectures;
 import op29sem58.student.local.entities.Lecture;
-import op29sem58.student.local.entities.LectureDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 // Here is the main Student Service code. This handles all the requests required to assign students.
@@ -40,10 +39,7 @@ public class StudentController {
     private transient StudentEnrollmentRepo studentEnrollments;
 
     //This is a list consisting of all the courses with their lectures.
-    private transient List<Course> courseList;
-
-    //This is a list consisting of all the lectures.
-    private transient List<Lecture> lectureList;
+    private transient List<CourseLectures> courseLecturesList;
 
     //This is our class to communicate with other microservices
     private transient ServerCommunication serverCommunication = new ServerCommunication();
@@ -67,98 +63,6 @@ public class StudentController {
         return this.students.findAll();
     }
 
-
-    /**
-     * This should return all the lectures of the student sending the request,
-     * This however is not the most optimal solution I could think of. But
-     * will have to do, because of time constraint.
-     *
-     * @param token This is used to retrieve the user name.
-     * @return a list with all it's lecture sorted ascending by date.
-     */
-    @GetMapping(path = "/allMyLectures")
-    @SuppressWarnings("PMD") //DU anomaly
-    public List<LectureDetails> getMyLectures(@RequestHeader("Authorization") String token) {
-        // We first create an empty ArrayList, We then get the student by studentID.
-        List<LectureDetails> campusLectures = new ArrayList<>();
-        Student currentStudent = getStudentbyToken(token);
-
-        // Here we iterate through all the allocated rooms for the student.
-        // We then just add it to our lectureDetail list(This will be sorted by date).
-        for (RoomSchedule roomSchedule : this.studentBookings.findByStudents(currentStudent)) {
-            String courseName = getCourseName(roomSchedule.getLectureId());
-            LectureDetails tempDetails = new LectureDetails(
-                    roomSchedule.getLectureId(), courseName, roomSchedule.getRoomId(), true,
-                    roomSchedule.getStartTime(), roomSchedule.getEndTime());
-            campusLectures.add(tempDetails);
-        }
-        // We iterate through the list of lectures already sorted by date.
-        // For every lecture we check if the student is enrolled.
-        // If student is enrolled we check if we already had a lecture scheduled in a room
-        // for the student, if not we can add the lecture to a list of onlineLectures.
-        // we end by calling a helper function to merge the two lists.
-        List<LectureDetails> onlineLectures = new ArrayList<>();
-        for (Lecture lecture : this.lectureList) {
-            if (studentIsEnrolledFor(currentStudent, lecture)) {
-                Optional<LectureDetails> alreadyAssigned = campusLectures.stream()
-                        .filter(e -> e.getLectureId() == lecture.getId()).findFirst();
-                if (alreadyAssigned.isPresent()) {
-                    continue;
-                }
-                String courseName = getCourseName(lecture.getId());
-                RoomSchedule rs = lecture.getRoomSchedule();
-                LectureDetails tempDetails = new LectureDetails(lecture.getId(), courseName,
-                        0, false, rs.getStartTime(), rs.getEndTime());
-                onlineLectures.add(tempDetails);
-            }
-        }
-        merge(campusLectures, onlineLectures);
-
-        return campusLectures;
-    }
-
-    /**
-     * Small helper function to get the student by token.
-     *
-     * @param token required to send to the auth server
-     * @return the student using the token
-     */
-    public Student getStudentbyToken(String token) {
-        String studentId = serverCommunication.getUserId(token);
-        return this.students.getOne(studentId);
-    }
-
-    /**
-     * To merge two LectureDetails list into one, so that it stay's sorted.
-     *
-     * @param l1 first list.
-     * @param l2 second list to merge.
-     */
-    @SuppressWarnings("PMD") //DU anomaly
-    public static void merge(List<LectureDetails> l1, List<LectureDetails> l2) {
-        for (int i = 0, j = 0; j < l2.size(); i++) {
-            if (i == l1.size() ||
-                    l1.get(i).getStartTime().isAfter(l2.get(j).getStartTime())) {
-                l1.add(i, l2.get(j++));
-            }
-        }
-    }
-
-    /**
-     * inefficient code just to get the courseName, due to lack of time this is the way we do it.
-     *
-     * @param lectureId to find the courseName
-     * @return name of the course.
-     */
-    public String getCourseName(int lectureId) throws IllegalStateException {
-        for (Course c : this.courseList) {
-            if (c.courseHasLecture(lectureId)) {
-                return c.getName();
-            }
-        }
-        throw new IllegalStateException("Lecture must be linked with a course.");
-    }
-
     /**
      * Assigns all students up until the date given in the options.
      *
@@ -166,14 +70,13 @@ public class StudentController {
      */
     @PostMapping(path = "/assignStudentsUntil")
     @SuppressWarnings("PMD") //DU anomaly
-    public void assignStudentsUntil(@RequestBody LocalDateTime date,
-                                    @RequestHeader("Authorization") String token) {
+    public void assignStudentsUntil(@RequestBody LocalDateTime date) {
         // Request all courses with their lectures from coursesService,
         // so courseLecturesList is initialized.
-        this.initializeCourses(token);
+        this.initializeCourses();
 
         // get all lectures to assign students to, sorted by their startTime
-        this.initializeAllScheduledLecturesUntil(date, token);
+        final List<Lecture> lectures = this.getAllScheduledSortedLecturesUntil(date);
 
         // Now that we have a list with all upcoming lectures sorted by earliest startTime.
         // We can allocate students to them. We do this by iterating through the lectures and 
@@ -189,14 +92,16 @@ public class StudentController {
         // list in the database. This Creates the many to many relationship in the database.
         // To be clear this stores all the students who go to campus.
         final List<RoomSchedule> studentSchedule = new ArrayList<>();
-        for (final Lecture lecture : this.lectureList) {
+        for (final Lecture lecture : lectures) {
             // get all students, where the highest priority students are at the start
             final List<Student> students = this.students.findByWantsToGoTrueOrderByLastVisitedAsc();
             final RoomSchedule roomSchedule = lecture.getRoomSchedule();
 
             int assignedStudents = 0;
             final int allowedStudents = roomSchedule.getCoronaCapacity();
-            for (Student student : students) {
+            Iterator<Student> i = students.iterator();
+            while (i.hasNext()) {
+                Student student = i.next();
                 if (this.studentIsEnrolledFor(student, lecture)) {
                     roomSchedule.addStudent(student);
                     student.setLastVisited(lecture.getRoomSchedule().getStartTime());
@@ -206,6 +111,7 @@ public class StudentController {
                         break;
                     }
                 }
+                i.remove();
             }
             studentSchedule.add(roomSchedule);
         }
@@ -218,8 +124,8 @@ public class StudentController {
      * This initializes all courses, by sending a request to the Courses Service.
      */
     @SuppressWarnings("PMD") //DU anomaly
-    private void initializeCourses(String token) {
-        courseList = this.serverCommunication.getAllCourses(token);
+    private void initializeCourses() {
+        courseLecturesList = this.serverCommunication.getAllLectures();
     }
 
     /**
@@ -233,18 +139,17 @@ public class StudentController {
      * @return a boolean if the student is enrolled.
      */
     private boolean studentIsEnrolledFor(Student student, Lecture lecture) {
-        Optional<Course> courseLecture = this.courseList.stream()
+        Optional<CourseLectures> courseLecture = courseLecturesList.stream()
                 .filter(e -> e.courseHasLecture(lecture.getId()))
                 .findFirst();
         if (courseLecture.isEmpty()) {
             return false;
         }
-        final List<StudentEnrollment> maybeStudentEnrollment =
+        final Optional<StudentEnrollment> maybeStudentEnrollment =
             this.studentEnrollments.findByCourseIdAndStudent(courseLecture.get()
                     .getCourseId(), student);
-        return !maybeStudentEnrollment.isEmpty();
+        return maybeStudentEnrollment.isPresent();
     }
-
 
     /**
      * This gets a sorted list of lectures sorted by upcoming.
@@ -252,16 +157,15 @@ public class StudentController {
      * @param date to get all lectures before date
      * @return return all lecture before date
      */
-    private void initializeAllScheduledLecturesUntil(LocalDateTime date,
-                                                     @RequestHeader("Authorization") String token) {
+    private List<Lecture> getAllScheduledSortedLecturesUntil(LocalDateTime date) {
         // get the schedule via getSchedule endpoint
-        final List<RoomSchedule> schedule = this.serverCommunication.getSchedule(token);
+        final List<RoomSchedule> schedule = this.serverCommunication.getSchedule();
 
         // sort the lectures by their start time
         schedule.sort(Comparator.comparing(RoomSchedule::getStartTime));
 
         // collect lectures that matter
-        this.lectureList = schedule.stream()
+        return schedule.stream()
             .filter(roomSchedule -> roomSchedule.getStartTime().isBefore(date))
             .map(roomSchedule -> new Lecture(roomSchedule.getLectureId(), roomSchedule))
             .collect(Collectors.toList());
