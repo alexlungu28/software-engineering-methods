@@ -26,6 +26,14 @@ public class RoomController {
     @Autowired
     private RoomRepository roomRepository;
 
+    final transient String authHeader = "Authorization";
+
+    transient String errorMessage = "You do not have the privilege to perform this action.";
+
+    transient String student = "Student";
+
+    transient String admin = "Admin";
+
     public RoomRepository getRoomRepository() {
         return roomRepository;
     }
@@ -43,12 +51,9 @@ public class RoomController {
      */
     @PostMapping(path = "/createRoom") // Map ONLY POST Requests
     public @ResponseBody
-    String addNewRoom(@RequestHeader("Authorization") String token, @RequestBody Room r) {
-        token = token.replace("Bearer ", "");
-        boolean isAuthorized = Authorization.authorize(token, "Admin");
-        if (!isAuthorized) {
-            throw new RuntimeException("You do not have the privilege to perform " +
-                    "this action.");
+    String addNewRoom(@RequestHeader(authHeader) String token, @RequestBody Room r) {
+        if (!Authorization.authorize(token, admin)) {
+            throw new RuntimeException(errorMessage);
         } else {
             roomRepository.saveAndFlush(r);
             return "Saved room";
@@ -63,12 +68,9 @@ public class RoomController {
      */
     @GetMapping(path = "/allrooms")
     public @ResponseBody
-    Iterable<Room> getAllRooms(@RequestHeader("Authorization") String token) {
-        token = token.replace("Bearer ", "");
-        boolean isAuthorized = Authorization.authorize(token, "Admin");
-        if (!isAuthorized) {
-            throw new RuntimeException("You do not have the privilege to perform " +
-                    "this action.");
+    Iterable<Room> getAllRooms(@RequestHeader(authHeader) String token) {
+        if (!Authorization.authorize(token, admin)) {
+            throw new RuntimeException(errorMessage);
         } else {
             return roomRepository.findAll();
         }
@@ -81,12 +83,9 @@ public class RoomController {
      * @return message ("saved" if token corresponds to an admin, exception otherwise)
      */
     @PutMapping(path = "/generateRooms")
-    public @ResponseBody String generateRooms(@RequestHeader("Authorization") String token) {
-        token = token.replace("Bearer ", "");
-        boolean isAuthorized = Authorization.authorize(token, "Admin");
-        if (!isAuthorized) {
-            throw new RuntimeException("You do not have the privilege to perform " +
-                    "this action.");
+    public @ResponseBody String generateRooms(@RequestHeader(authHeader) String token) {
+        if (!Authorization.authorize(token, admin)) {
+            throw new RuntimeException(errorMessage);
         } else {
             return roomRepository.createInitialRooms();
         }
@@ -101,12 +100,16 @@ public class RoomController {
      */
     @GetMapping(path = "/room/{id}")
     public @ResponseBody
-    Room getRoom(@PathVariable int id) {
-        Optional<Room> room = roomRepository.findById(id);
-        if (room.isPresent()) {
-            return room.get();
+    Room getRoom(@RequestHeader(authHeader) String token, @PathVariable int id) {
+        if (Authorization.authorize(token, student)) {
+            Optional<Room> room = roomRepository.findById(id);
+            if (room.isPresent()) {
+                return room.get();
+            } else {
+                throw new RuntimeException("Room not found for the id " + id);
+            }
         } else {
-            throw new RuntimeException("Room not found for the id " + id);
+            throw new RuntimeException(errorMessage);
         }
     }
 
@@ -117,16 +120,34 @@ public class RoomController {
      */
     @GetMapping(path = "/countRooms")
     public @ResponseBody
-    Long getNumberOfRooms() {
-        return roomRepository.count();
+    Long getNumberOfRooms(@RequestHeader(authHeader) String token) {
+        if (Authorization.authorize(token, student)) {
+            return roomRepository.count();
+        } else {
+            throw new RuntimeException(errorMessage);
+        }
     }
 
+    /**
+     * Get rooms with capacity that's at least a set amount.
+     *
+     * @param token jwt token
+     * @param numOfStudents number of students
+     * @param minPer minimum persons
+     * @param maxPer maximum persons
+     * @return the rooms that meet these conditions
+     */
     @GetMapping(path = "/getRoomsWithCapacityAtLeast/{numOfStudents}/{minPer}/{maxPer}")
     public @ResponseBody
-    List<RoomInfo> getRoomWithCapAtLeast(@PathVariable Integer numOfStudents,
+    List<RoomInfo> getRoomWithCapAtLeast(@RequestHeader(authHeader) String token,
+                                         @PathVariable Integer numOfStudents,
                                          @PathVariable Integer minPer,
                                          @PathVariable Integer maxPer) {
-        return roomRepository.getRoomsWithCapacityAtLeast(numOfStudents, minPer, maxPer);
+        if (Authorization.authorize(token, student)) {
+            return roomRepository.getRoomsWithCapacityAtLeast(numOfStudents, minPer, maxPer);
+        } else {
+            throw new RuntimeException(errorMessage);
+        }
     }
 
     /**
@@ -137,24 +158,42 @@ public class RoomController {
      */
     @PutMapping(path = "/modifyRoom")
     public @ResponseBody
-    String editRoom(@RequestBody Room r) {
-        Optional<Room> room = roomRepository.findById(r.getId());
-        if (room.isPresent()) {
-            room.get().setName(r.getName());
-            room.get().setCapacity(r.getCapacity());
-            roomRepository.saveAndFlush(room.get());
-            return "Changed Room";
+    String editRoom(@RequestHeader(authHeader) String token, @RequestBody Room r) {
+        if (Authorization.authorize(token, "Teacher")) {
+            Optional<Room> room = roomRepository.findById(r.getId());
+            if (room.isPresent()) {
+                room.get().setName(r.getName());
+                room.get().setCapacity(r.getCapacity());
+                roomRepository.saveAndFlush(room.get());
+                return "Changed Room";
+            } else {
+                throw new RuntimeException("Room not found for the id " + r.getId());
+            }
         } else {
-            throw new RuntimeException("Room not found for the id " + r.getId());
+            throw new RuntimeException(errorMessage);
         }
     }
 
+    /**
+     * Get the corona capacity of a room.
+     *
+     * @param token jwt token
+     * @param roomId id of room
+     * @param minPerc min people
+     * @param maxPerc max people
+     * @return the capacity
+     */
     @GetMapping(path = "/getCoronaCapacity/{roomId}/{minPerc}/{maxPerc}")
     public @ResponseBody
-    Integer coronaCapacity(@PathVariable Integer roomId,
+    Integer coronaCapacity(@RequestHeader(authHeader) String token,
+                           @PathVariable Integer roomId,
                              @PathVariable Integer minPerc,
                              @PathVariable Integer maxPerc) {
-        return roomRepository.getCoronaCapacity(roomId, minPerc, maxPerc);
+        if (Authorization.authorize(token, student)) {
+            return roomRepository.getCoronaCapacity(roomId, minPerc, maxPerc);
+        } else {
+            throw new RuntimeException(errorMessage);
+        }
     }
 
 
@@ -168,13 +207,17 @@ public class RoomController {
      */
     @DeleteMapping(path = "/deleteRoom/{id}")
     public @ResponseBody
-    String deleteRoom(@PathVariable int id) {
-        Optional<Room> room = roomRepository.findById(id);
-        if (room.isPresent()) {
-            roomRepository.deleteById(id);
-            return "Deleted Room";
+    String deleteRoom(@RequestHeader(authHeader) String token, @PathVariable int id) {
+        if (Authorization.authorize(token, admin)) {
+            Optional<Room> room = roomRepository.findById(id);
+            if (room.isPresent()) {
+                roomRepository.deleteById(id);
+                return "Deleted Room";
+            } else {
+                throw new RuntimeException("Room not found for the id " + id);
+            }
         } else {
-            throw new RuntimeException("Room not found for the id " + id);
+            throw new RuntimeException(errorMessage);
         }
     }
 
