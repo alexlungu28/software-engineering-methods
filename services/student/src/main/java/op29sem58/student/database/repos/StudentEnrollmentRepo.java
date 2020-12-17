@@ -1,6 +1,5 @@
 package op29sem58.student.database.repos;
 
-import java.util.List;
 import java.util.Optional;
 import op29sem58.student.database.entities.Student;
 import op29sem58.student.database.entities.StudentEnrollment;
@@ -15,5 +14,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface StudentEnrollmentRepo extends JpaRepository<StudentEnrollment, Integer> {
-    List<StudentEnrollment> findByCourseIdAndStudent(int courseId, Student student);
+    Optional<StudentEnrollment> findByCourseIdAndStudent(int courseId, Student student);
 }

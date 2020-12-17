@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import op29sem58.student.communication.adapters.LocalDateTimeAdapter;
 import op29sem58.student.database.entities.RoomSchedule;
-import op29sem58.student.local.entities.Course;
+import op29sem58.student.local.entities.CourseLectures;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -34,11 +34,9 @@ public class ServerCommunication {
         .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
         .create();
 
-    private <T> T makeGetRequest(String url, Class<T> classOf, String token) {
-        HttpGet request = new HttpGet((url));
-        request.addHeader("Authorization", token);
+    private <T> T makeGetRequest(String url, Class<T> classOf) {
         try (
-            CloseableHttpResponse response = ServerCommunication.client.execute(request)
+            CloseableHttpResponse response = ServerCommunication.client.execute(new HttpGet(url))
         ) {
             String body = EntityUtils.toString(response.getEntity());
             response.close();
@@ -53,34 +51,18 @@ public class ServerCommunication {
     }
 
     /**
-     * Uses the `/getAllCourses` endpoint from the Courses service to get all the courses with their
-     * lectures.
+     * Uses the `/getAllLectures` endpoint from the Courses service to get all lectures.
      *
      * @return List of course lectures.
      */
-    public List<Course> getAllCourses(String token) {
-        String url = ServerCommunication.COURSES_SERVICE_URL + "/getAllCourses";
-        Course[] result = this.makeGetRequest(url, Course[].class, token);
+    public List<CourseLectures> getAllLectures() {
+        String url = ServerCommunication.COURSES_SERVICE_URL + "/getAllLectures";
+        CourseLectures[] result = this.makeGetRequest(url, CourseLectures[].class);
         if (result == null) {
-            return new ArrayList<Course>();
+            return new ArrayList<CourseLectures>();
         }
+
         return Arrays.asList(result);
-    }
-
-    /**
-     * Uses the `/getUsername` endpoint from the Authentication service
-     * to get the username.
-     *
-     * @return the username
-     */
-    public String getUserId(String token) {
-        String url = ServerCommunication.COURSES_SERVICE_URL + "/getUsername";
-        String result = this.makeGetRequest(url, String.class, token);
-        if (result == null) {
-            return "no user";
-        }
-
-        return result;
     }
 
     /**
@@ -88,15 +70,13 @@ public class ServerCommunication {
      *
      * @return List of scheduled rooms.
      */
-    public List<RoomSchedule> getSchedule(String token) {
+    public List<RoomSchedule> getSchedule() {
         String url = ServerCommunication.ROOM_SCHEDULE_SERVICE_URL + "/getSchedule";
-        RoomSchedule[] result = this.makeGetRequest(url, RoomSchedule[].class, token);
+        RoomSchedule[] result = this.makeGetRequest(url, RoomSchedule[].class);
         if (result == null) {
             return new ArrayList<RoomSchedule>();
         }
 
         return Arrays.asList(result);
     }
-
-
 }
