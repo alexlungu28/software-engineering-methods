@@ -10,8 +10,8 @@ import org.junit.jupiter.api.Test;
 
 public class IdNamePairTest {
 
-    transient private IdNamePair idNamePair;
-    transient private String name;
+    transient IdNamePair idNamePair;
+    transient String name;
 
     /**
      * Method that, before each test, creates an IdNamePair
