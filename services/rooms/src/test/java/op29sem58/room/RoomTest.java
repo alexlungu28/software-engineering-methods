@@ -40,6 +40,42 @@ public class RoomTest {
         assertEquals(room.getCapacity(), (Integer) 100);
     }
 
+
+    @Test
+    public void setCapacityTest() {
+        try {
+            Room r = new Room("tz5", 200);
+            r.setCapacity(-1150);
+        } catch (IllegalArgumentException e) {
+            assertEquals(e.getMessage(), "invalid capacity");
+        }
+    }
+
+    @Test
+    public void nullEqualsTest() {
+        Room r = new Room("tz7", 200);
+        Object b = null;
+        assertTrue(!r.equals(b));
+    }
+
+    @Test
+    public void equalsTestSameObject() {
+        Room r = new Room("tz5", 200);
+        assertEquals(r, r);
+    }
+
+
+
+
+
+    @Test
+    public void testEqualsSymmetric() {
+        Room x = new Room("a", 10);
+        Room y = new Room("a", 10);
+        assertTrue(x.equals(y) && y.equals(x));
+        assertTrue(x.hashCode() == y.hashCode());
+    }
+
     /**
      * Testing the entity Room's equal method.
      * Checking to see if two instances of the same Room return true.
