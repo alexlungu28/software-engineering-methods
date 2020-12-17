@@ -91,7 +91,6 @@ public class CoursesController {
             String path = ServerCommunication.getRoomScheduleServiceUrl() + "/scheduleLecture/"
                     + l.getDate() + "/" + l.getNumberOfTimeslots() + "/" + l.getMinNoStudents()
                     + "/" + l.getId() + "/" + l.getCourse().getYearOfStudy();
-            System.out.println(path);
             String response = ServerCommunication.makeGetRequest(path);
             if (response == null) {
                 return "Something went wrong on our end. Please try again later.";
