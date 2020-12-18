@@ -19,7 +19,6 @@ public class RoomSlotCommunication extends ServerCommunication {
         String port = "8080"; //this is the port of the room-service
         String path = "/room/" + id;
         JsonObject jsonObject = gson.fromJson(getObjectJson(port, path), JsonObject.class);
-        System.out.println(jsonObject);
         if (jsonObject.get("status") == null) {
             return "ok";
         } else {
@@ -40,7 +39,7 @@ public class RoomSlotCommunication extends ServerCommunication {
      */
     public static List<Rule> getRules() throws IOException {
         String port = "8081";
-        String path = "/allrules";
+        String path = "/allRules";
         return stringToArray(getObjectJson(port, path), Rule[].class);
     }
 

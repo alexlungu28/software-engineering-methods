@@ -1,11 +1,14 @@
 package op29sem58.student.local.entities;
 
+import java.time.LocalDateTime;
+
 public class LectureDetails {
     private int lectureId;
     private String courseName;
     private int roomId;
     private boolean onCampus;
-
+    private transient LocalDateTime startTime;
+    private transient LocalDateTime endTime;
 
     /**
      * This is to store the details of a lecture.
@@ -15,11 +18,14 @@ public class LectureDetails {
      * @param roomId the id of the room
      * @param onCampus if the lecture is on campus
      */
-    public LectureDetails(int lectureId, String courseName, int roomId, boolean onCampus) {
+    public LectureDetails(int lectureId, String courseName, int roomId, boolean onCampus,
+                          LocalDateTime startTime, LocalDateTime endTime) {
         this.lectureId = lectureId;
         this.courseName = courseName;
         this.roomId = roomId;
         this.onCampus = onCampus;
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 
     public int getLectureId() {
@@ -52,5 +58,21 @@ public class LectureDetails {
 
     public void setRoomId(int roomId) {
         this.roomId = roomId;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
     }
 }
