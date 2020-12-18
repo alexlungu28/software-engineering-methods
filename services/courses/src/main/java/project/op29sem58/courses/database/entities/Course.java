@@ -1,10 +1,17 @@
 package project.op29sem58.courses.database.entities;
 
 import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Course {
@@ -17,6 +24,17 @@ public class Course {
     private String name;
     private String code;
     private int yearOfStudy;
+
+    @SuppressWarnings("PMD") //DU anomaly
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+    @JsonIdentityReference(alwaysAsId = true)
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<Lecture> lectures;
+
+    public Course(){}
 
     /**
      * Constructor for the course entity.
@@ -31,6 +49,21 @@ public class Course {
         this.name = name;
         this.code = code;
         this.yearOfStudy = yearOfStudy;
+        this.lectures = new ArrayList<>();
+    }
+
+    public void addLectures(Lecture lecture) {
+        this.lectures.add(lecture);
+        lecture.setCourse(this);
+    }
+
+    public void removeLecture(Lecture lecture) {
+        this.lectures.remove(lecture);
+        lecture.setCourse(null);
+    }
+
+    public List<Lecture> getLectures() {
+        return lectures;
     }
 
     public void setId(int id) {

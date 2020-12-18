@@ -1,5 +1,6 @@
 package project.op29sem58.courses.database.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDate;
 import java.util.Objects;
 import javax.persistence.Entity;
@@ -17,13 +18,13 @@ public class Lecture {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
+    @JsonIgnoreProperties({"lectures"})
     @ManyToOne
     private Course course;
     private LocalDate date;
     private int numberOfTimeslots;
     private int minNoStudents;
 
-    public Lecture(){}
 
     /**
      * Constructor for the lecture entity.
@@ -34,10 +35,13 @@ public class Lecture {
      * @param minNumberOfStudents the minimum number of students that should attend this lecture
      */
     public Lecture(Course course, LocalDate date, int numberOfTimeSlots, int minNumberOfStudents) {
-        this.course = course;
+        course.addLectures(this);
         this.date = date;
         this.numberOfTimeslots = numberOfTimeSlots;
         this.minNoStudents = minNumberOfStudents;
+    }
+
+    public Lecture() {
     }
 
     public void setId(int id) {
