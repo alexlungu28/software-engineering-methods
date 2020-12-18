@@ -60,7 +60,7 @@ class RoomControllerTest {
 
     @AfterAll
     public static void closeMock() {
-        mockedAuth.reset();
+        mockedAuth.close();
     }
 
 

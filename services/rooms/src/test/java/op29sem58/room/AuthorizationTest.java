@@ -19,6 +19,7 @@ import org.apache.http.message.BasicStatusLine;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +52,7 @@ public class AuthorizationTest {
 
     @AfterAll
     public static void closeMock() {
-        mockedAuth.reset();
+        mockedAuth.close();
     }
 
     @SuppressWarnings("PMD")
@@ -59,7 +60,7 @@ public class AuthorizationTest {
     public void authorizeTestAdmin() throws Exception {
 
         CloseableHttpResponse response = Mockito.mock(CloseableHttpResponse.class);
-        HttpEntity entity = Mockito.mock(HttpEntity.class);
+        final HttpEntity entity = Mockito.mock(HttpEntity.class);
         Mockito.when(response.getStatusLine()).thenReturn(new BasicStatusLine(
                 HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK"));
 
@@ -68,6 +69,7 @@ public class AuthorizationTest {
         this.mockMvc.perform(MockMvcRequestBuilders.get("/allrooms")
                 .header(authorization, bearer))
                 .andExpect(status().isOk());
+        Mockito.reset(entity, response);
     }
 
     @SuppressWarnings("PMD")
@@ -83,6 +85,7 @@ public class AuthorizationTest {
         Mockito.when(r.getAllRooms(Mockito.anyString())).thenThrow(new RuntimeException());
         this.mockMvc.perform(MockMvcRequestBuilders.get("/allrooms"))
                 .andExpect(status().isBadRequest());
+        Mockito.reset(response, roomConMock, r);
     }
 
     @Test
