@@ -10,10 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.Arrays;
 import op29sem58.authentication.AuthenticationService;
 import op29sem58.authentication.roles.Role;
-import org.junit.After;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
@@ -24,13 +21,11 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WithMockUser(roles = "ADMIN")
 @SpringBootTest(classes = AuthenticationService.class)
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
-@RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase(replace = Replace.ANY)
 class UserControllerTest {
@@ -42,11 +37,6 @@ class UserControllerTest {
 
     @MockBean
     transient UserService userService;
-
-    @After
-    public void reset_mocks() {
-        Mockito.reset(mvc);
-    }
 
     @Test
     public void getAllUsers()
