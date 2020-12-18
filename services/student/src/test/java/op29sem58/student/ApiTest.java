@@ -55,11 +55,6 @@ public class ApiTest {
         this.mockedAuth.when(() -> Authorization.authorize("Bearer token", Role.Admin))
             .thenReturn(true);
     }
-    
-    @Test
-    public void fail() {
-        assertEquals(false, true);
-    }
 
     @Test
     public void exampleTest() throws Exception {
