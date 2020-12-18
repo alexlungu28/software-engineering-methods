@@ -88,14 +88,5 @@ public class AuthorizationTest {
         Mockito.reset(response, roomConMock, r);
     }
 
-    @Test
-    public void testThatReturnsJson() throws IOException {
-        String jsonMimeType = "application/json";
-        HttpUriRequest request = new HttpGet("http://localhost:8090/isAdmin");
-        HttpResponse response = HttpClientBuilder.create().build().execute(request);
-        String mimeType = ContentType.getOrDefault(response.getEntity()).getMimeType();
-        assertEquals(jsonMimeType, mimeType);
-    }
-
 
 }
