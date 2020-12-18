@@ -124,7 +124,8 @@ public class RoomController {
     public ResponseEntity<List<RoomInfo>> getRoomWithCapAtLeast(@PathVariable Integer numOfStudents,
                                          @PathVariable Integer minPer,
                                          @PathVariable Integer maxPer) {
-        return ResponseEntity.ok(roomRepository.getRoomsWithCapacityAtLeast(numOfStudents, minPer, maxPer));
+        return ResponseEntity.ok(roomRepository.getRoomsWithCapacityAtLeast(
+                numOfStudents, minPer, maxPer));
     }
 
     /**
