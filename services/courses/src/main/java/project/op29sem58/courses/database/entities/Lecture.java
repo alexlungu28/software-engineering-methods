@@ -1,7 +1,6 @@
 package project.op29sem58.courses.database.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import java.time.LocalDate;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
