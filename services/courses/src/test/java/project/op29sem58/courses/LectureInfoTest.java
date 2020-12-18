@@ -15,7 +15,7 @@ public class LectureInfoTest {
 
     @BeforeEach
     public void setUp() {
-        lectureInfo = new LectureInfo(1, java.time.LocalDate.of(2020, 12, 12), 3, 2);
+        lectureInfo = new LectureInfo(java.time.LocalDate.of(2020, 12, 12), 3, 2);
     }
 
     @Test
@@ -31,7 +31,7 @@ public class LectureInfoTest {
 
     @Test
     public void getCourseIdTest() {
-        assertEquals(1, lectureInfo.getCourseId());
+        assertEquals(1, lectureInfo);
     }
 
     @Test
@@ -49,11 +49,6 @@ public class LectureInfoTest {
         assertEquals(2, lectureInfo.getMinNoStudents());
     }
 
-    @Test
-    public void setCourseIdTest() {
-        lectureInfo.setCourseId(2);
-        assertEquals(2, lectureInfo.getCourseId());
-    }
 
     @Test
     public void setDateTest() {
@@ -75,7 +70,7 @@ public class LectureInfoTest {
 
     @Test
     public void toStringTest() {
-        assertEquals("LectureInfo{courseId=1, date=2020-12-12, nSlots=3, " +
+        assertEquals("LectureInfo{date=2020-12-12, nSlots=3, " +
                 "minNoStudents=2}", lectureInfo.toString());
     }
 
