@@ -1,4 +1,4 @@
-package op29sem58.room.controllers;
+package op29sem58.student.controllers;
 
 import java.io.IOException;
 import org.apache.http.client.ClientProtocolException;
@@ -8,8 +8,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-
-
 
 public class Authorization {
 
@@ -26,6 +24,7 @@ public class Authorization {
      */
     @SuppressWarnings("PMD")
     public static boolean authorize(String token, String role) {
+        token = token.replace("Bearer ", "");
         CloseableHttpResponse response = sendGetRequest("8090", "is" + role, token);
         int statusCode = response.getStatusLine().getStatusCode();
         return statusCode == 200;

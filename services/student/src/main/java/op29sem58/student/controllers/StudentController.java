@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import op29sem58.student.communication.ServerCommunication;
+import op29sem58.student.communication.authorization.Authorization;
+import op29sem58.student.communication.authorization.Role;
 import op29sem58.student.database.entities.RoomSchedule;
 import op29sem58.student.database.entities.Student;
 import op29sem58.student.database.entities.StudentEnrollment;
@@ -18,6 +20,8 @@ import op29sem58.student.local.entities.Lecture;
 import op29sem58.student.local.entities.LectureDetails;
 import op29sem58.student.local.entities.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,6 +44,8 @@ public class StudentController {
     @Autowired
     private transient StudentEnrollmentRepo studentEnrollments;
 
+    final transient String authHeader = "Authorization";
+
     //This is a list consisting of all the courses with their lectures.
     private transient List<Course> courseList;
 
@@ -53,9 +59,15 @@ public class StudentController {
      * Initialize a default student set.
      */
     @PostMapping(path = "/initializeStudents")
-    public void initializeStudents(@RequestBody List<Student> students) {
+    public ResponseEntity<Void> initializeStudents(@RequestHeader(authHeader) String token,
+                                   @RequestBody List<Student> students) {
+        if (!Authorization.authorize(token, Role.Admin)) {
+            return new ResponseEntity<Void>(HttpStatus.FORBIDDEN);
+        }
+
         this.students.saveAll(students);
         this.students.flush();
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
     /**
@@ -64,8 +76,12 @@ public class StudentController {
      * @return list with all students in the database
      */
     @GetMapping(path = "/getStudents")
-    public List<Student> getStudents() {
-        return this.students.findAll();
+    public ResponseEntity<List<Student>> getStudents(@RequestHeader(authHeader) String token) {
+        if (!Authorization.authorize(token, Role.Admin)) {
+            return new ResponseEntity<List<Student>>(HttpStatus.FORBIDDEN);
+        }
+
+        return new ResponseEntity<List<Student>>(this.students.findAll(), HttpStatus.OK);
     }
 
 
@@ -79,7 +95,7 @@ public class StudentController {
      */
     @GetMapping(path = "/allMyLectures")
     @SuppressWarnings("PMD") //DU anomaly
-    public List<LectureDetails> getMyLectures(@RequestHeader("Authorization") String token) {
+    public List<LectureDetails> getMyLectures(@RequestHeader(authHeader) String token) {
         // We first create an empty ArrayList, We then get the student by studentID.
         List<LectureDetails> campusLectures = new ArrayList<>();
         Student currentStudent = getStudentbyToken(token);
@@ -127,7 +143,7 @@ public class StudentController {
      */
     @GetMapping(path = "/allMyCourses")
     @SuppressWarnings("PMD") //DU anomaly
-    public List<Pair<String, Integer>> getMyCourses(@RequestHeader("Authorization") String token) {
+    public List<Pair<String, Integer>> getMyCourses(@RequestHeader(authHeader) String token) {
         // We first create an empty ArrayList, We then get the student by the token.
         List<Pair<String, Integer>> studentCourses = new ArrayList<>();
         Student currentStudent = getStudentbyToken(token);
@@ -194,8 +210,12 @@ public class StudentController {
      */
     @PostMapping(path = "/assignStudentsUntil")
     @SuppressWarnings("PMD") //DU anomaly
-    public void assignStudentsUntil(@RequestBody LocalDateTime date,
-                                    @RequestHeader("Authorization") String token) {
+    public ResponseEntity<Void> assignStudentsUntil(@RequestHeader(authHeader) String token,
+                                    @RequestBody LocalDateTime date) {
+        if (!Authorization.authorize(token, Role.Admin)) {
+            return new ResponseEntity<Void>(HttpStatus.FORBIDDEN);
+        }
+
         // Request all courses with their lectures from coursesService,
         // so courseLecturesList is initialized.
         this.initializeCourses(token);
@@ -204,13 +224,13 @@ public class StudentController {
         this.initializeAllScheduledLecturesUntil(date, token);
 
         // Now that we have a list with all upcoming lectures sorted by earliest startTime.
-        // We can allocate students to them. We do this by iterating through the lectures and 
-        // getting the scheduled room for each lecture. For each lecture we also make a call to our
-        // repository to get all students, sorted by last visited. This makes sure that we always
+        // We can allocate students to them. We do this by iterating through the lectures and
+        // getting the scheduled room for each lecture. For each lecture we also call our
+        // repository to get all students, sorted by last visited. This ensures that we always
         // allocate the last visited students. We retrieve the room of the lecture and also keep
-        // track of the allocatedStudents for that room and use the retrieved coronaCapacity as the
-        // upperbound. Knowing this, we can iterate through all the students to check if they are
-        // enrolled for the lecture, if so we add them to the roomSchedule, modify the student 
+        // track of the allocatedStudents for that room and use the coronaCapacity as the
+        // upperbound. Knowing this, we can iterate through all students to check if they are
+        // enrolled for the lecture, if so we add them to the roomSchedule, modify the student
         // lastVisited by the startTime of the lecture. Increment the assignedStudents variable
         // and then check if the assigned students equals the allowedStudents. if so we break.
         // We end with a list of RoomSchedules which are linked with students and we save this
@@ -219,7 +239,8 @@ public class StudentController {
         final List<RoomSchedule> studentSchedule = new ArrayList<>();
         for (final Lecture lecture : this.lectureList) {
             // get all students, where the highest priority students are at the start
-            final List<Student> students = this.students.findByWantsToGoTrueOrderByLastVisitedAsc();
+            final List<Student> students =
+                    this.students.findByWantsToGoTrueOrderByLastVisitedAsc();
             final RoomSchedule roomSchedule = lecture.getRoomSchedule();
 
             int assignedStudents = 0;
@@ -240,6 +261,7 @@ public class StudentController {
         // save in database
         this.studentBookings.saveAll(studentSchedule);
         this.studentBookings.flush();
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
     /**
@@ -281,7 +303,7 @@ public class StudentController {
      * @return return all lecture before date
      */
     private void initializeAllScheduledLecturesUntil(LocalDateTime date,
-                                                     @RequestHeader("Authorization") String token) {
+                                                     @RequestHeader(authHeader) String token) {
         // get the schedule via getSchedule endpoint
         final List<RoomSchedule> schedule = this.serverCommunication.getSchedule(token);
 
