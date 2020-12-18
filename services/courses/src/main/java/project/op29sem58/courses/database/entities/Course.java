@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.util.Objects;
 
 @Entity
 public class Course {
@@ -16,8 +17,6 @@ public class Course {
     private String name;
     private String code;
     private int yearOfStudy;
-
-    public Course(){}
 
     /**
      * Constructor for the course entity.
@@ -72,5 +71,21 @@ public class Course {
 
     public void setYearOfStudy(int yearOfStudy) {
         this.yearOfStudy = yearOfStudy;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Course course = (Course) o;
+        return Objects.equals(teacherNetId, course.teacherNetId)
+                && Objects.equals(id, course.id)
+                && Objects.equals(name, course.name)
+                && Objects.equals(code, course.code)
+                && Objects.equals(yearOfStudy, course.yearOfStudy);
     }
 }
