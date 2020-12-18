@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseBody;
 import roomscheduler.communication.RoomScheduleCommunication;
+import roomscheduler.communication.authorization.Authorization;
+import roomscheduler.communication.authorization.Role;
 import roomscheduler.entities.IdNamePair;
 import roomscheduler.entities.IntPair;
 import roomscheduler.entities.NameDateInfo;
@@ -67,12 +69,12 @@ public class RoomScheduleController {
     public @ResponseBody
     String addNewRoomSchedule(@RequestHeader(authHeader) String token,
                               @RequestBody RoomSchedule r) {
-        if (Authorization.authorize(token, "Admin")) {
-            roomScheduleRepository.saveAndFlush(r);
-            return "Saved room schedule";
-        } else {
+        if (!Authorization.authorize(token, Role.Admin)) {
             throw new RuntimeException(errorMessage);
         }
+
+        roomScheduleRepository.saveAndFlush(r);
+        return "Saved room schedule";
     }
 
     /**
@@ -221,20 +223,20 @@ public class RoomScheduleController {
     public @ResponseBody
     String deleteLecture(@RequestHeader(authHeader) String token,
                          @PathVariable int id) throws IOException {
-        if (Authorization.authorize(token, "Teacher")) {
-            List<IntPair> values = roomScheduleRepository.getSlotIdAndRoomSlotId(id);
-            if (values.size() == 0) {
-                return "There is no scheduled lecture with the given id";
-            } else {
-                for (IntPair p : values) {
-                    roomScheduleRepository.deleteById(p.getRoomScheduleId());
-                    RoomScheduleCommunication.makeRoomSlotAvailable(p.getRoomSlotId());
-                }
-            }
-            return "Canceled lecture";
-        } else {
+        if (!Authorization.authorize(token, Role.Teacher)) {
             throw new RuntimeException(errorMessage);
         }
+
+        List<IntPair> values = roomScheduleRepository.getSlotIdAndRoomSlotId(id);
+        if (values.size() == 0) {
+            return "There is no scheduled lecture with the given id";
+        } else {
+            for (IntPair p : values) {
+                roomScheduleRepository.deleteById(p.getRoomScheduleId());
+                RoomScheduleCommunication.makeRoomSlotAvailable(p.getRoomSlotId());
+            }
+        }
+        return "Canceled lecture";
     }
 
 
@@ -249,11 +251,11 @@ public class RoomScheduleController {
     @GetMapping(path = "/allroomsschedules")
     public @ResponseBody
     Iterable<RoomSchedule> getAllRoomsSchedules(@RequestHeader(authHeader) String token) {
-        if (Authorization.authorize(token, student)) {
-            return roomScheduleRepository.findAll();
-        } else {
+        if (!Authorization.authorize(token, Role.Student)) {
             throw new RuntimeException(errorMessage);
         }
+
+        return roomScheduleRepository.findAll();
     }
 
     /**
@@ -266,15 +268,15 @@ public class RoomScheduleController {
     public @ResponseBody
     RoomSchedule getRoomSchedule(@RequestHeader(authHeader) String token,
                                  @PathVariable int id) {
-        if (Authorization.authorize(token, student)) {
-            Optional<RoomSchedule> roomSchedule = roomScheduleRepository.findById(id);
-            if (roomSchedule.isPresent()) {
-                return roomSchedule.get();
-            } else {
-                throw new RuntimeException("Room Schedule not found for the id " + id);
-            }
-        } else {
+        if (!Authorization.authorize(token, Role.Student)) {
             throw new RuntimeException(errorMessage);
+        }
+
+        Optional<RoomSchedule> roomSchedule = roomScheduleRepository.findById(id);
+        if (roomSchedule.isPresent()) {
+            return roomSchedule.get();
+        } else {
+            throw new RuntimeException("Room Schedule not found for the id " + id);
         }
     }
 

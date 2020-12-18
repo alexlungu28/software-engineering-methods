@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import op29sem58.student.communication.ServerCommunication;
 import op29sem58.student.communication.authorization.Authorization;
 import op29sem58.student.communication.authorization.Role;
@@ -19,7 +18,6 @@ import op29sem58.student.database.repos.StudentEnrollmentRepo;
 import op29sem58.student.database.repos.StudentRepo;
 import op29sem58.student.local.entities.CourseLectures;
 import op29sem58.student.local.entities.Lecture;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

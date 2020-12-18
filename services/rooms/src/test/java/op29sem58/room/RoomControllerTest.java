@@ -5,6 +5,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import op29sem58.room.communication.authorization.Authorization;
+import op29sem58.room.communication.authorization.Role;
 import op29sem58.room.controllers.RoomController;
 import op29sem58.room.entities.Room;
 import org.hamcrest.Matchers;
@@ -54,7 +56,7 @@ class RoomControllerTest {
     @BeforeAll
     public static void mockAuthorization() {
         mockedAuth = Mockito.mockStatic(Authorization.class);
-        mockedAuth.when(() -> Authorization.authorize("Bearer token", "Admin")).thenReturn(true);
+        mockedAuth.when(() -> Authorization.authorize("Bearer token", Role.Admin)).thenReturn(true);
     }
 
     @AfterAll
