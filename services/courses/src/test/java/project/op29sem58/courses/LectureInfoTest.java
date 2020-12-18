@@ -66,8 +66,8 @@ public class LectureInfoTest {
 
     @Test
     public void toStringTest() {
-        assertEquals("LectureInfo{date=2020-12-12, nSlots=3, " +
-                "minNoStudents=2}", lectureInfo.toString());
+        assertEquals("LectureInfo{date=2020-12-12, numberOfTimeslots=3," +
+                " minNoStudents=2}", lectureInfo.toString());
     }
 
 
