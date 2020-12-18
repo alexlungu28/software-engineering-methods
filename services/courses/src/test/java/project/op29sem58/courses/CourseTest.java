@@ -15,17 +15,23 @@ import project.op29sem58.courses.database.entities.Course;
 @SpringBootTest
 public class CourseTest {
 
-    private String teacherNetId;
-    private String name;
-    private String code;
-    private int yearOfStudy;
-    private Course course;
+    private transient String teacherNetId;
+    private transient String name;
+    private transient String code;
+    private transient int yearOfStudy;
+    private transient Course course;
+    private transient String ads = "ads";
+    private transient String cc = "Cse1305";
 
+    /**
+     * Method that, before each test, creates an instance of a course.
+     * This will will be used for testing.
+     */
     @BeforeEach
     public void setUp() {
         this.teacherNetId = "1";
-        this.name = "ads";
-        this.code = "Cse1305";
+        this.name = ads;
+        this.code = cc;
         this.yearOfStudy = 1;
         course = new Course(teacherNetId, name, code, yearOfStudy);
     }
@@ -34,8 +40,8 @@ public class CourseTest {
     public void constructorTest() {
         assertNotNull(course);
         assertEquals(course.getTeacherNetId(), "1");
-        assertEquals(course.getName(), "ads");
-        assertEquals(course.getCode(), "Cse1305");
+        assertEquals(course.getName(), ads);
+        assertEquals(course.getCode(), cc);
         assertEquals(course.getYearOfStudy(), 1);
     }
 
@@ -65,24 +71,24 @@ public class CourseTest {
 
     @Test
     public void getNameTest() {
-        assertEquals(course.getName(), "ads");
+        assertEquals(course.getName(), ads);
     }
 
     @Test
     public void setNameTest() {
-        assertEquals(course.getName(), "ads");
+        assertEquals(course.getName(), ads);
         course.setName("AD");
         assertEquals(course.getName(), "AD");
     }
 
     @Test
     public void getCodeTest() {
-        assertEquals(course.getCode(), "Cse1305");
+        assertEquals(course.getCode(), cc);
     }
 
     @Test
     public void setCodeTest() {
-        assertEquals(course.getCode(), "Cse1305");
+        assertEquals(course.getCode(), cc);
         course.setCode("Cse1315");
         assertEquals(course.getCode(), "Cse1315");
     }
@@ -101,15 +107,15 @@ public class CourseTest {
 
     @Test
     public void equalsTest() {
-        Course c = new Course("1", "ads", "Cse1305", 1);
-        Course c2 = new Course("2", "xx", "Cse1305", 1);
-        Course c3 = new Course("1", "xx", "Cse1305", 1);
-        Course c4 = new Course("1", "ads", "xxx", 1);
-        Course c5 = new Course("1", "ads", "xx", 2);
+        Course c = new Course("1", ads, cc, 1);
         assertTrue(course.equals(c));
+        Course c2 = new Course("2", "xx", cc, 1);
         assertFalse(course.equals(c2));
+        Course c3 = new Course("1", "xx", cc, 1);
         assertFalse(course.equals(c3));
+        Course c4 = new Course("1", ads, "xxx", 1);
         assertFalse(course.equals(c4));
+        Course c5 = new Course("1", ads, "xx", 2);
         assertFalse(course.equals(c5));
     }
 

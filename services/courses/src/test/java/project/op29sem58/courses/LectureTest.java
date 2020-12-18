@@ -1,27 +1,30 @@
 package project.op29sem58.courses;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
 import org.springframework.boot.test.context.SpringBootTest;
 import project.op29sem58.courses.database.entities.Course;
 import project.op29sem58.courses.database.entities.Lecture;
 
-import java.time.LocalDate;
-
-import static org.junit.Assert.*;
-
 @SpringBootTest
 public class LectureTest {
 
-    private Course course;
-    private LocalDate date;
-    private int numberOfTimeslots;
-    private int minNoStudents;
-    private Lecture lecture;
-    private Course exmpleCourse =  new Course("1", "ads", "Cse1305", 1);
-    private static MockedStatic<LocalDate> mockedDate;
+    private transient Course course;
+    private transient LocalDate date;
+    private transient int numberOfTimeslots;
+    private transient int minNoStudents;
+    private transient Lecture lecture;
+    private transient Course exmpleCourse =  new Course("1", "ads", "Cse1305", 1);
 
+    /**
+     * Method that, before each test, creates an instance of Lecture.
+     * This will be used for testing.
+     */
     @BeforeEach
     public void setUp() {
         this.course = exmpleCourse;
