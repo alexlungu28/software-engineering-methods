@@ -50,7 +50,6 @@ public class CoursesController {
     @PostMapping(path = "/createLecture/{courseId}")
     public @ResponseBody String createCourse(@PathVariable int courseId,
                                              @RequestBody LectureInfo l) {
-        System.out.println(courseId);
         Optional<Course> courseOpt = coursesRepo
                 .findById(courseId);
 
