@@ -11,7 +11,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseBody;
+import roomscheduler.communication.authorization.Authorization;
+import roomscheduler.communication.authorization.Role;
 import roomscheduler.entities.Rule;
 import roomscheduler.repositories.RuleRepository;
 
@@ -22,6 +25,10 @@ public class RuleController {
     @Autowired
     private RuleRepository ruleRepository;
 
+    final transient String authHeader = "Authorization";
+
+    transient String errorMessage = "You do not have the privilege to perform this action.";
+
     public RuleRepository getRuleRepository() {
         return ruleRepository;
     }
@@ -30,8 +37,21 @@ public class RuleController {
         this.ruleRepository = ruleRepo;
     }
 
+    /**
+     * Create a new rule.
+     *
+     * @param token jwt token
+     * @param r rule
+     * @return saved if successful, error if otherwise
+     * @throws IOException if something goes wrong
+     */
     @PostMapping(path = "/createRule") // Map ONLY POST Requests
-    public @ResponseBody String addNewRule(@RequestBody Rule r) throws IOException {
+    public @ResponseBody String addNewRule(@RequestHeader(authHeader) String token,
+                                           @RequestBody Rule r) throws IOException {
+        if (!Authorization.authorize(token, Role.Teacher)) {
+            throw new RuntimeException(errorMessage);
+        }
+
         ruleRepository.saveAndFlush(r);
         return "Saved rule";
     }
@@ -53,7 +73,12 @@ public class RuleController {
      * @return message
      */
     @PutMapping(path = "/modifyRule")
-    public @ResponseBody String editRule(@RequestBody Rule r) {
+    public @ResponseBody String editRule(@RequestHeader(authHeader) String token,
+                                         @RequestBody Rule r) {
+        if (!Authorization.authorize(token, Role.Teacher)) {
+            throw new RuntimeException(errorMessage);
+        }
+
         Optional<Rule> rule = ruleRepository.findById(r.getIdrules());
         if (rule.isPresent()) {
             rule.get().setName(r.getName());
@@ -72,7 +97,12 @@ public class RuleController {
      * @return message
      */
     @DeleteMapping(path = "/deleteRule/{id}")
-    public @ResponseBody String deleteRule(@PathVariable int id) {
+    public @ResponseBody String deleteRule(@RequestHeader(authHeader) String token,
+                                           @PathVariable int id) {
+        if (!Authorization.authorize(token, Role.Teacher)) {
+            throw new RuntimeException(errorMessage);
+        }
+
         Optional<Rule> rule = ruleRepository.findById(id);
         if (rule.isPresent()) {
             ruleRepository.deleteById(id);

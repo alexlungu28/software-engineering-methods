@@ -17,8 +17,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseBody;
 import roomscheduler.communication.RoomScheduleCommunication;
+import roomscheduler.communication.authorization.Authorization;
+import roomscheduler.communication.authorization.Role;
 import roomscheduler.entities.IdNamePair;
 import roomscheduler.entities.IntPair;
 import roomscheduler.entities.NameDateInfo;
@@ -41,6 +44,12 @@ public class RoomScheduleController {
     @Autowired
     private RoomScheduleRepository roomScheduleRepository;
 
+    final transient String authHeader = "Authorization";
+
+    transient String errorMessage = "You do not have the privilege to perform this action.";
+
+    transient String student = "Student";
+
     public RoomScheduleRepository getRoomScheduleRepository() {
         return roomScheduleRepository;
     }
@@ -49,9 +58,21 @@ public class RoomScheduleController {
         this.roomScheduleRepository = roomScheduleRepository;
     }
 
+    /**
+     * Add a new room schedule.
+     *
+     * @param token jwt token
+     * @param r room schedule
+     * @return saved if successful, throw exception otherwise
+     */
     @PostMapping(path = "/addroomschedule") // Map ONLY POST Requests
     public @ResponseBody
-    String addNewRoomSchedule(@RequestBody RoomSchedule r) {
+    String addNewRoomSchedule(@RequestHeader(authHeader) String token,
+                              @RequestBody RoomSchedule r) {
+        if (!Authorization.authorize(token, Role.Admin)) {
+            throw new RuntimeException(errorMessage);
+        }
+
         roomScheduleRepository.saveAndFlush(r);
         return "Saved room schedule";
     }
@@ -65,7 +86,8 @@ public class RoomScheduleController {
      */
     @GetMapping(path = "/getSchedule")
     public @ResponseBody
-    List<ScheduleInformation> getAllSchedules() throws IOException {
+    List<ScheduleInformation> getAllSchedules()
+        throws IOException {
         Integer breakDuration = roomScheduleRepository.getBreakDuration();
         Integer slotDuration = roomScheduleRepository.getSlotDuration();
         List<ScheduleInfo> result = roomScheduleRepository
@@ -80,7 +102,14 @@ public class RoomScheduleController {
         return finalRes;
     }
 
-
+    /**
+     * Get the available slots.
+     *
+     * @param prefDate pref date
+     * @param numSlots number of slots
+     * @param lunchTime time of lunch
+     * @return a list of available slots
+     */
     @GetMapping(path = "/availableSlots/{prefDate}/{numSlots}/{lunchTime}")
     public @ResponseBody
     Iterable<RoomSlotStat> getAvailableSlots(@PathVariable Date prefDate,
@@ -111,7 +140,7 @@ public class RoomScheduleController {
                                     @PathVariable Integer numOfStudents,
                               @PathVariable Integer lectureId,
                               @PathVariable Integer yearOfStudy)
-            throws IOException, ParseException {
+        throws IOException, ParseException {
         List<RoomSchedule> roomScheduleWithGivenLectureId = roomScheduleRepository
                 .getRoomScheduleWithLectureId(lectureId);
         //it should not be possible to schedule a lecture that is already scheduled
@@ -120,7 +149,7 @@ public class RoomScheduleController {
                     " been already scheduled!");
         }
         Integer lunchHour = 7 + roomScheduleRepository.getLunchSlot();
-        Time lunchTime = utcTime("" + lunchHour  + ":45:00");
+        Time lunchTime = utcTime("" + lunchHour + ":45:00");
         int minPercentage = roomScheduleRepository.getMinPerc();
         int maxPercentage = roomScheduleRepository.getMaxPerc();
         List<IdNamePair> roomInfoWithRequiredCapacity =
@@ -134,7 +163,8 @@ public class RoomScheduleController {
 
 
         List<NameDateInfo> finalResult = new ArrayList<>();
-        outer: for (IdNamePair i : roomInfoWithRequiredCapacity) {
+        outer:
+        for (IdNamePair i : roomInfoWithRequiredCapacity) {
             for (SlotInfo pair : dateIntPairs) {
                 if (i.getId() == pair.getRoomId() && !slotIdsToNotOverlapSameYear
                         .contains(pair.roomSlotId)) {
@@ -158,7 +188,8 @@ public class RoomScheduleController {
                         + (i + 1) * 20, lectureId, yearOfStudy));
             }
             RoomScheduleCommunication.makeRoomSlotsOccupied(result.getRoomSlotId(), numSlots);
-            return "Your lecture was successfully scheduled for: " + result.getDate().toString() +
+            return "Your lecture was successfully scheduled for: " +
+                    result.getDate().toString() +
                     " in the room with name: " + result.getRoomName();
         }
     }
@@ -188,7 +219,12 @@ public class RoomScheduleController {
      */
     @DeleteMapping(path = "/cancelLecture/{id}")
     public @ResponseBody
-    String deleteLecture(@PathVariable int id) throws IOException {
+    String deleteLecture(@RequestHeader(authHeader) String token,
+                         @PathVariable int id) throws IOException {
+        if (!Authorization.authorize(token, Role.Teacher)) {
+            throw new RuntimeException(errorMessage);
+        }
+
         List<IntPair> values = roomScheduleRepository.getSlotIdAndRoomSlotId(id);
         if (values.size() == 0) {
             return "There is no scheduled lecture with the given id";
@@ -212,7 +248,11 @@ public class RoomScheduleController {
      */
     @GetMapping(path = "/allroomsschedules")
     public @ResponseBody
-    Iterable<RoomSchedule> getAllRoomsSchedules() {
+    Iterable<RoomSchedule> getAllRoomsSchedules(@RequestHeader(authHeader) String token) {
+        if (!Authorization.authorize(token, Role.Student)) {
+            throw new RuntimeException(errorMessage);
+        }
+
         return roomScheduleRepository.findAll();
     }
 
@@ -224,7 +264,12 @@ public class RoomScheduleController {
      */
     @GetMapping(path = "/roomschedule/{id}")
     public @ResponseBody
-    RoomSchedule getRoomSchedule(@PathVariable int id) {
+    RoomSchedule getRoomSchedule(@RequestHeader(authHeader) String token,
+                                 @PathVariable int id) {
+        if (!Authorization.authorize(token, Role.Student)) {
+            throw new RuntimeException(errorMessage);
+        }
+
         Optional<RoomSchedule> roomSchedule = roomScheduleRepository.findById(id);
         if (roomSchedule.isPresent()) {
             return roomSchedule.get();
