@@ -95,7 +95,7 @@ public class StudentController {
      */
     @GetMapping(path = "/allMyLectures")
     @SuppressWarnings("PMD") //DU anomaly
-    public List<LectureDetails> getMyLectures(@RequestHeader("Authorization") String token) {
+    public List<LectureDetails> getMyLectures(@RequestHeader(authHeader) String token) {
         // We first create an empty ArrayList, We then get the student by studentID.
         List<LectureDetails> campusLectures = new ArrayList<>();
         Student currentStudent = getStudentbyToken(token);
@@ -143,7 +143,7 @@ public class StudentController {
      */
     @GetMapping(path = "/allMyCourses")
     @SuppressWarnings("PMD") //DU anomaly
-    public List<Pair<String, Integer>> getMyCourses(@RequestHeader("Authorization") String token) {
+    public List<Pair<String, Integer>> getMyCourses(@RequestHeader(authHeader) String token) {
         // We first create an empty ArrayList, We then get the student by the token.
         List<Pair<String, Integer>> studentCourses = new ArrayList<>();
         Student currentStudent = getStudentbyToken(token);
@@ -303,7 +303,7 @@ public class StudentController {
      * @return return all lecture before date
      */
     private void initializeAllScheduledLecturesUntil(LocalDateTime date,
-                                                     @RequestHeader("Authorization") String token) {
+                                                     @RequestHeader(authHeader) String token) {
         // get the schedule via getSchedule endpoint
         final List<RoomSchedule> schedule = this.serverCommunication.getSchedule(token);
 
