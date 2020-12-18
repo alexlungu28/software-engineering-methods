@@ -47,6 +47,7 @@ public class RuleControllerTest {
     private transient String saveRule = "Saved rule";
     private transient String allRules = "/allRules";
     private transient String ruleName = "rule1";
+
     @Before
     public void setUp() throws Exception {
         mockMvc = MockMvcBuilders.standaloneSetup(ruleController).build();
