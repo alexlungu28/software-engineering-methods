@@ -61,7 +61,7 @@ public class RuleControllerTest {
     }
 
     @Test
-    public void addNewRoomSlotTest() throws Exception {
+    public void addNewRuleTest() throws Exception {
         Rule rs = new Rule(ruleName, "v1");
         String requestJson = gson.toJson(rs);
         this.mockMvc.perform(

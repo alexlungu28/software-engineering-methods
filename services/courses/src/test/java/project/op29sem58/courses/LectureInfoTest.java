@@ -29,10 +29,6 @@ public class LectureInfoTest {
         assertNotNull(lectureInfo);
     }
 
-    @Test
-    public void getCourseIdTest() {
-        assertEquals(1, lectureInfo);
-    }
 
     @Test
     public void getDateTest() {
