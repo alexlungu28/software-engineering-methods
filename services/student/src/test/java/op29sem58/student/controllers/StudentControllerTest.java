@@ -1,4 +1,4 @@
-package op29sem58.student;
+package op29sem58.student.controllers;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -12,11 +12,13 @@ import com.google.gson.GsonBuilder;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import op29sem58.student.StudentService;
 import op29sem58.student.communication.adapters.LocalDateTimeAdapter;
 import op29sem58.student.communication.authorization.Authorization;
 import op29sem58.student.communication.authorization.Role;
 import op29sem58.student.database.entities.Student;
-import org.junit.jupiter.api.BeforeEach;
+import op29sem58.student.local.entities.UserPreference;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -33,23 +35,39 @@ import org.springframework.test.web.servlet.MockMvc;
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase(replace = Replace.ANY)
-public class ApiTest {
+public class StudentControllerTest {
     @Autowired
     protected transient MockMvc mockMvc;
 
     final transient Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
             .create();
-    transient MockedStatic<Authorization> mockedAuth;
+    private static MockedStatic<Authorization> mockedAuth;
 
     /**
      * Initialize the Authorization class to allow admins to perform operations.
      */
-    @BeforeEach
-    public void mockAuthorization() {
-        this.mockedAuth = Mockito.mockStatic(Authorization.class);
-        this.mockedAuth.when(() -> Authorization.authorize("Bearer token", Role.Admin))
-            .thenReturn(true);
+    @BeforeAll
+    public static void mockAuthorization() {
+        StudentControllerTest.mockedAuth = 
+            Mockito.mockStatic(Authorization.class);
+        StudentControllerTest.mockedAuth.when(
+            () -> Authorization.authorize("Bearer admin", Role.Admin)
+        ).thenReturn(true);
+        StudentControllerTest.mockedAuth.when(
+			() -> Authorization.authorize("Bearer student", Role.Student)
+		).thenReturn(true);
+    }
+
+    private void initializeStudents(List<Student> students) throws Exception {
+        String requestJson = this.gson.toJson(students);
+        this.mockMvc.perform(
+            post("/initializeStudents")
+            .contentType(APPLICATION_JSON)
+            .header("Authorization", "Bearer admin")
+            .content(requestJson)
+        )
+            .andExpect(status().isOk());
     }
 
     @Test
@@ -62,12 +80,28 @@ public class ApiTest {
             student.setWantsToGo(true);
             students.add(student);
         }
-        String requestJson = gson.toJson(students);
-        this.mockMvc.perform(post("/initializeStudents").contentType(APPLICATION_JSON)
-            .header("Authorization", "Bearer token")
-                .content(requestJson)).andExpect(status().isOk());
-        this.mockMvc.perform(get("/getStudents").header("Authorization", "Bearer token"))
+        this.initializeStudents(students);
+        this.mockMvc.perform(get("/getStudents").header("Authorization", "Bearer admin"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", hasSize(8)));
+    }
+    
+    @Test
+    public void setPreferenceTest() throws Exception {
+        List<Student> students = new ArrayList<>();
+        students.add(new Student(
+            "student0",
+            LocalDateTime.now(),
+            false
+        ));
+        this.initializeStudents(students);
+
+        UserPreference newPreference = new UserPreference("student0", true);
+        this.mockMvc.perform(
+            post("/setPreferences")
+            .contentType(APPLICATION_JSON)
+            .header("Authorization", "Bearer student")
+            .content(this.gson.toJson(newPreference))
+        ).andExpect(status().isOk());
     }
 }
