@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -103,5 +104,26 @@ public class Course {
 
     public void setYearOfStudy(int yearOfStudy) {
         this.yearOfStudy = yearOfStudy;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Course course = (Course) o;
+        return Objects.equals(teacherNetId, course.teacherNetId)
+                && Objects.equals(id, course.id)
+                && Objects.equals(name, course.name)
+                && Objects.equals(code, course.code)
+                && Objects.equals(yearOfStudy, course.yearOfStudy);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, teacherNetId, name, code, yearOfStudy);
     }
 }

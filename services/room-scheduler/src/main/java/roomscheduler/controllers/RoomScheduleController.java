@@ -161,21 +161,9 @@ public class RoomScheduleController {
         List<Integer> slotIdsToNotOverlapSameYear = roomScheduleRepository
                 .getSlotIdsToNotOverlapSameYear(yearOfStudy);
 
+        List<NameDateInfo> finalResult = findSuitable(roomInfoWithRequiredCapacity,
+                dateIntPairs, slotIdsToNotOverlapSameYear);
 
-        List<NameDateInfo> finalResult = new ArrayList<>();
-        outer:
-        for (IdNamePair i : roomInfoWithRequiredCapacity) {
-            for (SlotInfo pair : dateIntPairs) {
-                if (i.getId() == pair.getRoomId() && !slotIdsToNotOverlapSameYear
-                        .contains(pair.roomSlotId)) {
-                    finalResult.add(new NameDateInfo(pair.getDate(),
-                            i.getName(), pair.getRoomSlotId()));
-                    //once we found one room slot to schedule the lecture, we can
-                    //stop searching
-                    break outer;
-                }
-            }
-        }
         if (finalResult.size() == 0) { //no available slots for the input given
             return "There are no available slots for the input given. Try again!";
         } else {
@@ -192,6 +180,35 @@ public class RoomScheduleController {
                     result.getDate().toString() +
                     " in the room with name: " + result.getRoomName();
         }
+    }
+
+    /**
+     * Method that finds an appropriate room slot for the lecture to be scheduled.
+     *
+     * @param roomInfoWithRequiredCapacity rooms with at least the required capacity
+     * @param dateIntPairs available room slots for the input given
+     * @param slotIdsToNotOverlapSameYear room slots ids for lectures of the same year
+     *                                    of study that would cause overlap
+     * @return empty list of list with one appropriate room slot
+     */
+    public List<NameDateInfo> findSuitable(List<IdNamePair> roomInfoWithRequiredCapacity,
+                                           List<SlotInfo> dateIntPairs,
+                                           List<Integer> slotIdsToNotOverlapSameYear) {
+        List<NameDateInfo> finalResult = new ArrayList<>();
+        outer:
+        for (IdNamePair i : roomInfoWithRequiredCapacity) {
+            for (SlotInfo pair : dateIntPairs) {
+                if (i.getId() == pair.getRoomId() && !slotIdsToNotOverlapSameYear
+                        .contains(pair.roomSlotId)) {
+                    finalResult.add(new NameDateInfo(pair.getDate(),
+                            i.getName(), pair.getRoomSlotId()));
+                    //once we found one room slot to schedule the lecture, we can
+                    //stop searching
+                    break outer;
+                }
+            }
+        }
+        return finalResult;
     }
 
     /**
@@ -236,9 +253,6 @@ public class RoomScheduleController {
         }
         return "Canceled lecture";
     }
-
-
-
 
 
     /**

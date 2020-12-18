@@ -48,4 +48,12 @@ public class LectureInfo {
     }
 
 
+    @Override
+    public String toString() {
+        return "LectureInfo{" +
+                "date=" + date +
+                ", numberOfTimeslots=" + numberOfTimeslots +
+                ", minNoStudents=" + minNoStudents +
+                '}';
+    }
 }

@@ -2,6 +2,7 @@ package project.op29sem58.courses.database.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDate;
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -82,4 +83,6 @@ public class Lecture {
     public void setMinNoStudents(int minNumberOfStudents) {
         this.minNoStudents = minNumberOfStudents;
     }
+
+
 }
