@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseBody;
+import roomscheduler.communication.authorization.Authorization;
+import roomscheduler.communication.authorization.Role;
 import roomscheduler.entities.Rule;
 import roomscheduler.repositories.RuleRepository;
 
@@ -46,12 +48,12 @@ public class RuleController {
     @PostMapping(path = "/createRule") // Map ONLY POST Requests
     public @ResponseBody String addNewRule(@RequestHeader(authHeader) String token,
                                            @RequestBody Rule r) throws IOException {
-        if (Authorization.authorize(token, "Teacher")) {
-            ruleRepository.saveAndFlush(r);
-            return "Saved rule";
-        } else {
+        if (!Authorization.authorize(token, Role.Teacher)) {
             throw new RuntimeException(errorMessage);
         }
+
+        ruleRepository.saveAndFlush(r);
+        return "Saved rule";
     }
 
     /**
@@ -73,18 +75,18 @@ public class RuleController {
     @PutMapping(path = "/modifyRule")
     public @ResponseBody String editRule(@RequestHeader(authHeader) String token,
                                          @RequestBody Rule r) {
-        if (Authorization.authorize(token, "Teacher")) {
-            Optional<Rule> rule = ruleRepository.findById(r.getIdrules());
-            if (rule.isPresent()) {
-                rule.get().setName(r.getName());
-                rule.get().setValue(r.getValue());
-                ruleRepository.saveAndFlush(rule.get());
-                return "Changed Rule";
-            } else {
-                throw new RuntimeException("Rule not found for the id " + r.getIdrules());
-            }
-        } else {
+        if (!Authorization.authorize(token, Role.Teacher)) {
             throw new RuntimeException(errorMessage);
+        }
+
+        Optional<Rule> rule = ruleRepository.findById(r.getIdrules());
+        if (rule.isPresent()) {
+            rule.get().setName(r.getName());
+            rule.get().setValue(r.getValue());
+            ruleRepository.saveAndFlush(rule.get());
+            return "Changed Rule";
+        } else {
+            throw new RuntimeException("Rule not found for the id " + r.getIdrules());
         }
     }
 
@@ -97,16 +99,16 @@ public class RuleController {
     @DeleteMapping(path = "/deleteRule/{id}")
     public @ResponseBody String deleteRule(@RequestHeader(authHeader) String token,
                                            @PathVariable int id) {
-        if (Authorization.authorize(token, "Teacher")) {
-            Optional<Rule> rule = ruleRepository.findById(id);
-            if (rule.isPresent()) {
-                ruleRepository.deleteById(id);
-                return "Deleted Rule";
-            } else {
-                throw new RuntimeException("Rule not found for the id " + id);
-            }
-        } else {
+        if (!Authorization.authorize(token, Role.Teacher)) {
             throw new RuntimeException(errorMessage);
+        }
+
+        Optional<Rule> rule = ruleRepository.findById(id);
+        if (rule.isPresent()) {
+            ruleRepository.deleteById(id);
+            return "Deleted Rule";
+        } else {
+            throw new RuntimeException("Rule not found for the id " + id);
         }
     }
 

@@ -1,4 +1,4 @@
-package op29sem58.room.controllers;
+package project.op29sem58.courses.communication.authorization;
 
 import java.io.IOException;
 import org.apache.http.client.ClientProtocolException;
@@ -8,8 +8,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-
-
 
 public class Authorization {
 
@@ -25,9 +23,9 @@ public class Authorization {
      * @return true if the user has that role, false otherwise
      */
     @SuppressWarnings("PMD")
-    public static boolean authorize(String token, String role) {
+    public static boolean authorize(String token, Role role) {
         token = token.replace("Bearer ", "");
-        CloseableHttpResponse response = sendGetRequest("8090", "is" + role, token);
+        CloseableHttpResponse response = sendGetRequest("8090", "is" + role.getName(), token);
         int statusCode = response.getStatusLine().getStatusCode();
         return statusCode == 200;
     }

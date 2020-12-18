@@ -1,4 +1,4 @@
-package roomscheduler.controllers;
+package op29sem58.student.communication.authorization;
 
 import java.io.IOException;
 import org.apache.http.client.ClientProtocolException;
@@ -23,9 +23,9 @@ public class Authorization {
      * @return true if the user has that role, false otherwise
      */
     @SuppressWarnings("PMD")
-    public static boolean authorize(String token, String role) {
+    public static boolean authorize(String token, Role role) {
         token = token.replace("Bearer ", "");
-        CloseableHttpResponse response = sendGetRequest("8090", "is" + role, token);
+        CloseableHttpResponse response = sendGetRequest("8090", "is" + role.getName(), token);
         int statusCode = response.getStatusLine().getStatusCode();
         return statusCode == 200;
     }
