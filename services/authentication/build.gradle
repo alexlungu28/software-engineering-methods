@@ -4,5 +4,6 @@ plugins {
 }
 
 dependencies {
+	compile "org.springframework.security:spring-security-test:4.2.3.RELEASE"
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 }
