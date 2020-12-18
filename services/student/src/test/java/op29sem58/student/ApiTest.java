@@ -1,6 +1,7 @@
 package op29sem58.student;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -13,7 +14,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import op29sem58.student.communication.adapters.LocalDateTimeAdapter;
-import op29sem58.student.controllers.Authorization;
+import op29sem58.student.communication.authorization.Authorization;
+import op29sem58.student.communication.authorization.Role;
 import op29sem58.student.database.entities.Student;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,8 +52,13 @@ public class ApiTest {
     @Before
     public void mockAuthorization() {
         this.mockedAuth = Mockito.mockStatic(Authorization.class);
-        this.mockedAuth.when(() -> Authorization.authorize("Bearer token", "Admin"))
+        this.mockedAuth.when(() -> Authorization.authorize("Bearer token", Role.Admin))
             .thenReturn(true);
+    }
+    
+    @Test
+    public void fail() {
+        assertEquals(false, true);
     }
 
     @Test
@@ -64,7 +71,6 @@ public class ApiTest {
             student.setWantsToGo(true);
             students.add(student);
         }
-        gson.toJson(students);
         String requestJson = gson.toJson(students);
         this.mockMvc.perform(post("/initializeStudents").contentType(APPLICATION_JSON)
             .header("Authorization", "Bearer token")

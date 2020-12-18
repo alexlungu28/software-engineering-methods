@@ -5,7 +5,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import op29sem58.room.controllers.Authorization;
 import op29sem58.room.controllers.RoomController;
 import op29sem58.room.entities.Room;
 import org.hamcrest.Matchers;
