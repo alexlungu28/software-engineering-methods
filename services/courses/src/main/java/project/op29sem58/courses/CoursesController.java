@@ -50,9 +50,9 @@ public class CoursesController {
     @PostMapping(path = "/createLecture/{courseId}")
     public @ResponseBody String createCourse(@PathVariable int courseId,
                                              @RequestBody LectureInfo l) {
-        l.setCourseId(courseId);
+        System.out.println(courseId);
         Optional<Course> courseOpt = coursesRepo
-                .findById(l.getCourseId());
+                .findById(courseId);
 
         if (courseOpt.isEmpty()) {
             return "Incorrect course id, there is no course with this id. \n"
@@ -64,6 +64,7 @@ public class CoursesController {
 			course, l.getDate(), l.getNumberOfTimeslots(), l.getMinNoStudents()
 		);
 
+        coursesRepo.saveAndFlush(course);
         lecturesRepo.saveAndFlush(lecture);
         return "Lecture saved successfully!";
     }
