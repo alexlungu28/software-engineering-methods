@@ -7,12 +7,11 @@ package op29sem58.student.local.entities;
  */
 public class Course {
     private int courseId;
-    private int[] lectureIds;
-
     private String teacherNetId;
     private String name;
     private String code;
     private int yearOfStudy;
+    private int[] lectureIds;
 
     /**
      * Basis constructor to create a course object.

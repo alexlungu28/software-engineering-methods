@@ -98,9 +98,8 @@ public class CoursesController {
         if (!Authorization.authorize(token, Role.Teacher)) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-        l.setCourseId(courseId);
         Optional<Course> courseOpt = coursesRepo
-                .findById(l.getCourseId());
+                .findById(courseId);
 
         if (courseOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -111,6 +110,7 @@ public class CoursesController {
                 course, l.getDate(), l.getNumberOfTimeslots(), l.getMinNoStudents()
         );
 
+        coursesRepo.saveAndFlush(course);
         lecturesRepo.saveAndFlush(lecture);
         return new ResponseEntity<>(lecture, HttpStatus.CREATED);
     }
