@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="8.37">
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\courses\src\main\java\project\op29sem58\courses\CourseService.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\courses\src\main\java\project\op29sem58\courses\CoursesController.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\courses\src\main\java\project\op29sem58\courses\LectureInfo.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\courses\src\main\java\project\op29sem58\courses\ServerCommunication.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\courses\src\main\java\project\op29sem58\courses\communication\authorization\Authorization.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\courses\src\main\java\project\op29sem58\courses\communication\authorization\Role.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\courses\src\main\java\project\op29sem58\courses\database\entities\Course.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\courses\src\main\java\project\op29sem58\courses\database\entities\Lecture.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\courses\src\main\java\project\op29sem58\courses\database\repos\CoursesRepo.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\courses\src\main\java\project\op29sem58\courses\database\repos\LecturesRepo.java">
+</file>
+</checkstyle>

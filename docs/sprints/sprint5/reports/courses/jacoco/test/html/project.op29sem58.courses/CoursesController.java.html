@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CoursesController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">courses</a> &gt; <a href="index.source.html" class="el_package">project.op29sem58.courses</a> &gt; <span class="el_source">CoursesController.java</span></div><h1>CoursesController.java</h1><pre class="source lang-java linenums">package project.op29sem58.courses;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.ResponseBody;
+import project.op29sem58.courses.communication.authorization.Authorization;
+import project.op29sem58.courses.communication.authorization.Role;
+import project.op29sem58.courses.database.entities.Course;
+import project.op29sem58.courses.database.entities.Lecture;
+import project.op29sem58.courses.database.repos.CoursesRepo;
+import project.op29sem58.courses.database.repos.LecturesRepo;
+
+@Controller
+<span class="fc" id="L24">public class CoursesController {</span>
+
+    @Autowired
+    private CoursesRepo coursesRepo;
+    @Autowired
+    private LecturesRepo lecturesRepo;
+
+<span class="fc" id="L31">    final transient String authHeader = &quot;Authorization&quot;;</span>
+<span class="fc" id="L32">    final transient ResponseEntity&lt;String&gt; internalError = new ResponseEntity&lt;String&gt;(&quot;Something &quot; +</span>
+            &quot;went wrong on our end, please try again later.&quot;,
+            HttpStatus.INTERNAL_SERVER_ERROR);
+
+<span class="fc" id="L36">    transient String errorMessage = &quot;You do not have the privilege to perform this action.&quot;;</span>
+
+<span class="fc" id="L38">    transient String teacher = &quot;Teacher&quot;;</span>
+
+    transient LocalDate date;
+
+    /**
+     * Retrieve a list of all courses.
+     *
+     * @param token jwt token
+     * @return all courses
+     */
+    @GetMapping(path = &quot;/getAllCourses&quot;)
+    public ResponseEntity&lt;Iterable&lt;Course&gt;&gt; getAllCourses(@RequestHeader(authHeader) String token) {
+<span class="nc bnc" id="L50" title="All 2 branches missed.">        if (!Authorization.authorize(token, Role.Student)) {</span>
+<span class="nc" id="L51">            return new ResponseEntity&lt;&gt;(HttpStatus.FORBIDDEN);</span>
+        }
+<span class="nc" id="L53">        return ResponseEntity.ok(coursesRepo.findAll());</span>
+    }
+
+    /**
+     * Retrieve a list of all lectures.
+     *
+     * @return all lectures
+     */
+    @GetMapping(path = &quot;/getAllLectures&quot;)
+    public @ResponseBody ResponseEntity&lt;Iterable&lt;Lecture&gt;&gt;
+    getAllLectures(@RequestHeader(authHeader) String token) {
+<span class="nc bnc" id="L64" title="All 2 branches missed.">        if (!Authorization.authorize(token, Role.Student)) {</span>
+<span class="nc" id="L65">            return new ResponseEntity&lt;&gt;(HttpStatus.FORBIDDEN);</span>
+        }
+<span class="nc" id="L67">        return ResponseEntity.ok(lecturesRepo.findAll());</span>
+    }
+
+    /**
+     * Creates a course in the database.
+     *
+     * @param token jwt token
+     * @param c course
+     * @return saved if successful, error otherwise
+     */
+    @PostMapping(path = &quot;/createCourse&quot;)
+    public ResponseEntity&lt;Course&gt; createCourse(@RequestHeader(authHeader) String token,
+                                       @RequestBody Course c) {
+<span class="pc bpc" id="L80" title="1 of 2 branches missed.">        if (!Authorization.authorize(token, Role.Teacher)) {</span>
+<span class="nc" id="L81">            return new ResponseEntity&lt;&gt;(HttpStatus.FORBIDDEN);</span>
+        }
+<span class="fc" id="L83">        coursesRepo.saveAndFlush(c);</span>
+<span class="fc" id="L84">        return new ResponseEntity&lt;&gt;(c, HttpStatus.CREATED);</span>
+    }
+
+    /**
+     * Creates a lecture for the course of CourseID.
+     *
+     * @param courseId the id of the course this lecture is for
+     * @param l the lecture to be scheduled
+     * @return a string with information about the status of the request
+     */
+    @PostMapping(path = &quot;/createLecture/{courseId}&quot;)
+    public ResponseEntity&lt;Lecture&gt; createCourse(@RequestHeader(authHeader) String token,
+                                             @PathVariable int courseId,
+                                             @RequestBody LectureInfo l) {
+<span class="nc bnc" id="L98" title="All 2 branches missed.">        if (!Authorization.authorize(token, Role.Teacher)) {</span>
+<span class="nc" id="L99">            return new ResponseEntity&lt;&gt;(HttpStatus.FORBIDDEN);</span>
+        }
+<span class="nc" id="L101">        Optional&lt;Course&gt; courseOpt = coursesRepo</span>
+<span class="nc" id="L102">                .findById(courseId);</span>
+
+<span class="nc bnc" id="L104" title="All 2 branches missed.">        if (courseOpt.isEmpty()) {</span>
+<span class="nc" id="L105">            return ResponseEntity.notFound().build();</span>
+        }
+<span class="nc" id="L107">        Course course = courseOpt.get();</span>
+
+<span class="nc" id="L109">        Lecture lecture = new Lecture(</span>
+<span class="nc" id="L110">                course, l.getDate(), l.getNumberOfTimeslots(), l.getMinNoStudents()</span>
+        );
+
+<span class="nc" id="L113">        coursesRepo.saveAndFlush(course);</span>
+<span class="nc" id="L114">        lecturesRepo.saveAndFlush(lecture);</span>
+<span class="nc" id="L115">        return new ResponseEntity&lt;&gt;(lecture, HttpStatus.CREATED);</span>
+    }
+
+    /**
+     * Schedules the all lectures for the coming two weeks.
+     *
+     * @return A string with a message about the status of the request
+     */
+    @PostMapping(path = &quot;/scheduleLecturesUntil&quot;)
+    public ResponseEntity&lt;String&gt; scheduleLecturesUntil(@RequestBody LocalDate date) {
+<span class="nc bnc" id="L125" title="All 2 branches missed.">        if (date.isBefore(LocalDate.now())) {</span>
+<span class="nc" id="L126">            return new ResponseEntity&lt;String&gt;(&quot;Please specify a date&quot;</span>
+                    + &quot; after the current date.&quot;, HttpStatus.BAD_REQUEST);
+        }
+
+<span class="nc" id="L130">        List&lt;Lecture&gt; lectures = lecturesRepo.findAll();</span>
+
+<span class="nc" id="L132">        lectures.removeIf(lecture -&gt; lecture.getDate().isAfter(date));</span>
+
+<span class="nc bnc" id="L134" title="All 2 branches missed.">        if (lectures.size() == 0) {</span>
+<span class="nc" id="L135">            return new ResponseEntity&lt;String&gt;(&quot;There are no lectures planned in &quot;</span>
+                    + &quot;the coming two weeks.&quot;, HttpStatus.BAD_REQUEST);
+        }
+
+<span class="nc bnc" id="L139" title="All 2 branches missed.">        for (Lecture l : lectures) {</span>
+<span class="nc" id="L140">            String path = ServerCommunication.getRoomScheduleServiceUrl() + &quot;/scheduleLecture/&quot;</span>
+<span class="nc" id="L141">                    + l.getDate() + &quot;/&quot; + l.getNumberOfTimeslots() + &quot;/&quot; + l.getMinNoStudents()</span>
+<span class="nc" id="L142">                    + &quot;/&quot; + l.getId() + &quot;/&quot; + l.getCourse().getYearOfStudy();</span>
+<span class="nc" id="L143">            String response = ServerCommunication.makeGetRequest(path);</span>
+<span class="nc bnc" id="L144" title="All 2 branches missed.">            if (response == null) {</span>
+<span class="nc" id="L145">                return internalError;</span>
+            }
+<span class="nc" id="L147">        }</span>
+
+<span class="nc" id="L149">        return new ResponseEntity&lt;&gt;(&quot;Lectures until &quot; + date.toString()</span>
+                + &quot; are scheduled!&quot;, HttpStatus.OK);
+    }
+
+    /**
+     * This method schedules a lecture in a room using the lecture id.
+     *
+     * @param lectureId The id of the lecture, specified in the path
+     * @return A string with info about the status of the request
+     */
+    @GetMapping(path = &quot;/scheduleLecture/{lectureId}&quot;)
+    public ResponseEntity&lt;String&gt; scheduleLecture(@PathVariable int lectureId) {
+<span class="nc" id="L161">        Optional&lt;Lecture&gt; lecture = lecturesRepo.findById(lectureId);</span>
+<span class="nc bnc" id="L162" title="All 2 branches missed.">        if (lecture.isEmpty()) {</span>
+<span class="nc" id="L163">            return new ResponseEntity&lt;&gt;(&quot;There is no lecture with this id, &quot;</span>
+                    + &quot;please check if the id is correct.&quot;, HttpStatus.BAD_REQUEST);
+        }
+
+<span class="nc" id="L167">        Lecture l = lecture.get();</span>
+<span class="nc" id="L168">        String path = ServerCommunication.getRoomScheduleServiceUrl() + &quot;/scheduleLecture/&quot;</span>
+<span class="nc" id="L169">                + l.getDate() + &quot;/&quot; + l.getNumberOfTimeslots() + &quot;/&quot; + l.getMinNoStudents()</span>
+<span class="nc" id="L170">                + &quot;/&quot; + l.getId() + &quot;/&quot; + l.getCourse().getYearOfStudy();</span>
+<span class="nc" id="L171">        String response = ServerCommunication.makeGetRequest(path);</span>
+<span class="nc bnc" id="L172" title="All 2 branches missed.">        if (response == null) {</span>
+<span class="nc" id="L173">            return internalError;</span>
+        }
+
+<span class="nc" id="L176">        return new ResponseEntity&lt;&gt;(response, HttpStatus.OK);</span>
+    }
+
+    /**
+     * Schedules the all lectures for the coming two weeks.
+     *
+     * @return A string with a message about the status of the request
+     */
+    @GetMapping(path = &quot;/scheduleForTwoWeeks&quot;)
+    public ResponseEntity&lt;String&gt; scheduleForTwoWeeks() {
+<span class="nc" id="L186">        ResponseEntity&lt;String&gt; s = scheduleLecturesUntil(LocalDate.now().plusWeeks(2));</span>
+<span class="nc" id="L187">        ResponseEntity&lt;String&gt; correctReturn = new ResponseEntity&lt;String&gt;(&quot;Lectures until &quot;</span>
+<span class="nc" id="L188">                + LocalDate.now().plusWeeks(2).toString() + &quot; are scheduled!&quot;, HttpStatus.OK);</span>
+
+
+<span class="nc bnc" id="L191" title="All 2 branches missed.">        if (!s.equals(correctReturn)) {</span>
+<span class="nc" id="L192">            return internalError;</span>
+        }
+
+<span class="nc" id="L195">        return s;</span>
+    }
+
+
+    public CoursesRepo getCoursesRepo() {
+<span class="nc" id="L200">        return coursesRepo;</span>
+    }
+
+    public void setCoursesRepo(CoursesRepo coursesRepo) {
+<span class="nc" id="L204">        this.coursesRepo = coursesRepo;</span>
+<span class="nc" id="L205">    }</span>
+
+    public LecturesRepo getLecturesRepo() {
+<span class="nc" id="L208">        return lecturesRepo;</span>
+    }
+
+    public void setLecturesRepo(LecturesRepo lecturesRepo) {
+<span class="nc" id="L212">        this.lecturesRepo = lecturesRepo;</span>
+<span class="nc" id="L213">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

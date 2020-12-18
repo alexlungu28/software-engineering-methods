@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NameDateInfo.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">room-scheduler</a> &gt; <a href="index.source.html" class="el_package">roomscheduler.entities</a> &gt; <span class="el_source">NameDateInfo.java</span></div><h1>NameDateInfo.java</h1><pre class="source lang-java linenums">package roomscheduler.entities;
+
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.util.Objects;
+
+public class NameDateInfo {
+
+    Timestamp date;
+    String roomName;
+    Integer roomSlotId;
+
+    /**
+     * Constructor for NameDateInfo.
+     *
+
+     * @param date date
+     * @param roomName roomName
+     * @param roomSlotId roomSlotId
+     */
+<span class="fc" id="L21">    public NameDateInfo(Timestamp date, String roomName, Integer roomSlotId) {</span>
+<span class="fc" id="L22">        this.date = date;</span>
+<span class="fc" id="L23">        this.roomName = roomName;</span>
+<span class="fc" id="L24">        this.roomSlotId = roomSlotId;</span>
+<span class="fc" id="L25">    }</span>
+
+    public Timestamp getDate() {
+<span class="fc" id="L28">        return date;</span>
+    }
+
+    public void setDate(Timestamp date) {
+<span class="nc" id="L32">        this.date = date;</span>
+<span class="nc" id="L33">    }</span>
+
+    public String getRoomName() {
+<span class="fc" id="L36">        return roomName;</span>
+    }
+
+    public void setRoomName(String roomName) {
+<span class="nc" id="L40">        this.roomName = roomName;</span>
+<span class="nc" id="L41">    }</span>
+
+    public Integer getRoomSlotId() {
+<span class="fc" id="L44">        return roomSlotId;</span>
+    }
+
+    public void setRoomSlotId(Integer roomSlotId) {
+<span class="nc" id="L48">        this.roomSlotId = roomSlotId;</span>
+<span class="nc" id="L49">    }</span>
+
+    @Override
+    public boolean equals(Object o) {
+<span class="pc bpc" id="L53" title="1 of 2 branches missed.">        if (this == o) {</span>
+<span class="nc" id="L54">            return true;</span>
+        }
+<span class="pc bpc" id="L56" title="2 of 4 branches missed.">        if (o == null || getClass() != o.getClass()) {</span>
+<span class="nc" id="L57">            return false;</span>
+        }
+<span class="fc" id="L59">        NameDateInfo that = (NameDateInfo) o;</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">        return Objects.equals(date, that.date)</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">                &amp;&amp; Objects.equals(roomName, that.roomName)</span>
+<span class="pc bpc" id="L62" title="1 of 2 branches missed.">                &amp;&amp; Objects.equals(roomSlotId, that.roomSlotId);</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L67">        return Objects.hash(date, roomName, roomSlotId);</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L72">        return &quot;NameDateInfo{&quot;</span>
+                + &quot;date=&quot; + date
+                + &quot;, roomName='&quot; + roomName + '\''
+                + &quot;, roomSlotId=&quot; + roomSlotId
+                + '}';
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

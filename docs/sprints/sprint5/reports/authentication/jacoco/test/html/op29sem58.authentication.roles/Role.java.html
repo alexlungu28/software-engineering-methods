@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Role.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">authentication</a> &gt; <a href="index.source.html" class="el_package">op29sem58.authentication.roles</a> &gt; <span class="el_source">Role.java</span></div><h1>Role.java</h1><pre class="source lang-java linenums">package op29sem58.authentication.roles;
+
+import java.util.Locale;
+import java.util.Objects;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = &quot;roles&quot;)
+public class Role {
+    @Id
+    private int id;
+    private String name;
+
+<span class="nc" id="L16">    public Role() {</span>
+<span class="nc" id="L17">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param id role id
+     * @param name role name
+     */
+<span class="fc" id="L25">    public Role(int id, String name) {</span>
+<span class="fc" id="L26">        this.id = id;</span>
+<span class="fc" id="L27">        this.name = name;</span>
+<span class="fc" id="L28">    }</span>
+
+    public int getId() {
+<span class="fc" id="L31">        return id;</span>
+    }
+
+    public void setId(int id) {
+<span class="fc" id="L35">        this.id = id;</span>
+<span class="fc" id="L36">    }</span>
+
+    public void setName(String name) {
+<span class="nc" id="L39">        this.name = name;</span>
+<span class="nc" id="L40">    }</span>
+
+    /** Converts the id to a name that is used for authentication.
+     *
+     * @return the name of the role
+     */
+    public String getName() {
+<span class="fc" id="L47">        return &quot;ROLE_&quot; + name.toUpperCase(Locale.US);</span>
+    }
+
+    @Override
+    public boolean equals(Object o) {
+<span class="fc bfc" id="L52" title="All 2 branches covered.">        if (this == o) {</span>
+<span class="fc" id="L53">            return true;</span>
+        }
+<span class="fc bfc" id="L55" title="All 2 branches covered.">        if (!(o instanceof Role)) {</span>
+<span class="fc" id="L56">            return false;</span>
+        }
+<span class="fc" id="L58">        Role role = (Role) o;</span>
+<span class="fc bfc" id="L59" title="All 2 branches covered.">        return id == role.id</span>
+<span class="pc bpc" id="L60" title="1 of 2 branches missed.">                &amp;&amp; name.equals(role.name);</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L65">        return Objects.hash(id, name);</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L70">        return &quot;Role{&quot; + &quot;id=&quot; + id</span>
+                + &quot;, name='&quot; + name + '\''
+                + '}';
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

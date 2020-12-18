@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AuthenticationController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">authentication</a> &gt; <a href="index.source.html" class="el_package">op29sem58.authentication</a> &gt; <span class="el_source">AuthenticationController.java</span></div><h1>AuthenticationController.java</h1><pre class="source lang-java linenums">package op29sem58.authentication;
+
+import io.jsonwebtoken.Jwts;
+import op29sem58.authentication.users.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+<span class="fc" id="L17">public class AuthenticationController {</span>
+
+    @Autowired
+    private transient AuthenticationManager authenticationManager;
+
+    @Autowired
+    private transient MyUserDetailsService userDetailsService;
+
+    @Autowired
+    private transient JwtUtil jwtTokenUtil;
+
+    /** Creates a token for the user if the provided credentials are correct.
+     *
+     * @return the token
+     * @throws Exception if the provided username or password is incorrect
+     */
+    @PostMapping(&quot;/login&quot;)
+    public String createAuthenticationToken(@RequestBody User user) {
+<span class="nc" id="L35">        String id = user.getNetid();</span>
+<span class="nc" id="L36">        String password = user.getPassword();</span>
+<span class="nc" id="L37">        password = &quot;&quot; + password.hashCode();</span>
+        try {
+<span class="nc" id="L39">            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(</span>
+                    id, password));
+<span class="nc" id="L41">        } catch (BadCredentialsException e) {</span>
+<span class="nc" id="L42">            return &quot;Incorrect username or password&quot;;</span>
+<span class="nc" id="L43">        }</span>
+
+<span class="nc" id="L45">        final UserDetails userDetails = userDetailsService</span>
+<span class="nc" id="L46">                .loadUserByUsername(id);</span>
+
+<span class="nc" id="L48">        final String jwt = jwtTokenUtil.generateToken(userDetails);</span>
+<span class="nc" id="L49">        return jwt;</span>
+    }
+
+    @GetMapping(&quot;/isStudent&quot;)
+    public boolean isStudent() {
+<span class="nc" id="L54">        return true;</span>
+    }
+
+    @GetMapping(&quot;/isTeacher&quot;)
+    public boolean isTeacher() {
+<span class="nc" id="L59">        return true;</span>
+    }
+
+    @GetMapping(&quot;/isAdmin&quot;)
+    public boolean isAdmin() {
+<span class="nc" id="L64">        return true;</span>
+    }
+
+    @GetMapping(&quot;/getUsername&quot;)
+    public String getUsername(@RequestHeader(&quot;Authorization&quot;) String token) {
+<span class="nc" id="L69">        token = token.replace(&quot;Bearer &quot;, &quot;&quot;);</span>
+<span class="nc" id="L70">        return Jwts.parser().setSigningKey(&quot;secret&quot;).parseClaimsJws(token).getBody().getSubject();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

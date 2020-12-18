@@ -1,8 +1,12 @@
 package roomscheduler.controllers;
 
 import java.io.IOException;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
@@ -13,8 +17,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseBody;
 import roomscheduler.communication.RoomSlotCommunication;
+import roomscheduler.communication.authorization.Authorization;
+import roomscheduler.communication.authorization.Role;
 import roomscheduler.entities.RoomSlot;
 import roomscheduler.entities.Rule;
 import roomscheduler.repositories.RoomSlotRepository;
@@ -30,6 +37,10 @@ public class RoomSlotController {
 
     @Autowired
     private RoomSlotRepository roomSlotRepository;
+
+    final transient String authHeader = "Authorization";
+
+    transient String errorMessage = "You do not have the privilege to perform this action.";
 
     public RoomSlotRepository getRoomSlotRepository() {
         return roomSlotRepository;
@@ -49,7 +60,12 @@ public class RoomSlotController {
      */
     @PostMapping(path = "/addroomslot") // Map ONLY POST Requests
     public @ResponseBody
-    String addNewRoomSlot(@RequestBody RoomSlot r) throws IOException {
+    String addNewRoomSlot(@RequestHeader(authHeader) String token,
+                          @RequestBody RoomSlot r) throws IOException {
+        if (!Authorization.authorize(token, Role.Teacher)) {
+            throw new RuntimeException(errorMessage);
+        }
+
         Object a = RoomSlotCommunication.getRoom(r.getRooms_id());
         if (a.toString().equals("not found")) {
             return "There is no room with the id of the Room Slot entered!";
@@ -59,6 +75,12 @@ public class RoomSlotController {
         }
     }
 
+    /**
+     * Get the number of rooms.
+     *
+     * @return the number of rooms
+     * @throws IOException in case something goes wrong
+     */
     @GetMapping(path = "/countRooms") // Map ONLY POST Requests
     public @ResponseBody
     Long getNumberOfRooms() throws IOException {
@@ -75,8 +97,13 @@ public class RoomSlotController {
      * @throws IOException ioException
      */
     @PutMapping(path = "/generateRoomSlots/{numDays}/{firstSlotDateTime}")
-    public @ResponseBody String generateRoomSlots(@PathVariable int numDays,
+    public @ResponseBody String generateRoomSlots(@RequestHeader(authHeader) String token,
+                                                  @PathVariable int numDays,
               @PathVariable String firstSlotDateTime) throws IOException {
+        if (!Authorization.authorize(token, Role.Admin)) {
+            throw new RuntimeException(errorMessage);
+        }
+    
         Long numberOfRooms = RoomSlotCommunication.numberOfRooms();
         List<Rule> allRules = RoomSlotCommunication.getRules();
         HashMap<String, Integer> rules = new HashMap<>();
@@ -84,10 +111,13 @@ public class RoomSlotController {
             rules.put(r.getName(), Integer.parseInt(r.getValue()));
         }
         int breakSlot = rules.get("lunch slot");
-        int timeBetweenSlotsInHours = (rules.get("slot duration") + rules.get("break time")) / 60;
-        int timeBetweenSlotsInMin = (rules.get("slot duration") + rules.get("break time")) % 60;
+        int timeBetweenSlotsInHours = (rules.get("slot duration") +
+                rules.get("break time")) / 60;
+        int timeBetweenSlotsInMin = (rules.get("slot duration") +
+                rules.get("break time")) % 60;
         int slotsPerDay = rules.get("slots per day");
-        DateTimeFormatter formatter = org.joda.time.format.DateTimeFormat.forPattern("HH:mm:ss");
+        DateTimeFormatter formatter
+                = org.joda.time.format.DateTimeFormat.forPattern("HH:mm:ss");
         String s;
         if (timeBetweenSlotsInMin / 10 == 0) {
             s = "0";
@@ -119,9 +149,16 @@ public class RoomSlotController {
             roomSlot.get().setOccupied(1);
             roomSlotRepository.saveAndFlush(roomSlot.get());
             for (int i = 0; i < numOfSlots; i++) {
-                Optional<RoomSlot> next = roomSlotRepository.findById(id + (i + 1) * 20);
-                next.get().setOccupied(1);
-                roomSlotRepository.saveAndFlush(next.get());
+                if (i < numOfSlots - 1) {
+                    Optional<RoomSlot> next = roomSlotRepository.findById(id + (i + 1) * 20);
+                    next.get().setOccupied(1);
+                    roomSlotRepository.saveAndFlush(next.get());
+                } else {
+                    Optional<RoomSlot> next = roomSlotRepository.findById(id + (i + 1) * 20);
+                    next.get().setOccupied(3);
+                    roomSlotRepository.saveAndFlush(next.get());
+                }
+
             }
             return "Marked room slots as occupied!";
         } else {
@@ -140,7 +177,15 @@ public class RoomSlotController {
     String makeRoomSlotAvail(@PathVariable Integer id) {
         Optional<RoomSlot> roomSlot = roomSlotRepository.findById(id);
         if (roomSlot.isPresent()) {
-            roomSlot.get().setOccupied(0);
+            Timestamp timestamp = roomSlot.get().getDate_time();
+            String date = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+                    .format(new Date(timestamp.getTime()));
+            Timestamp b = Timestamp.valueOf(date + " 12:45:00");
+            if (b.getTime() == timestamp.getTime()) { //it is a lunch slot
+                roomSlot.get().setOccupied(2);
+            } else {
+                roomSlot.get().setOccupied(0);
+            }
             roomSlotRepository.saveAndFlush(roomSlot.get());
             return "Marked room slot as available!";
         } else {
@@ -156,7 +201,11 @@ public class RoomSlotController {
      */
     @GetMapping(path = "/allroomslots")
     public @ResponseBody
-    Iterable<RoomSlot> getAllRoomsSlots() {
+    Iterable<RoomSlot> getAllRoomsSlots(@RequestHeader(authHeader) String token) {
+        if (!Authorization.authorize(token, Role.Student)) {
+            throw new RuntimeException(errorMessage);
+        }
+
         return roomSlotRepository.findAll();
     }
 
@@ -168,7 +217,12 @@ public class RoomSlotController {
      */
     @GetMapping(path = "/roomslot/{id}")
     public @ResponseBody
-    RoomSlot getRoomSlot(@PathVariable int id) {
+    RoomSlot getRoomSlot(@RequestHeader(authHeader) String token,
+                         @PathVariable int id) {
+        if (!Authorization.authorize(token, Role.Student)) {
+            throw new RuntimeException(errorMessage);
+        }
+
         Optional<RoomSlot> roomSlot = roomSlotRepository.findById(id);
         if (roomSlot.isPresent()) {
             return roomSlot.get();

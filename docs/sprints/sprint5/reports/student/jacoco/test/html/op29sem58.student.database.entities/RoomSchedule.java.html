@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RoomSchedule.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">student</a> &gt; <a href="index.source.html" class="el_package">op29sem58.student.database.entities</a> &gt; <span class="el_source">RoomSchedule.java</span></div><h1>RoomSchedule.java</h1><pre class="source lang-java linenums">package op29sem58.student.database.entities;
+
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.Transient;
+
+/**
+ * This is a RoomSchedule entity, the interesting part is that we store only the part
+ * relevant to our service in the database. So the ID is the RoomSchedule ID we receive
+ * from the roomScheduler, we link this with the students in a many to many relationship 
+ * and store that relationship in the database. The other information like lectureId, 
+ * roomId, startTime endTime and coronaCapacity is used while assigning the students, but
+ * discarded afterwards, as we do not want to store, values across multiple databases.
+ */
+@Entity(name = &quot;RoomSchedule&quot;)
+public class RoomSchedule {
+    @Id
+    @Column(unique = true, nullable = false)
+    private int id;
+
+    @ManyToMany()
+    private Set&lt;Student&gt; students;
+
+    private int lectureId;
+    @Transient
+    private int roomId;
+    @Transient
+    private LocalDateTime startTime;
+    @Transient
+    private LocalDateTime endTime;
+    @Transient
+    private int coronaCapacity;
+
+    /**
+     * Creates a new instance of a room schedule.
+     *
+     * @param id Id of the roomschedule
+     * @param lectureId Id of the lecture that was scheduled
+     * @param roomId Id of the room the lecture was scheduled in
+     * @param startTime Start time of the lecture
+     * @param endTime End time of the lecture
+     * @param coronaCapacity Number of students that are allowed in the room
+     */
+    public RoomSchedule(
+        int id,
+        int lectureId,
+        int roomId,
+        LocalDateTime startTime,
+        LocalDateTime endTime,
+        int coronaCapacity
+<span class="nc" id="L56">    ) {</span>
+<span class="nc" id="L57">        this.startTime = startTime;</span>
+<span class="nc" id="L58">        this.endTime = endTime;</span>
+<span class="nc" id="L59">        this.id = id;</span>
+<span class="nc" id="L60">        this.lectureId = lectureId;</span>
+<span class="nc" id="L61">        this.roomId = roomId;</span>
+<span class="nc" id="L62">        this.coronaCapacity = coronaCapacity;</span>
+<span class="nc" id="L63">    }</span>
+
+<span class="fc" id="L65">    public RoomSchedule() {</span>
+<span class="fc" id="L66">        this.students = new HashSet&lt;Student&gt;();</span>
+<span class="fc" id="L67">    }</span>
+
+    public int getId() {
+<span class="nc" id="L70">        return this.id;</span>
+    }
+    
+    public void setId(int id) {
+<span class="nc" id="L74">        this.id = id;</span>
+<span class="nc" id="L75">    }</span>
+
+    public int getCoronaCapacity() {
+<span class="nc" id="L78">        return this.coronaCapacity;</span>
+    }
+    
+    public void setCoronaCapacity(int coronaCapacity) {
+<span class="nc" id="L82">        this.coronaCapacity = coronaCapacity;</span>
+<span class="nc" id="L83">    }</span>
+
+    public Set&lt;Student&gt; getStudents() {
+<span class="nc" id="L86">        return this.students;</span>
+    }
+    
+    public void setStudents(Set&lt;Student&gt; students) {
+<span class="nc" id="L90">        this.students = students;</span>
+<span class="nc" id="L91">    }</span>
+
+    public void addStudent(Student student) {
+<span class="nc" id="L94">        this.students.add(student);</span>
+<span class="nc" id="L95">    }</span>
+
+    public LocalDateTime getStartTime() {
+<span class="nc" id="L98">        return this.startTime;</span>
+    }
+    
+    public void setStartTime(LocalDateTime startTime) {
+<span class="nc" id="L102">        this.startTime = startTime;</span>
+<span class="nc" id="L103">    }</span>
+
+    public LocalDateTime getEndTime() {
+<span class="nc" id="L106">        return this.endTime;</span>
+    }
+    
+    public void setEndTime(LocalDateTime endTime) {
+<span class="nc" id="L110">        this.endTime = endTime;</span>
+<span class="nc" id="L111">    }</span>
+
+    public int getLectureId() {
+<span class="nc" id="L114">        return this.lectureId;</span>
+    }
+    
+    public void setLectureId(int lectureId) {
+<span class="nc" id="L118">        this.lectureId = lectureId;</span>
+<span class="nc" id="L119">    }</span>
+
+    public int getRoomId() {
+<span class="nc" id="L122">        return this.roomId;</span>
+    }
+    
+    public void setRoomId(int roomId) {
+<span class="nc" id="L126">        this.roomId = roomId;</span>
+<span class="nc" id="L127">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

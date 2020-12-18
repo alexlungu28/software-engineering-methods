@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Course.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">student</a> &gt; <a href="index.source.html" class="el_package">op29sem58.student.local.entities</a> &gt; <span class="el_source">Course.java</span></div><h1>Course.java</h1><pre class="source lang-java linenums">package op29sem58.student.local.entities;
+
+/**
+ * This Class is created so that we can store the list we receive from the courses service,
+ * which are only the courses with their lectures. This helps with assigning the students
+ * as we can check if they are enrolled for the course.
+ */
+public class Course {
+    private int courseId;
+    private String teacherNetId;
+    private String name;
+    private String code;
+    private int yearOfStudy;
+    private int[] lectureIds;
+
+    /**
+     * Basis constructor to create a course object.
+     *
+     * @param courseId Well the courseId.
+     * @param lectureIds The Id's of the lectures
+     * @param teacherNetId the NetId of the teacher
+     * @param name the name of the course
+     * @param code the course code
+     * @param yearOfStudy For what year this course is held.
+     */
+    public Course(int courseId, int[] lectureIds, String teacherNetId, String name, String code,
+<span class="fc" id="L27">                  int yearOfStudy) {</span>
+<span class="fc" id="L28">        this.courseId = courseId;</span>
+<span class="fc" id="L29">        this.lectureIds = lectureIds;</span>
+<span class="fc" id="L30">        this.teacherNetId = teacherNetId;</span>
+<span class="fc" id="L31">        this.name = name;</span>
+<span class="fc" id="L32">        this.code = code;</span>
+<span class="fc" id="L33">        this.yearOfStudy = yearOfStudy;</span>
+<span class="fc" id="L34">    }</span>
+
+    /**
+     * If the course has this lectureId, it will return true.
+     *
+     * @param lectureId to check if the course has this lecture
+     * @return true if course contains this lecture, false otherwise
+     */
+    public boolean courseHasLecture(int lectureId) {
+<span class="fc bfc" id="L43" title="All 2 branches covered.">        for (int id : this.lectureIds) {</span>
+<span class="fc bfc" id="L44" title="All 2 branches covered.">            if (id == lectureId) {</span>
+<span class="fc" id="L45">                return true;</span>
+            }
+        }
+<span class="fc" id="L48">        return false;</span>
+    }
+
+    public String getTeacherNetId() {
+<span class="fc" id="L52">        return teacherNetId;</span>
+    }
+
+    public void setTeacherNetId(String teacherNetId) {
+<span class="fc" id="L56">        this.teacherNetId = teacherNetId;</span>
+<span class="fc" id="L57">    }</span>
+
+    public String getName() {
+<span class="fc" id="L60">        return name;</span>
+    }
+
+    public void setName(String name) {
+<span class="fc" id="L64">        this.name = name;</span>
+<span class="fc" id="L65">    }</span>
+
+    public String getCode() {
+<span class="fc" id="L68">        return code;</span>
+    }
+
+    public void setCode(String code) {
+<span class="fc" id="L72">        this.code = code;</span>
+<span class="fc" id="L73">    }</span>
+
+    public int getYearOfStudy() {
+<span class="fc" id="L76">        return yearOfStudy;</span>
+    }
+
+    public void setYearOfStudy(int yearOfStudy) {
+<span class="fc" id="L80">        this.yearOfStudy = yearOfStudy;</span>
+<span class="fc" id="L81">    }</span>
+
+    public int getCourseId() {
+<span class="fc" id="L84">        return courseId;</span>
+    }
+
+    public void setCourseId(int courseId) {
+<span class="fc" id="L88">        this.courseId = courseId;</span>
+<span class="fc" id="L89">    }</span>
+
+    public int[] getLectureIds() {
+<span class="fc" id="L92">        return this.lectureIds;</span>
+    }
+    
+    public void setLectureIds(int[] lectureIds) {
+<span class="fc" id="L96">        this.lectureIds = lectureIds;</span>
+<span class="fc" id="L97">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

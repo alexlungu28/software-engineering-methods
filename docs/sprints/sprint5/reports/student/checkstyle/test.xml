@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="8.37">
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\student\src\test\java\op29sem58\student\controllers\StudentControllerTest.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\student\src\test\java\op29sem58\student\local\entities\CourseTest.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\student\src\test\java\op29sem58\student\local\entities\LectureDetailsTest.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\student\src\test\java\op29sem58\student\local\entities\LectureTest.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\student\src\test\java\op29sem58\student\local\entities\UserPreferenceTest.java">
+</file>
+</checkstyle>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">authentication</a> &gt; <a href="index.source.html" class="el_package">op29sem58.authentication.users</a> &gt; <span class="el_source">UserService.java</span></div><h1>UserService.java</h1><pre class="source lang-java linenums">package op29sem58.authentication.users;
+
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+<span class="fc" id="L8">public class UserService {</span>
+
+    @Autowired
+    private transient UserRepository userRepository;
+
+    /**
+     * Get all users method.
+     *
+     * @return returns all users from database
+     */
+    public Iterable&lt;User&gt; getAllUsers() {
+<span class="fc" id="L19">        return userRepository.findAll();</span>
+    }
+
+    /**
+     * Get user information by netID.
+     *
+     * @param netid - netID
+     *
+     * @return the user from database
+     */
+    public Optional&lt;User&gt; getUser(String netid) {
+<span class="fc" id="L30">        Optional&lt;User&gt; optionalUser = userRepository.findById(netid);</span>
+<span class="fc" id="L31">        User user = optionalUser.get();</span>
+<span class="fc" id="L32">        user.setPassword(&quot;&quot;);</span>
+<span class="fc" id="L33">        return Optional.of(user);</span>
+    }
+
+    /**
+     * This method updates the user.
+     *
+     * @param user the user with all fields, including role
+     *
+     * @return result of operation
+     */
+    public String modifyUser(User user) {
+<span class="pc bpc" id="L44" title="1 of 2 branches missed.">        if (!userRepository.existsById(user.getNetid())) {</span>
+<span class="nc" id="L45">            return &quot;User does not exist&quot;;</span>
+        }
+<span class="fc" id="L47">        User temp = userRepository.findById(user.getNetid())</span>
+<span class="fc" id="L48">                .orElse(null);</span>
+<span class="fc" id="L49">        temp.setRole(user.getRole());</span>
+<span class="fc" id="L50">        userRepository.save(temp);</span>
+<span class="fc" id="L51">        return &quot;User Updated&quot;;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

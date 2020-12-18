@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RoomSlotCommunication.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">room-scheduler</a> &gt; <a href="index.source.html" class="el_package">roomscheduler.communication</a> &gt; <span class="el_source">RoomSlotCommunication.java</span></div><h1>RoomSlotCommunication.java</h1><pre class="source lang-java linenums">package roomscheduler.communication;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import roomscheduler.entities.Rule;
+
+<span class="nc" id="L10">public class RoomSlotCommunication extends ServerCommunication {</span>
+
+    /** Placeholder.
+     *
+     * @param id Placeholder.
+     * @return Placeholder.
+     * @throws IOException Placeholder.
+     */
+    public static Object getRoom(int id) throws IOException {
+<span class="nc" id="L19">        String port = &quot;8080&quot;; //this is the port of the room-service</span>
+<span class="nc" id="L20">        String path = &quot;/room/&quot; + id;</span>
+<span class="nc" id="L21">        JsonObject jsonObject = gson.fromJson(getObjectJson(port, path), JsonObject.class);</span>
+<span class="nc bnc" id="L22" title="All 2 branches missed.">        if (jsonObject.get(&quot;status&quot;) == null) {</span>
+<span class="nc" id="L23">            return &quot;ok&quot;;</span>
+        } else {
+<span class="nc" id="L25">            return &quot;not found&quot;;</span>
+        }
+    }
+    
+    /** Placeholder.
+     */
+    public static Long numberOfRooms() throws IOException {
+<span class="nc" id="L32">        String port = &quot;8080&quot;; //this is the port of the room-service</span>
+<span class="nc" id="L33">        String path = &quot;/countRooms&quot;;</span>
+<span class="nc" id="L34">        Long count = gson.fromJson(getObjectJson(port, path), Long.class);</span>
+<span class="nc" id="L35">        return count;</span>
+    }
+
+    /** Placeholder.
+     */
+    public static List&lt;Rule&gt; getRules() throws IOException {
+<span class="nc" id="L41">        String port = &quot;8081&quot;;</span>
+<span class="nc" id="L42">        String path = &quot;/allRules&quot;;</span>
+<span class="nc" id="L43">        return stringToArray(getObjectJson(port, path), Rule[].class);</span>
+    }
+
+    public static &lt;T&gt; List&lt;T&gt; stringToArray(String s, Class&lt;T[]&gt; clazz) {
+<span class="nc" id="L47">        T[] arr = new Gson().fromJson(s, clazz);</span>
+<span class="nc" id="L48">        return Arrays.asList(arr);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

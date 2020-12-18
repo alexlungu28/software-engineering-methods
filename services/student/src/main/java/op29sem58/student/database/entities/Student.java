@@ -18,6 +18,23 @@ public class Student {
     private LocalDateTime lastVisited;
     private boolean wantsToGo;
 
+    public Student() {}
+
+    /**
+     * Create a student.
+     *
+     * @param netId NetId of the student.
+     * @param lastVisited When the student visited the campus last.
+     * @param wantsToGo Whether they prefer to go to campus.
+     */
+    public Student(
+        String netId, LocalDateTime lastVisited, boolean wantsToGo
+    ) {
+        this.netId = netId;
+        this.lastVisited = lastVisited;
+        this.wantsToGo = wantsToGo;
+    }
+
     public String getNetId() {
         return this.netId;
     }
