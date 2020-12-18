@@ -4,6 +4,7 @@ public class UserPreference {
     private String studentId;
     private boolean wantsToGo;
 
+    public UserPreference() {}
 
     /**
      * This it to receive Json to that we can receive student and
