@@ -1,10 +1,10 @@
 package project.op29sem58.courses.database.entities;
 
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.util.Objects;
 
 @Entity
 public class Course {
@@ -87,5 +87,10 @@ public class Course {
                 && Objects.equals(name, course.name)
                 && Objects.equals(code, course.code)
                 && Objects.equals(yearOfStudy, course.yearOfStudy);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, teacherNetId, name, code, yearOfStudy);
     }
 }

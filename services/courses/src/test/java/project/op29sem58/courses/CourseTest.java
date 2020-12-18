@@ -119,4 +119,10 @@ public class CourseTest {
         assertFalse(course.equals(c5));
     }
 
+    @Test
+    public void hashCodeTest() {
+        Course c = new Course("1", ads, cc, 1);
+        Assertions.assertEquals(c.hashCode(), c.hashCode());
+    }
+
 }
