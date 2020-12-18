@@ -4,12 +4,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import java.util.ArrayList;
-import java.util.List;
 import org.hamcrest.Matchers;
-import org.junit.Before;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
@@ -23,10 +19,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import roomscheduler.communication.RoomScheduleCommunication;
-import roomscheduler.communication.RoomSlotCommunication;
-import roomscheduler.controllers.Authorization;
+import roomscheduler.communication.authorization.Authorization;
+import roomscheduler.communication.authorization.Role;
 import roomscheduler.controllers.RuleController;
 import roomscheduler.entities.Rule;
 
@@ -48,11 +42,6 @@ public class RuleControllerTest {
     private transient String allRules = "/allRules";
     private transient String ruleName = "rule1";
 
-    @Before
-    public void setUp() throws Exception {
-        mockMvc = MockMvcBuilders.standaloneSetup(ruleController).build();
-    }
-
     /**
      * Before all mock Authorization and RoomScheduleCommunication.
      */
@@ -61,9 +50,9 @@ public class RuleControllerTest {
     public static void mockAuthorization() {
         String br = "Bearer token";
         mockedAuth = Mockito.mockStatic(Authorization.class);
-        mockedAuth.when(() -> Authorization.authorize(br, "Admin")).thenReturn(true);
-        mockedAuth.when(() -> Authorization.authorize(br, "Student")).thenReturn(true);
-        mockedAuth.when(() -> Authorization.authorize(br, "Teacher")).thenReturn(true);
+        mockedAuth.when(() -> Authorization.authorize(br, Role.Admin)).thenReturn(true);
+        mockedAuth.when(() -> Authorization.authorize(br, Role.Student)).thenReturn(true);
+        mockedAuth.when(() -> Authorization.authorize(br, Role.Teacher)).thenReturn(true);
     }
 
     @AfterAll

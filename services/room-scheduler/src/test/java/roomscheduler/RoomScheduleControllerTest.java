@@ -4,7 +4,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.junit.Before;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -22,7 +21,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import roomscheduler.communication.RoomScheduleCommunication;
-import roomscheduler.controllers.Authorization;
+import roomscheduler.communication.authorization.Authorization;
+import roomscheduler.communication.authorization.Role;
 import roomscheduler.controllers.RoomScheduleController;
 import roomscheduler.entities.RoomSchedule;
 
@@ -43,10 +43,6 @@ public class RoomScheduleControllerTest {
     private static MockedStatic<Authorization> mockedAuth;
     private static MockedStatic<RoomScheduleCommunication> mockedRoomCom;
 
-    @Before
-    public void setUp() throws Exception {
-        mockMvc = MockMvcBuilders.standaloneSetup(roomScheduleController).build();
-    }
 
     /**
      * Before all mock Authorization and RoomScheduleCommunication.
@@ -54,9 +50,13 @@ public class RoomScheduleControllerTest {
     @BeforeAll
     public static void mockAuthorization() {
         mockedAuth = Mockito.mockStatic(Authorization.class);
-        mockedAuth.when(() -> Authorization.authorize("Bearer token", "Admin")).thenReturn(true);
-        mockedAuth.when(() -> Authorization.authorize("Bearer token", "Student")).thenReturn(true);
-        mockedAuth.when(() -> Authorization.authorize("Bearer token", "Teacher")).thenReturn(true);
+        mockedAuth.when(() -> Authorization.authorize("Bearer token", Role.Admin)).thenReturn(true);
+        mockedAuth.when(
+                () -> Authorization.authorize("Bearer token", Role.Student)
+        ).thenReturn(true);
+        mockedAuth.when(
+                () -> Authorization.authorize("Bearer token", Role.Teacher)
+        ).thenReturn(true);
         mockedRoomCom = Mockito.mockStatic(RoomScheduleCommunication.class);
     }
 

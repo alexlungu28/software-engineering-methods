@@ -1,25 +1,18 @@
 package op29sem58.room;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.io.IOException;
-import op29sem58.room.controllers.Authorization;
+import op29sem58.room.communication.authorization.Authorization;
+import op29sem58.room.communication.authorization.Role;
 import op29sem58.room.controllers.RoomController;
 import op29sem58.room.repositories.RoomRepository;
-import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.entity.ContentType;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicStatusLine;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,7 +57,7 @@ public class AuthorizationTest {
         Mockito.when(response.getStatusLine()).thenReturn(new BasicStatusLine(
                 HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK"));
 
-        mockedAuth.when(() -> Authorization.authorize("Bearer token", "Admin")).thenReturn(true);
+        mockedAuth.when(() -> Authorization.authorize("Bearer token", Role.Admin)).thenReturn(true);
 
         this.mockMvc.perform(MockMvcRequestBuilders.get("/allrooms")
                 .header(authorization, bearer))
@@ -78,7 +71,9 @@ public class AuthorizationTest {
         CloseableHttpResponse response = Mockito.mock(CloseableHttpResponse.class);
         Mockito.when(response.getStatusLine()).thenReturn(new BasicStatusLine(HttpVersion
                 .HTTP_1_1, HttpStatus.SC_INTERNAL_SERVER_ERROR, "Not ok"));
-        mockedAuth.when(() -> Authorization.authorize("Bearer token", "Admin")).thenReturn(false);
+        mockedAuth.when(
+                () -> Authorization.authorize("Bearer token", Role.Admin)
+        ).thenReturn(false);
         RoomRepository roomConMock = Mockito.mock(RoomRepository.class);
         Mockito.verify(roomConMock, Mockito.never()).findAll();
         RoomController r = Mockito.mock(RoomController.class);
