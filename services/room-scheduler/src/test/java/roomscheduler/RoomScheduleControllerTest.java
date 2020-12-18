@@ -26,6 +26,8 @@ import roomscheduler.controllers.Authorization;
 import roomscheduler.controllers.RoomScheduleController;
 import roomscheduler.entities.RoomSchedule;
 
+import java.util.Date;
+
 @SpringBootTest(classes = RoomScheduleService.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @AutoConfigureMockMvc
@@ -62,8 +64,8 @@ public class RoomScheduleControllerTest {
 
     @AfterAll
     public static void closeMock() {
-        mockedAuth.reset();
-        mockedRoomCom.reset();
+        mockedAuth.close();
+        mockedRoomCom.close();
     }
 
     @AfterEach

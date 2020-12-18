@@ -25,6 +25,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import roomscheduler.communication.RoomScheduleCommunication;
+import roomscheduler.communication.RoomSlotCommunication;
 import roomscheduler.controllers.Authorization;
 import roomscheduler.controllers.RuleController;
 import roomscheduler.entities.Rule;
@@ -42,7 +43,6 @@ public class RuleControllerTest {
     final transient String authorization = "Authorization";
     final transient String bearer = "Bearer token";
     private static MockedStatic<Authorization> mockedAuth;
-    private static MockedStatic<RoomScheduleCommunication> mockedRoomSlotCom;
     private transient String createRule = "/createRule";
     private transient String saveRule = "Saved rule";
     private transient String allRules = "/allRules";
@@ -63,18 +63,11 @@ public class RuleControllerTest {
         mockedAuth.when(() -> Authorization.authorize(br, "Admin")).thenReturn(true);
         mockedAuth.when(() -> Authorization.authorize(br, "Student")).thenReturn(true);
         mockedAuth.when(() -> Authorization.authorize(br, "Teacher")).thenReturn(true);
-        mockedRoomSlotCom = Mockito.mockStatic(RoomScheduleCommunication.class);
     }
 
     @AfterAll
     public static void closeMock() {
-        mockedAuth.reset();
-        mockedRoomSlotCom.reset();
-    }
-
-    @AfterEach
-    public void reset() {
-        mockedRoomSlotCom.reset();
+        mockedAuth.close();
     }
 
     @Test
