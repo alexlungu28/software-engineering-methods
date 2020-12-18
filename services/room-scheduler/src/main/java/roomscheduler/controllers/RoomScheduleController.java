@@ -92,7 +92,6 @@ public class RoomScheduleController {
         Integer slotDuration = roomScheduleRepository.getSlotDuration();
         List<ScheduleInfo> result = roomScheduleRepository
                 .getScheduleInfo(slotDuration, breakDuration);
-        System.out.println(result);
         List<ScheduleInformation> finalRes = new ArrayList<>();
         for (ScheduleInfo s : result) {
             finalRes.add(new ScheduleInformation(s.getRoomScheduleId(), s.getStartTime(),
@@ -100,7 +99,6 @@ public class RoomScheduleController {
                     .getCoronaCapacity(s.getRoomId(), roomScheduleRepository.getMinPerc(),
                             roomScheduleRepository.getMaxPerc())));
         }
-        System.out.println(finalRes);
         return finalRes;
     }
 

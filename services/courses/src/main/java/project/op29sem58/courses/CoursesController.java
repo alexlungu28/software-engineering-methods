@@ -140,7 +140,6 @@ public class CoursesController {
             String path = ServerCommunication.getRoomScheduleServiceUrl() + "/scheduleLecture/"
                     + l.getDate() + "/" + l.getNumberOfTimeslots() + "/" + l.getMinNoStudents()
                     + "/" + l.getId() + "/" + l.getCourse().getYearOfStudy();
-            System.out.println(path);
             String response = ServerCommunication.makeGetRequest(path);
             if (response == null) {
                 return internalError;

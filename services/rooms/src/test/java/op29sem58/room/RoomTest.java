@@ -1,8 +1,8 @@
 package op29sem58.room;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import op29sem58.room.entities.Room;
 import org.junit.jupiter.api.Test;
@@ -10,12 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 public class RoomTest {
-
-    @Test
-    void contextLoads() {
-        org.junit.jupiter.api.Assertions.assertTrue(true);
-    }
-
     /**
      * Testing the entity Room's constructor method.
      * Checking to see if a Room instance returns an exception if a negative capacity is inputted.
@@ -45,7 +39,7 @@ public class RoomTest {
      * Checking to see if two instances of the same Room return true.
      */
     @Test
-    public void roomEqaulsTest() {
+    public void roomEquelsTest() {
         Room room1 = new Room("tz2", 100);
         Room room2 = new Room("tz2", 100);
         Room room3 = new Room("tz3", 100);

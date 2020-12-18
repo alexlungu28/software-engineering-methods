@@ -9,12 +9,12 @@ import op29sem58.room.communication.authorization.Authorization;
 import op29sem58.room.communication.authorization.Role;
 import op29sem58.room.controllers.RoomController;
 import op29sem58.room.entities.Room;
+import org.aspectj.lang.annotation.Before;
 import org.hamcrest.Matchers;
-import org.junit.Before;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -34,7 +33,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 @SpringBootTest(classes = RoomService.class)
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
-@RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase(replace = Replace.ANY)
 class RoomControllerTest {
@@ -47,11 +45,6 @@ class RoomControllerTest {
     final transient String authorization = "Authorization";
     final transient String bearer = "Bearer token";
     private static MockedStatic<Authorization> mockedAuth;
-
-    @Before
-    public void setUp() throws Exception {
-        mockMvc = MockMvcBuilders.standaloneSetup(roomController).build();
-    }
 
     @BeforeAll
     public static void mockAuthorization() {

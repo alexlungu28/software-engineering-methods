@@ -17,11 +17,7 @@ import op29sem58.student.communication.adapters.LocalDateTimeAdapter;
 import op29sem58.student.communication.authorization.Authorization;
 import op29sem58.student.communication.authorization.Role;
 import op29sem58.student.database.entities.Student;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
@@ -34,7 +30,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest(classes = StudentService.class)
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
-@RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase(replace = Replace.ANY)
 public class ApiTest {
@@ -57,7 +52,7 @@ public class ApiTest {
     }
 
     @Test
-    public void exampleTest() throws Exception {
+    public void initializingStudentsTest() throws Exception {
         List<Student> students = new ArrayList<>();
         for (int i = 0; i < 8; i++) {
             Student student = new Student();
