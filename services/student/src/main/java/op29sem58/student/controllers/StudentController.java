@@ -19,6 +19,7 @@ import op29sem58.student.local.entities.Course;
 import op29sem58.student.local.entities.Lecture;
 import op29sem58.student.local.entities.LectureDetails;
 import op29sem58.student.local.entities.Pair;
+import op29sem58.student.local.entities.UserPreference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -84,6 +85,25 @@ public class StudentController {
         return new ResponseEntity<List<Student>>(this.students.findAll(), HttpStatus.OK);
     }
 
+    /**
+     * To set the preference if the student wants to go or not.
+     *
+     * @param userPreference this includes the studentId and boolean wantsToGo.
+     */
+    @PostMapping(path = "/setPreferences")
+    public ResponseEntity<Void> setPreference(
+        @RequestHeader(authHeader) String token, @RequestBody UserPreference userPreference
+    ) {
+        if (!Authorization.authorize(token, Role.Student)) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
+        String i = userPreference.getStudentId();
+        boolean wantsToGo = userPreference.isWantsToGo();
+        Student student = students.findById(i).orElse(new Student());
+        student.setWantsToGo(wantsToGo);
+        return ResponseEntity.ok().build();
+    }
 
     /**
      * This should return all the lectures of the student sending the request,
