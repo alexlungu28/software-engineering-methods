@@ -18,6 +18,7 @@ import op29sem58.student.database.repos.StudentRepo;
 import op29sem58.student.local.entities.Course;
 import op29sem58.student.local.entities.Lecture;
 import op29sem58.student.local.entities.LectureDetails;
+import op29sem58.student.local.entities.UserPreference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -68,18 +69,14 @@ public class StudentController {
     /**
      * To set the preference if the student wants to go or not.
      *
-     * @param json this includes the studentId and boolean wantsToGo.
+     * @param userPreference this includes the studentId and boolean wantsToGo.
      */
     @PostMapping(path = "/setPreferences")
-    public void setPreference(@RequestBody Map<String, String> json) {
-        String i = json.get("user");
-        String wantsToGo = json.get("wantsToGo");
+    public void setPreference(@RequestBody UserPreference userPreference) {
+        String i = userPreference.getStudentId();
+        boolean wantsToGo = userPreference.isWantsToGo();
         Student student = students.findById(i).orElse(new Student());
-        if ("true".equals(wantsToGo)) {
-            student.setWantsToGo(true);
-        } else {
-            student.setWantsToGo(false);
-        }
+        student.setWantsToGo(wantsToGo);
     }
 
     /**
