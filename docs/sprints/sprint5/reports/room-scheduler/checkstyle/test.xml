@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="8.37">
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\room-scheduler\src\test\java\roomscheduler\IdNamePairTest.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\room-scheduler\src\test\java\roomscheduler\NameDateInfoTest.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\room-scheduler\src\test\java\roomscheduler\RoomScheduleControllerTest.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\room-scheduler\src\test\java\roomscheduler\RoomScheduleTest.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\room-scheduler\src\test\java\roomscheduler\RoomSlotTest.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\room-scheduler\src\test\java\roomscheduler\RuleControllerTest.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\room-scheduler\src\test\java\roomscheduler\RuleTest.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\room-scheduler\src\test\java\roomscheduler\ScheduleInformationTest.java">
+</file>
+<file name="C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\room-scheduler\src\test\java\roomscheduler\SlotInfoTest.java">
+</file>
+</checkstyle>

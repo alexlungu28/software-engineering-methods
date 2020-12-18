@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RoomController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">rooms</a> &gt; <a href="index.source.html" class="el_package">op29sem58.room.controllers</a> &gt; <span class="el_source">RoomController.java</span></div><h1>RoomController.java</h1><pre class="source lang-java linenums">package op29sem58.room.controllers;
+
+import java.util.List;
+import java.util.Optional;
+import op29sem58.room.communication.authorization.Authorization;
+import op29sem58.room.communication.authorization.Role;
+import op29sem58.room.entities.Room;
+import op29sem58.room.entities.RoomInfo;
+import op29sem58.room.repositories.RoomRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+
+/**
+ * Controller for Room.
+ * With methods for general and id-specific retrieval
+ */
+@Controller // This means that this class is a Controller
+<span class="fc" id="L27">public class RoomController {</span>
+    @Autowired
+    private RoomRepository roomRepository;
+
+<span class="fc" id="L31">    final transient String authHeader = &quot;Authorization&quot;;</span>
+
+    public RoomRepository getRoomRepository() {
+<span class="nc" id="L34">        return roomRepository;</span>
+    }
+
+    public void setRoomRepository(RoomRepository roomRepository) {
+<span class="nc" id="L38">        this.roomRepository = roomRepository;</span>
+<span class="nc" id="L39">    }</span>
+
+    /**
+     * Method for creating a room.
+     *
+     * @param token token
+     * @param r Room to be added
+     * @return if the token corresponds to an admin, return &quot;created&quot; message, exception otherwise
+     */
+    @PostMapping(path = &quot;/createRoom&quot;) // Map ONLY POST Requests
+    public ResponseEntity&lt;String&gt; addNewRoom(@RequestHeader(authHeader) String token,
+                             @RequestBody Room r) {
+<span class="pc bpc" id="L51" title="1 of 2 branches missed.">        if (!Authorization.authorize(token, Role.Admin)) {</span>
+<span class="nc" id="L52">            return new ResponseEntity&lt;&gt;(HttpStatus.FORBIDDEN);</span>
+        }
+
+<span class="fc" id="L55">        roomRepository.saveAndFlush(r);</span>
+<span class="fc" id="L56">        return ResponseEntity.ok(&quot;Saved room&quot;);</span>
+    }
+
+    /**
+     * Retrieve all Rooms.
+     *
+     * @return all Rooms stored in the database
+     */
+    @GetMapping(path = &quot;/allrooms&quot;)
+    public ResponseEntity&lt;Iterable&lt;Room&gt;&gt; getAllRooms(@RequestHeader(authHeader) String token) {
+<span class="pc bpc" id="L66" title="1 of 2 branches missed.">        if (!Authorization.authorize(token, Role.Admin)) {</span>
+<span class="nc" id="L67">            return new ResponseEntity&lt;&gt;(HttpStatus.FORBIDDEN);</span>
+        }
+
+<span class="fc" id="L70">        return ResponseEntity.ok(roomRepository.findAll());</span>
+    }
+
+    /**
+     * Method for initializing the rooms table.
+     *
+     * @param token token
+     * @return message (&quot;saved&quot; if token corresponds to an admin, exception otherwise)
+     */
+    @PutMapping(path = &quot;/generateRooms&quot;)
+    public ResponseEntity&lt;String&gt; generateRooms(@RequestHeader(authHeader) String token) {
+<span class="nc bnc" id="L81" title="All 2 branches missed.">        if (!Authorization.authorize(token, Role.Admin)) {</span>
+<span class="nc" id="L82">            return new ResponseEntity&lt;&gt;(HttpStatus.FORBIDDEN);</span>
+        }
+
+<span class="nc" id="L85">        return ResponseEntity.ok(roomRepository.createInitialRooms());</span>
+    }
+
+
+    /**
+     * Method for getting a Room.
+     *
+     * @param id id of the Room that is to be retrieved
+     * @return Room with id 'id'
+     */
+    @GetMapping(path = &quot;/room/{id}&quot;)
+    public ResponseEntity&lt;Room&gt; getRoom(@PathVariable int id) {
+<span class="fc" id="L97">        Optional&lt;Room&gt; room = roomRepository.findById(id);</span>
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">        if (room.isPresent()) {</span>
+<span class="fc" id="L99">            return ResponseEntity.ok(room.get());</span>
+        } else {
+<span class="nc" id="L101">            throw new RuntimeException(&quot;Room not found for the id &quot; + id);</span>
+        }
+    }
+
+    /**
+     * Method for retrieving the number of rooms.
+     *
+     * @return number of rooms
+     */
+    @GetMapping(path = &quot;/countRooms&quot;)
+    public ResponseEntity&lt;Long&gt; getNumberOfRooms() {
+<span class="fc" id="L112">        return ResponseEntity.ok(roomRepository.count());</span>
+    }
+
+    /**
+     * Get rooms with capacity that's at least a set amount.
+     *
+     * @param numOfStudents number of students
+     * @param minPer minimum persons
+     * @param maxPer maximum persons
+     * @return the rooms that meet these conditions
+     */
+    @GetMapping(path = &quot;/getRoomsWithCapacityAtLeast/{numOfStudents}/{minPer}/{maxPer}&quot;)
+    public ResponseEntity&lt;List&lt;RoomInfo&gt;&gt; getRoomWithCapAtLeast(@PathVariable Integer numOfStudents,
+                                         @PathVariable Integer minPer,
+                                         @PathVariable Integer maxPer) {
+<span class="nc" id="L127">        return ResponseEntity.ok(roomRepository.getRoomsWithCapacityAtLeast(</span>
+                numOfStudents, minPer, maxPer));
+    }
+
+    /**
+     * Method for editing a Room.
+     *
+     * @param r Room to be edited
+     * @return update message
+     */
+    @PutMapping(path = &quot;/modifyRoom&quot;)
+    public ResponseEntity&lt;String&gt; editRoom(@RequestHeader(authHeader) String token,
+                                           @RequestBody Room r) {
+<span class="pc bpc" id="L140" title="1 of 2 branches missed.">        if (!Authorization.authorize(token, Role.Admin)) {</span>
+<span class="nc" id="L141">            return new ResponseEntity&lt;&gt;(HttpStatus.FORBIDDEN);</span>
+        }
+
+<span class="fc" id="L144">        Optional&lt;Room&gt; room = roomRepository.findById(r.getId());</span>
+<span class="pc bpc" id="L145" title="1 of 2 branches missed.">        if (room.isPresent()) {</span>
+<span class="fc" id="L146">            room.get().setName(r.getName());</span>
+<span class="fc" id="L147">            room.get().setCapacity(r.getCapacity());</span>
+<span class="fc" id="L148">            roomRepository.saveAndFlush(room.get());</span>
+<span class="fc" id="L149">            return ResponseEntity.ok(&quot;Changed Room&quot;);</span>
+        } else {
+<span class="nc" id="L151">            throw new RuntimeException(&quot;Room not found for the id &quot; + r.getId());</span>
+        }
+    }
+
+    /**
+     * Get the corona capacity of a room.
+     *
+     * @param roomId id of room
+     * @param minPerc min people
+     * @param maxPerc max people
+     * @return the capacity
+     */
+    @GetMapping(path = &quot;/getCoronaCapacity/{roomId}/{minPerc}/{maxPerc}&quot;)
+    public ResponseEntity&lt;Integer&gt; coronaCapacity(@PathVariable Integer roomId,
+                             @PathVariable Integer minPerc,
+                             @PathVariable Integer maxPerc) {
+<span class="nc" id="L167">        return ResponseEntity.ok(roomRepository.getCoronaCapacity(roomId, minPerc, maxPerc));</span>
+    }
+
+
+
+
+    /**
+     * Method for deleting a Room.
+     *
+     * @param id id of the Room to be deleted
+     * @return Room with id 'id'
+     */
+    @DeleteMapping(path = &quot;/deleteRoom/{id}&quot;)
+    public ResponseEntity&lt;String&gt; deleteRoom(@RequestHeader(authHeader) String token,
+                                             @PathVariable int id) {
+<span class="pc bpc" id="L182" title="1 of 2 branches missed.">        if (!Authorization.authorize(token, Role.Admin)) {</span>
+<span class="nc" id="L183">            return new ResponseEntity&lt;&gt;(HttpStatus.FORBIDDEN);</span>
+        }
+<span class="fc" id="L185">        Optional&lt;Room&gt; room = roomRepository.findById(id);</span>
+<span class="pc bpc" id="L186" title="1 of 2 branches missed.">        if (room.isPresent()) {</span>
+<span class="fc" id="L187">            roomRepository.deleteById(id);</span>
+<span class="fc" id="L188">            return ResponseEntity.ok(&quot;Deleted Room&quot;);</span>
+        } else {
+<span class="nc" id="L190">            throw new RuntimeException(&quot;Room not found for the id &quot; + id);</span>
+        }
+    }
+
+}
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RoomSchedule.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">room-scheduler</a> &gt; <a href="index.source.html" class="el_package">roomscheduler.entities</a> &gt; <span class="el_source">RoomSchedule.java</span></div><h1>RoomSchedule.java</h1><pre class="source lang-java linenums">package roomscheduler.entities;
+
+import java.util.Objects;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+
+
+@Entity // This tells Hibernate to make a table out of this class
+@Table(name = &quot;rooms_schedule&quot;)
+public class RoomSchedule {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+    private Integer room_slots_id;
+    private Integer lectures_id;
+    private Integer year_of_study;
+
+
+<span class="fc" id="L24">    protected RoomSchedule() {</span>
+
+<span class="fc" id="L26">    }</span>
+
+
+    /**
+     * Constructor for RoomSchedule.
+
+     * @param room_slots_id the id of the room slot
+     * @param lectures_id lecture id
+     * @param year_of_study year of study
+     */
+<span class="fc" id="L36">    public RoomSchedule(Integer room_slots_id, Integer lectures_id, Integer year_of_study) {</span>
+<span class="fc" id="L37">        this.room_slots_id = room_slots_id;</span>
+<span class="fc" id="L38">        this.lectures_id = lectures_id;</span>
+<span class="fc" id="L39">        this.year_of_study = year_of_study;</span>
+<span class="fc" id="L40">    }</span>
+
+    public Integer getId() {
+<span class="fc" id="L43">        return id;</span>
+    }
+
+    public void setId(Integer id) {
+<span class="nc" id="L47">        this.id = id;</span>
+<span class="nc" id="L48">    }</span>
+
+    public Integer getRoom_slots_id() {
+<span class="fc" id="L51">        return room_slots_id;</span>
+    }
+
+    public void setRoom_slots_id(Integer room_slots_id) {
+<span class="fc" id="L55">        this.room_slots_id = room_slots_id;</span>
+<span class="fc" id="L56">    }</span>
+
+    public Integer getLectures_id() {
+<span class="fc" id="L59">        return lectures_id;</span>
+    }
+
+    public void setLectures_id(Integer lectures_id) {
+<span class="fc" id="L63">        this.lectures_id = lectures_id;</span>
+<span class="fc" id="L64">    }</span>
+
+    public Integer getYear_of_study() {
+<span class="fc" id="L67">        return year_of_study;</span>
+    }
+
+    public void setYear_of_study(Integer year_of_study) {
+<span class="fc" id="L71">        this.year_of_study = year_of_study;</span>
+<span class="fc" id="L72">    }</span>
+
+    @Override
+    public boolean equals(Object o) {
+<span class="pc bpc" id="L76" title="1 of 2 branches missed.">        if (this == o) {</span>
+<span class="nc" id="L77">            return true;</span>
+        }
+<span class="pc bpc" id="L79" title="2 of 4 branches missed.">        if (o == null || getClass() != o.getClass()) {</span>
+<span class="nc" id="L80">            return false;</span>
+        }
+<span class="fc" id="L82">        RoomSchedule that = (RoomSchedule) o;</span>
+<span class="pc bpc" id="L83" title="1 of 2 branches missed.">        return Objects.equals(id, that.id)</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">                &amp;&amp; Objects.equals(room_slots_id, that.room_slots_id)</span>
+<span class="fc bfc" id="L85" title="All 2 branches covered.">                &amp;&amp; Objects.equals(lectures_id, that.lectures_id)</span>
+<span class="fc bfc" id="L86" title="All 2 branches covered.">                &amp;&amp; Objects.equals(year_of_study, that.year_of_study);</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L91">        return Objects.hash(id, room_slots_id, lectures_id, year_of_study);</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L96">        return &quot;RoomSchedule{&quot;</span>
+                + &quot;id=&quot; + id
+                + &quot;, room_slots_id=&quot; + room_slots_id
+                + &quot;, lectures_id=&quot; + lectures_id
+                + &quot;, year_of_study=&quot; + year_of_study
+                + '}';
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

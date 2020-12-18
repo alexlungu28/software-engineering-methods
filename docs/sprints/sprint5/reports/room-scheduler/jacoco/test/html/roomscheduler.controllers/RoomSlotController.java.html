@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RoomSlotController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">room-scheduler</a> &gt; <a href="index.source.html" class="el_package">roomscheduler.controllers</a> &gt; <span class="el_source">RoomSlotController.java</span></div><h1>RoomSlotController.java</h1><pre class="source lang-java linenums">package roomscheduler.controllers;
+
+import java.io.IOException;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.ResponseBody;
+import roomscheduler.communication.RoomSlotCommunication;
+import roomscheduler.communication.authorization.Authorization;
+import roomscheduler.communication.authorization.Role;
+import roomscheduler.entities.RoomSlot;
+import roomscheduler.entities.Rule;
+import roomscheduler.repositories.RoomSlotRepository;
+
+
+
+/**
+ * Controller for RoomSlot.
+ * With methods for general and id-specific retrieval
+ */
+@Controller // This means that this class is a Controller
+<span class="fc" id="L36">public class RoomSlotController {</span>
+
+    @Autowired
+    private RoomSlotRepository roomSlotRepository;
+
+<span class="fc" id="L41">    final transient String authHeader = &quot;Authorization&quot;;</span>
+
+<span class="fc" id="L43">    transient String errorMessage = &quot;You do not have the privilege to perform this action.&quot;;</span>
+
+    public RoomSlotRepository getRoomSlotRepository() {
+<span class="nc" id="L46">        return roomSlotRepository;</span>
+    }
+
+    public void setRoomSlotRepository(RoomSlotRepository roomSlotRepository) {
+<span class="nc" id="L50">        this.roomSlotRepository = roomSlotRepository;</span>
+<span class="nc" id="L51">    }</span>
+
+    /**
+     * Method for adding a new room slot.
+     *
+     *
+     * @param r room slot to be added
+     * @return message
+     * @throws IOException ioException
+     */
+    @PostMapping(path = &quot;/addroomslot&quot;) // Map ONLY POST Requests
+    public @ResponseBody
+    String addNewRoomSlot(@RequestHeader(authHeader) String token,
+                          @RequestBody RoomSlot r) throws IOException {
+<span class="nc bnc" id="L65" title="All 2 branches missed.">        if (!Authorization.authorize(token, Role.Teacher)) {</span>
+<span class="nc" id="L66">            throw new RuntimeException(errorMessage);</span>
+        }
+
+<span class="nc" id="L69">        Object a = RoomSlotCommunication.getRoom(r.getRooms_id());</span>
+<span class="nc bnc" id="L70" title="All 2 branches missed.">        if (a.toString().equals(&quot;not found&quot;)) {</span>
+<span class="nc" id="L71">            return &quot;There is no room with the id of the Room Slot entered!&quot;;</span>
+        } else {
+<span class="nc" id="L73">            roomSlotRepository.saveAndFlush(r);</span>
+<span class="nc" id="L74">            return &quot;Saved room slot&quot;;</span>
+        }
+    }
+
+    /**
+     * Get the number of rooms.
+     *
+     * @return the number of rooms
+     * @throws IOException in case something goes wrong
+     */
+    @GetMapping(path = &quot;/countRooms&quot;) // Map ONLY POST Requests
+    public @ResponseBody
+    Long getNumberOfRooms() throws IOException {
+<span class="nc" id="L87">        Long count = RoomSlotCommunication.numberOfRooms();</span>
+<span class="nc" id="L88">        return count;</span>
+    }
+
+    /**
+     * Method for initializing the room slot table.
+     *
+     * @param numDays numberOfDays
+     * @param firstSlotDateTime dateTime of the first slot
+     * @return message
+     * @throws IOException ioException
+     */
+    @PutMapping(path = &quot;/generateRoomSlots/{numDays}/{firstSlotDateTime}&quot;)
+    public @ResponseBody String generateRoomSlots(@RequestHeader(authHeader) String token,
+                                                  @PathVariable int numDays,
+              @PathVariable String firstSlotDateTime) throws IOException {
+<span class="nc bnc" id="L103" title="All 2 branches missed.">        if (!Authorization.authorize(token, Role.Admin)) {</span>
+<span class="nc" id="L104">            throw new RuntimeException(errorMessage);</span>
+        }
+    
+<span class="nc" id="L107">        Long numberOfRooms = RoomSlotCommunication.numberOfRooms();</span>
+<span class="nc" id="L108">        List&lt;Rule&gt; allRules = RoomSlotCommunication.getRules();</span>
+<span class="nc" id="L109">        HashMap&lt;String, Integer&gt; rules = new HashMap&lt;&gt;();</span>
+<span class="nc bnc" id="L110" title="All 2 branches missed.">        for (Rule r : allRules) {</span>
+<span class="nc" id="L111">            rules.put(r.getName(), Integer.parseInt(r.getValue()));</span>
+<span class="nc" id="L112">        }</span>
+<span class="nc" id="L113">        int breakSlot = rules.get(&quot;lunch slot&quot;);</span>
+<span class="nc" id="L114">        int timeBetweenSlotsInHours = (rules.get(&quot;slot duration&quot;) +</span>
+<span class="nc" id="L115">                rules.get(&quot;break time&quot;)) / 60;</span>
+<span class="nc" id="L116">        int timeBetweenSlotsInMin = (rules.get(&quot;slot duration&quot;) +</span>
+<span class="nc" id="L117">                rules.get(&quot;break time&quot;)) % 60;</span>
+<span class="nc" id="L118">        int slotsPerDay = rules.get(&quot;slots per day&quot;);</span>
+<span class="nc" id="L119">        DateTimeFormatter formatter</span>
+<span class="nc" id="L120">                = org.joda.time.format.DateTimeFormat.forPattern(&quot;HH:mm:ss&quot;);</span>
+        String s;
+<span class="nc bnc" id="L122" title="All 2 branches missed.">        if (timeBetweenSlotsInMin / 10 == 0) {</span>
+<span class="nc" id="L123">            s = &quot;0&quot;;</span>
+        } else {
+<span class="nc" id="L125">            s = &quot;&quot;;</span>
+        }
+<span class="nc" id="L127">        DateTime t = DateTime.parse(timeBetweenSlotsInHours + &quot;:&quot; + s + timeBetweenSlotsInMin</span>
+                + &quot;:00&quot;, formatter);
+<span class="nc" id="L129">        String timeBetweenSlotsTime = formatter.print(t);</span>
+
+<span class="nc" id="L131">        return roomSlotRepository.createRoomSlots(slotsPerDay, numDays,</span>
+                firstSlotDateTime, timeBetweenSlotsTime,
+<span class="nc" id="L133">                breakSlot, numberOfRooms);</span>
+    }
+
+    /**
+     * Method for making a room slot occupied.
+     *
+     * @param id id of the room slot
+     * @param numOfSlots numberOfSlots
+     * @return message
+     */
+    @PostMapping(path = &quot;/updateRoomSlot/{id}/{numOfSlots}&quot;)
+    public @ResponseBody
+    String makeRoomSlotsOccupied(@PathVariable Integer id,
+                                 @PathVariable Integer numOfSlots) {
+<span class="nc" id="L147">        Optional&lt;RoomSlot&gt; roomSlot = roomSlotRepository.findById(id);</span>
+<span class="nc bnc" id="L148" title="All 2 branches missed.">        if (roomSlot.isPresent()) {</span>
+<span class="nc" id="L149">            roomSlot.get().setOccupied(1);</span>
+<span class="nc" id="L150">            roomSlotRepository.saveAndFlush(roomSlot.get());</span>
+<span class="nc bnc" id="L151" title="All 2 branches missed.">            for (int i = 0; i &lt; numOfSlots; i++) {</span>
+<span class="nc bnc" id="L152" title="All 2 branches missed.">                if (i &lt; numOfSlots - 1) {</span>
+<span class="nc" id="L153">                    Optional&lt;RoomSlot&gt; next = roomSlotRepository.findById(id + (i + 1) * 20);</span>
+<span class="nc" id="L154">                    next.get().setOccupied(1);</span>
+<span class="nc" id="L155">                    roomSlotRepository.saveAndFlush(next.get());</span>
+<span class="nc" id="L156">                } else {</span>
+<span class="nc" id="L157">                    Optional&lt;RoomSlot&gt; next = roomSlotRepository.findById(id + (i + 1) * 20);</span>
+<span class="nc" id="L158">                    next.get().setOccupied(3);</span>
+<span class="nc" id="L159">                    roomSlotRepository.saveAndFlush(next.get());</span>
+                }
+
+            }
+<span class="nc" id="L163">            return &quot;Marked room slots as occupied!&quot;;</span>
+        } else {
+<span class="nc" id="L165">            throw new RuntimeException(&quot;Room slot not found for the id &quot; + id);</span>
+        }
+    }
+
+    /**
+     * Method for making a room slot available.
+     *
+     * @param id id of the room slot
+     * @return message
+     */
+    @PostMapping(path = &quot;/makeRoomSlotAvailable/{id}&quot;)
+    public @ResponseBody
+    String makeRoomSlotAvail(@PathVariable Integer id) {
+<span class="nc" id="L178">        Optional&lt;RoomSlot&gt; roomSlot = roomSlotRepository.findById(id);</span>
+<span class="nc bnc" id="L179" title="All 2 branches missed.">        if (roomSlot.isPresent()) {</span>
+<span class="nc" id="L180">            Timestamp timestamp = roomSlot.get().getDate_time();</span>
+<span class="nc" id="L181">            String date = new SimpleDateFormat(&quot;yyyy-MM-dd&quot;, Locale.ENGLISH)</span>
+<span class="nc" id="L182">                    .format(new Date(timestamp.getTime()));</span>
+<span class="nc" id="L183">            Timestamp b = Timestamp.valueOf(date + &quot; 12:45:00&quot;);</span>
+<span class="nc bnc" id="L184" title="All 2 branches missed.">            if (b.getTime() == timestamp.getTime()) { //it is a lunch slot</span>
+<span class="nc" id="L185">                roomSlot.get().setOccupied(2);</span>
+            } else {
+<span class="nc" id="L187">                roomSlot.get().setOccupied(0);</span>
+            }
+<span class="nc" id="L189">            roomSlotRepository.saveAndFlush(roomSlot.get());</span>
+<span class="nc" id="L190">            return &quot;Marked room slot as available!&quot;;</span>
+        } else {
+<span class="nc" id="L192">            throw new RuntimeException(&quot;Room slot not found for the id &quot; + id);</span>
+        }
+    }
+
+
+    /**
+     * Retrieve all Room Slots.
+     *
+     * @return all Rooms Slots stored in the database
+     */
+    @GetMapping(path = &quot;/allroomslots&quot;)
+    public @ResponseBody
+    Iterable&lt;RoomSlot&gt; getAllRoomsSlots(@RequestHeader(authHeader) String token) {
+<span class="nc bnc" id="L205" title="All 2 branches missed.">        if (!Authorization.authorize(token, Role.Student)) {</span>
+<span class="nc" id="L206">            throw new RuntimeException(errorMessage);</span>
+        }
+
+<span class="nc" id="L209">        return roomSlotRepository.findAll();</span>
+    }
+
+    /**
+     * Method for getting a RoomSlot.
+     *
+     * @param id id of the RoomSlot that is to be retrieved
+     * @return RoomSlot with id 'id'
+     */
+    @GetMapping(path = &quot;/roomslot/{id}&quot;)
+    public @ResponseBody
+    RoomSlot getRoomSlot(@RequestHeader(authHeader) String token,
+                         @PathVariable int id) {
+<span class="nc bnc" id="L222" title="All 2 branches missed.">        if (!Authorization.authorize(token, Role.Student)) {</span>
+<span class="nc" id="L223">            throw new RuntimeException(errorMessage);</span>
+        }
+
+<span class="nc" id="L226">        Optional&lt;RoomSlot&gt; roomSlot = roomSlotRepository.findById(id);</span>
+<span class="nc bnc" id="L227" title="All 2 branches missed.">        if (roomSlot.isPresent()) {</span>
+<span class="nc" id="L228">            return roomSlot.get();</span>
+        } else {
+<span class="nc" id="L230">            throw new RuntimeException(&quot;Room Slot not found for the id &quot; + id);</span>
+        }
+    }
+
+}
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

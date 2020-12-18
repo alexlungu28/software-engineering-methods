@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+<title>Test results - UserControllerTest</title>
+<link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+<script src="../js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>UserControllerTest</h1>
+<div class="breadcrumbs">
+<a href="../index.html">all</a> &gt; 
+<a href="../packages/op29sem58.authentication.users.html">op29sem58.authentication.users</a> &gt; UserControllerTest</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">2</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">0</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="ignored">
+<div class="counter">0</div>
+<p>ignored</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">0.442s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox success" id="successRate">
+<div class="percent">100%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="tabs">
+<ul class="tabLinks">
+<li>
+<a href="#tab0">Tests</a>
+</li>
+<li>
+<a href="#tab1">Standard output</a>
+</li>
+</ul>
+<div id="tab0" class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Duration</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td class="success">getAllUsers()</td>
+<td class="success">0.372s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">getUser()</td>
+<td class="success">0.070s</td>
+<td class="success">passed</td>
+</tr>
+</table>
+</div>
+<div id="tab1" class="tab">
+<h2>Standard output</h2>
+<span class="code">
+<pre>2020-12-18 20:12:41.389  INFO 23172 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Neither @ContextConfiguration nor @ContextHierarchy found for test class [op29sem58.authentication.users.UserControllerTest], using SpringBootContextLoader
+2020-12-18 20:12:41.391  INFO 23172 --- [    Test worker] o.s.t.c.support.AbstractContextLoader    : Could not detect default resource locations for test class [op29sem58.authentication.users.UserControllerTest]: no resource found for suffixes {-context.xml, Context.groovy}.
+2020-12-18 20:12:41.405  INFO 23172 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Loaded default TestExecutionListener class names from location [META-INF/spring.factories]: [org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener, org.springframework.test.context.web.ServletTestExecutionListener, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener, org.springframework.test.context.support.DependencyInjectionTestExecutionListener, org.springframework.test.context.support.DirtiesContextTestExecutionListener, org.springframework.test.context.transaction.TransactionalTestExecutionListener, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener, org.springframework.test.context.event.EventPublishingTestExecutionListener, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener, org.springframework.boot.test.autoconfigure.webservices.client.MockWebServiceServerTestExecutionListener, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener]
+2020-12-18 20:12:41.405  INFO 23172 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Using TestExecutionListeners: [org.springframework.test.context.web.ServletTestExecutionListener@1d9746f6, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@76c1c7a4, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener@4c930b2a, org.springframework.boot.test.autoconfigure.SpringBootDependencyInjectionTestExecutionListener@5970fc7c, org.springframework.test.context.support.DirtiesContextTestExecutionListener@7ef7b152, org.springframework.test.context.transaction.TransactionalTestExecutionListener@6f3b5cf, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener@52ed2460, org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener@c20b15d, org.springframework.test.context.event.EventPublishingTestExecutionListener@4f1efcaa, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener@54d8754b, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener@6fad9594, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener@668e7b65, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener@5e4d20b2, org.springframework.boot.test.autoconfigure.webservices.client.MockWebServiceServerTestExecutionListener@49a8741d, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener@4a2a5989]
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::        (v2.3.5.RELEASE)
+
+2020-12-18 20:12:41.453  INFO 23172 --- [    Test worker] o.a.users.UserControllerTest             : Starting UserControllerTest on Alex-Laptop with PID 23172 (started by Alex Maat in C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\authentication)
+2020-12-18 20:12:41.453  INFO 23172 --- [    Test worker] o.a.users.UserControllerTest             : No active profile set, falling back to default profiles: default
+2020-12-18 20:12:41.719  INFO 23172 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFERRED mode.
+2020-12-18 20:12:41.738  INFO 23172 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 19ms. Found 1 JPA repository interfaces.
+2020-12-18 20:12:41.803  INFO 23172 --- [    Test worker] beddedDataSourceBeanFactoryPostProcessor : Replacing 'dataSource' DataSource bean with embedded version
+2020-12-18 20:12:42.280  INFO 23172 --- [    Test worker] o.s.j.d.e.EmbeddedDatabaseFactory        : Starting embedded database: url='jdbc:h2:mem:ac3a348a-84aa-48b5-afb7-1ecb15da8b09;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=false', username='sa'
+2020-12-18 20:12:42.423  INFO 23172 --- [    Test worker] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2020-12-18 20:12:42.471  INFO 23172 --- [         task-1] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2020-12-18 20:12:42.494  INFO 23172 --- [         task-1] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.H2Dialect
+2020-12-18 20:12:42.577  WARN 23172 --- [    Test worker] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2020-12-18 20:12:42.635  INFO 23172 --- [         task-1] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2020-12-18 20:12:42.637  INFO 23172 --- [         task-1] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2020-12-18 20:12:42.961  INFO 23172 --- [    Test worker] o.s.s.web.DefaultSecurityFilterChain     : Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@48e4acf, org.springframework.security.web.context.SecurityContextPersistenceFilter@5f4c618f, org.springframework.security.web.header.HeaderWriterFilter@385a926, org.springframework.security.web.authentication.logout.LogoutFilter@7a9192ef, op29sem58.authentication.JwtRequestFilter@74fe4808, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@456bd047, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@6b099d55, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@59b1d7ef, org.springframework.security.web.session.SessionManagementFilter@6319da0a, org.springframework.security.web.access.ExceptionTranslationFilter@1b0027b6, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@6897d225]
+2020-12-18 20:12:43.544  WARN 23172 --- [    Test worker] ion$DefaultTemplateResolverConfiguration : Cannot find template location: classpath:/templates/ (please add some templates or check your Thymeleaf configuration)
+2020-12-18 20:12:43.982  INFO 23172 --- [    Test worker] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2020-12-18 20:12:43.983  INFO 23172 --- [    Test worker] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2020-12-18 20:12:44.016  INFO 23172 --- [    Test worker] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 33 ms
+2020-12-18 20:12:44.027  INFO 23172 --- [    Test worker] DeferredRepositoryInitializationListener : Triggering deferred initialization of Spring Data repositories…
+2020-12-18 20:12:44.119  INFO 23172 --- [    Test worker] DeferredRepositoryInitializationListener : Spring Data repositories initialized!
+2020-12-18 20:12:44.124  INFO 23172 --- [    Test worker] o.a.users.UserControllerTest             : Started UserControllerTest in 2.715 seconds (JVM running for 13.729)
+
+MockHttpServletRequest:
+      HTTP Method = GET
+      Request URI = /users
+       Parameters = {}
+          Headers = [Content-Type:&quot;application/json;charset=UTF-8&quot;]
+             Body = null
+    Session Attrs = {}
+
+Handler:
+             Type = op29sem58.authentication.users.UserController
+           Method = op29sem58.authentication.users.UserController#getAllUsers()
+
+Async:
+    Async started = false
+     Async result = null
+
+Resolved Exception:
+             Type = null
+
+ModelAndView:
+        View name = null
+             View = null
+            Model = null
+
+FlashMap:
+       Attributes = null
+
+MockHttpServletResponse:
+           Status = 200
+    Error message = null
+          Headers = [Content-Type:&quot;application/json&quot;, X-Content-Type-Options:&quot;nosniff&quot;, X-XSS-Protection:&quot;1; mode=block&quot;, Cache-Control:&quot;no-cache, no-store, max-age=0, must-revalidate&quot;, Pragma:&quot;no-cache&quot;, Expires:&quot;0&quot;, X-Frame-Options:&quot;DENY&quot;]
+     Content type = application/json
+             Body = [{&quot;netid&quot;:&quot;user&quot;,&quot;password&quot;:&quot;123&quot;,&quot;role&quot;:{&quot;id&quot;:1,&quot;name&quot;:&quot;ROLE_STUDENT&quot;}},{&quot;netid&quot;:&quot;user2&quot;,&quot;password&quot;:&quot;abcd&quot;,&quot;role&quot;:{&quot;id&quot;:1,&quot;name&quot;:&quot;ROLE_STUDENT&quot;}}]
+    Forwarded URL = null
+   Redirected URL = null
+          Cookies = []
+2020-12-18 20:12:44.493  INFO 23172 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2020-12-18 20:12:44.494  INFO 23172 --- [    Test worker] .SchemaDropperImpl$DelayedDropActionImpl : HHH000477: Starting delayed evictData of schema as part of SessionFactory shut-down'
+2020-12-18 20:12:44.504  INFO 23172 --- [    Test worker] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::        (v2.3.5.RELEASE)
+
+2020-12-18 20:12:44.567  INFO 23172 --- [    Test worker] o.a.users.UserControllerTest             : Starting UserControllerTest on Alex-Laptop with PID 23172 (started by Alex Maat in C:\Users\Alex\Documents\TUDelft\Y2\Q2\Software Engineering Methods\repository\op29-sem58\services\authentication)
+2020-12-18 20:12:44.568  INFO 23172 --- [    Test worker] o.a.users.UserControllerTest             : No active profile set, falling back to default profiles: default
+2020-12-18 20:12:44.935  INFO 23172 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFERRED mode.
+2020-12-18 20:12:44.961  INFO 23172 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 25ms. Found 1 JPA repository interfaces.
+2020-12-18 20:12:45.032  INFO 23172 --- [    Test worker] beddedDataSourceBeanFactoryPostProcessor : Replacing 'dataSource' DataSource bean with embedded version
+2020-12-18 20:12:45.143  INFO 23172 --- [    Test worker] o.s.j.d.e.EmbeddedDatabaseFactory        : Starting embedded database: url='jdbc:h2:mem:d3afef79-fc9b-4a6f-85dc-393c784704ba;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=false', username='sa'
+2020-12-18 20:12:45.216  INFO 23172 --- [    Test worker] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2020-12-18 20:12:45.245  INFO 23172 --- [         task-1] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2020-12-18 20:12:45.261  INFO 23172 --- [         task-1] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.H2Dialect
+2020-12-18 20:12:45.302  WARN 23172 --- [    Test worker] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2020-12-18 20:12:45.335  INFO 23172 --- [         task-1] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2020-12-18 20:12:45.337  INFO 23172 --- [         task-1] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2020-12-18 20:12:45.550  INFO 23172 --- [    Test worker] o.s.s.web.DefaultSecurityFilterChain     : Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@4b2ee172, org.springframework.security.web.context.SecurityContextPersistenceFilter@27f3ca85, org.springframework.security.web.header.HeaderWriterFilter@6c283308, org.springframework.security.web.authentication.logout.LogoutFilter@232095da, op29sem58.authentication.JwtRequestFilter@5721d7d7, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@366ce6c8, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@1b71237e, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@f922351, org.springframework.security.web.session.SessionManagementFilter@21640557, org.springframework.security.web.access.ExceptionTranslationFilter@61fe0e15, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@1537d7bb]
+2020-12-18 20:12:46.044  WARN 23172 --- [    Test worker] ion$DefaultTemplateResolverConfiguration : Cannot find template location: classpath:/templates/ (please add some templates or check your Thymeleaf configuration)
+2020-12-18 20:12:46.245  INFO 23172 --- [    Test worker] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2020-12-18 20:12:46.245  INFO 23172 --- [    Test worker] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2020-12-18 20:12:46.259  INFO 23172 --- [    Test worker] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 14 ms
+2020-12-18 20:12:46.267  INFO 23172 --- [    Test worker] DeferredRepositoryInitializationListener : Triggering deferred initialization of Spring Data repositories…
+2020-12-18 20:12:46.338  INFO 23172 --- [    Test worker] DeferredRepositoryInitializationListener : Spring Data repositories initialized!
+2020-12-18 20:12:46.342  INFO 23172 --- [    Test worker] o.a.users.UserControllerTest             : Started UserControllerTest in 1.833 seconds (JVM running for 15.947)
+
+MockHttpServletRequest:
+      HTTP Method = GET
+      Request URI = /user/user
+       Parameters = {}
+          Headers = [Content-Type:&quot;application/json;charset=UTF-8&quot;]
+             Body = null
+    Session Attrs = {}
+
+Handler:
+             Type = op29sem58.authentication.users.UserController
+           Method = op29sem58.authentication.users.UserController#getUser(String)
+
+Async:
+    Async started = false
+     Async result = null
+
+Resolved Exception:
+             Type = null
+
+ModelAndView:
+        View name = null
+             View = null
+            Model = null
+
+FlashMap:
+       Attributes = null
+
+MockHttpServletResponse:
+           Status = 200
+    Error message = null
+          Headers = [Content-Type:&quot;application/json&quot;, X-Content-Type-Options:&quot;nosniff&quot;, X-XSS-Protection:&quot;1; mode=block&quot;, Cache-Control:&quot;no-cache, no-store, max-age=0, must-revalidate&quot;, Pragma:&quot;no-cache&quot;, Expires:&quot;0&quot;, X-Frame-Options:&quot;DENY&quot;]
+     Content type = application/json
+             Body = {&quot;netid&quot;:&quot;user&quot;,&quot;password&quot;:&quot;123&quot;,&quot;role&quot;:{&quot;id&quot;:1,&quot;name&quot;:&quot;ROLE_STUDENT&quot;}}
+    Forwarded URL = null
+   Redirected URL = null
+          Cookies = []
+2020-12-18 20:12:46.413  INFO 23172 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2020-12-18 20:12:46.413  INFO 23172 --- [    Test worker] .SchemaDropperImpl$DelayedDropActionImpl : HHH000477: Starting delayed evictData of schema as part of SessionFactory shut-down'
+2020-12-18 20:12:46.417  INFO 23172 --- [    Test worker] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+</pre>
+</span>
+</div>
+</div>
+<div id="footer">
+<p>
+<div>
+<label class="hidden" id="label-for-line-wrapping-toggle" for="line-wrapping-toggle">Wrap lines
+<input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
+</label>
+</div>Generated by 
+<a href="http://www.gradle.org">Gradle 6.7</a> at Dec 18, 2020, 8:12:47 PM</p>
+</div>
+</div>
+</body>
+</html>

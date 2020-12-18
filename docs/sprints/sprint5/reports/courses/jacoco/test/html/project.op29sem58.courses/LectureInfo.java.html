@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LectureInfo.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">courses</a> &gt; <a href="index.source.html" class="el_package">project.op29sem58.courses</a> &gt; <span class="el_source">LectureInfo.java</span></div><h1>LectureInfo.java</h1><pre class="source lang-java linenums">package project.op29sem58.courses;
+
+import java.time.LocalDate;
+
+public class LectureInfo {
+    private LocalDate date;
+    private int numberOfTimeslots;
+    private int minNoStudents;
+
+<span class="fc" id="L10">    public LectureInfo(){}</span>
+
+    /**
+     * Constructor for lectureInfo.
+     *
+     * @param date the preferred date for this lecture
+     * @param numberOfTimeslots the number of timeslots this lecture takes
+     * @param minNoStudents the minimum number of students that should attend this lecture
+     */
+<span class="fc" id="L19">    public LectureInfo(LocalDate date, int numberOfTimeslots, int minNoStudents) {</span>
+<span class="fc" id="L20">        this.date = date;</span>
+<span class="fc" id="L21">        this.numberOfTimeslots = numberOfTimeslots;</span>
+<span class="fc" id="L22">        this.minNoStudents = minNoStudents;</span>
+<span class="fc" id="L23">    }</span>
+
+
+    public LocalDate getDate() {
+<span class="fc" id="L27">        return date;</span>
+    }
+
+    public void setDate(LocalDate date) {
+<span class="fc" id="L31">        this.date = date;</span>
+<span class="fc" id="L32">    }</span>
+
+    public int getNumberOfTimeslots() {
+<span class="fc" id="L35">        return numberOfTimeslots;</span>
+    }
+
+    public void setNumberOfTimeslots(int numberOfTimeslots) {
+<span class="fc" id="L39">        this.numberOfTimeslots = numberOfTimeslots;</span>
+<span class="fc" id="L40">    }</span>
+
+    public int getMinNoStudents() {
+<span class="fc" id="L43">        return minNoStudents;</span>
+    }
+
+    public void setMinNoStudents(int minNoStudents) {
+<span class="fc" id="L47">        this.minNoStudents = minNoStudents;</span>
+<span class="fc" id="L48">    }</span>
+
+
+    @Override
+    public String toString() {
+<span class="fc" id="L53">        return &quot;LectureInfo{&quot; +</span>
+                &quot;date=&quot; + date +
+                &quot;, numberOfTimeslots=&quot; + numberOfTimeslots +
+                &quot;, minNoStudents=&quot; + minNoStudents +
+                '}';
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

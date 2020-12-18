@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LectureDetails.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">student</a> &gt; <a href="index.source.html" class="el_package">op29sem58.student.local.entities</a> &gt; <span class="el_source">LectureDetails.java</span></div><h1>LectureDetails.java</h1><pre class="source lang-java linenums">package op29sem58.student.local.entities;
+
+import java.time.LocalDateTime;
+
+public class LectureDetails {
+    private int lectureId;
+    private String courseName;
+    private int roomId;
+    private boolean onCampus;
+    private transient LocalDateTime startTime;
+    private transient LocalDateTime endTime;
+
+    /**
+     * This is to store the details of a lecture.
+     *
+     * @param lectureId The id of the lecture
+     * @param courseName the name of the course
+     * @param roomId the id of the room
+     * @param onCampus if the lecture is on campus
+     */
+    public LectureDetails(int lectureId, String courseName, int roomId, boolean onCampus,
+<span class="fc" id="L22">                          LocalDateTime startTime, LocalDateTime endTime) {</span>
+<span class="fc" id="L23">        this.lectureId = lectureId;</span>
+<span class="fc" id="L24">        this.courseName = courseName;</span>
+<span class="fc" id="L25">        this.roomId = roomId;</span>
+<span class="fc" id="L26">        this.onCampus = onCampus;</span>
+<span class="fc" id="L27">        this.startTime = startTime;</span>
+<span class="fc" id="L28">        this.endTime = endTime;</span>
+<span class="fc" id="L29">    }</span>
+
+    public int getLectureId() {
+<span class="fc" id="L32">        return lectureId;</span>
+    }
+
+    public void setLectureId(int lectureId) {
+<span class="fc" id="L36">        this.lectureId = lectureId;</span>
+<span class="fc" id="L37">    }</span>
+
+    public String getCourseName() {
+<span class="fc" id="L40">        return courseName;</span>
+    }
+
+    public void setCourseName(String courseName) {
+<span class="fc" id="L44">        this.courseName = courseName;</span>
+<span class="fc" id="L45">    }</span>
+
+    public boolean isOnCampus() {
+<span class="fc" id="L48">        return onCampus;</span>
+    }
+
+    public void setOnCampus(boolean onCampus) {
+<span class="fc" id="L52">        this.onCampus = onCampus;</span>
+<span class="fc" id="L53">    }</span>
+
+    public int getRoomId() {
+<span class="fc" id="L56">        return roomId;</span>
+    }
+
+    public void setRoomId(int roomId) {
+<span class="fc" id="L60">        this.roomId = roomId;</span>
+<span class="fc" id="L61">    }</span>
+
+    public LocalDateTime getStartTime() {
+<span class="fc" id="L64">        return startTime;</span>
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+<span class="fc" id="L68">        this.startTime = startTime;</span>
+<span class="fc" id="L69">    }</span>
+
+    public LocalDateTime getEndTime() {
+<span class="fc" id="L72">        return endTime;</span>
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+<span class="fc" id="L76">        this.endTime = endTime;</span>
+<span class="fc" id="L77">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RoomScheduleController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">room-scheduler</a> &gt; <a href="index.source.html" class="el_package">roomscheduler.controllers</a> &gt; <span class="el_source">RoomScheduleController.java</span></div><h1>RoomScheduleController.java</h1><pre class="source lang-java linenums">package roomscheduler.controllers;
+
+import java.io.IOException;
+import java.sql.Date;
+import java.sql.Time;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.TimeZone;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.ResponseBody;
+import roomscheduler.communication.RoomScheduleCommunication;
+import roomscheduler.communication.authorization.Authorization;
+import roomscheduler.communication.authorization.Role;
+import roomscheduler.entities.IdNamePair;
+import roomscheduler.entities.IntPair;
+import roomscheduler.entities.NameDateInfo;
+import roomscheduler.entities.RoomSchedule;
+import roomscheduler.entities.RoomSlotStat;
+import roomscheduler.entities.ScheduleInfo;
+import roomscheduler.entities.ScheduleInformation;
+import roomscheduler.entities.SlotInfo;
+import roomscheduler.repositories.RoomScheduleRepository;
+
+
+
+
+/**
+ * Controller for Room Schedule.
+ * With methods for general and id-specific retrieval
+ */
+@Controller // This means that this class is a Controller
+<span class="fc" id="L43">public class RoomScheduleController {</span>
+    @Autowired
+    private RoomScheduleRepository roomScheduleRepository;
+
+<span class="fc" id="L47">    final transient String authHeader = &quot;Authorization&quot;;</span>
+
+<span class="fc" id="L49">    transient String errorMessage = &quot;You do not have the privilege to perform this action.&quot;;</span>
+
+<span class="fc" id="L51">    transient String student = &quot;Student&quot;;</span>
+
+    public RoomScheduleRepository getRoomScheduleRepository() {
+<span class="nc" id="L54">        return roomScheduleRepository;</span>
+    }
+
+    public void setRoomScheduleRepository(RoomScheduleRepository roomScheduleRepository) {
+<span class="nc" id="L58">        this.roomScheduleRepository = roomScheduleRepository;</span>
+<span class="nc" id="L59">    }</span>
+
+    /**
+     * Add a new room schedule.
+     *
+     * @param token jwt token
+     * @param r room schedule
+     * @return saved if successful, throw exception otherwise
+     */
+    @PostMapping(path = &quot;/addroomschedule&quot;) // Map ONLY POST Requests
+    public @ResponseBody
+    String addNewRoomSchedule(@RequestHeader(authHeader) String token,
+                              @RequestBody RoomSchedule r) {
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">        if (!Authorization.authorize(token, Role.Admin)) {</span>
+<span class="nc" id="L73">            throw new RuntimeException(errorMessage);</span>
+        }
+
+<span class="fc" id="L76">        roomScheduleRepository.saveAndFlush(r);</span>
+<span class="fc" id="L77">        return &quot;Saved room schedule&quot;;</span>
+    }
+
+    /**
+     * Method for getting all room schedules.
+
+     *
+     *  @return list of schedule information
+     * @throws IOException exception
+     */
+    @GetMapping(path = &quot;/getSchedule&quot;)
+    public @ResponseBody
+    List&lt;ScheduleInformation&gt; getAllSchedules()
+        throws IOException {
+<span class="nc" id="L91">        Integer breakDuration = roomScheduleRepository.getBreakDuration();</span>
+<span class="nc" id="L92">        Integer slotDuration = roomScheduleRepository.getSlotDuration();</span>
+<span class="nc" id="L93">        List&lt;ScheduleInfo&gt; result = roomScheduleRepository</span>
+<span class="nc" id="L94">                .getScheduleInfo(slotDuration, breakDuration);</span>
+<span class="nc" id="L95">        List&lt;ScheduleInformation&gt; finalRes = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">        for (ScheduleInfo s : result) {</span>
+<span class="nc" id="L97">            finalRes.add(new ScheduleInformation(s.getRoomScheduleId(), s.getStartTime(),</span>
+<span class="nc" id="L98">                    s.getEndTime(), s.getLectureId(), s.getRoomId(), RoomScheduleCommunication</span>
+<span class="nc" id="L99">                    .getCoronaCapacity(s.getRoomId(), roomScheduleRepository.getMinPerc(),</span>
+<span class="nc" id="L100">                            roomScheduleRepository.getMaxPerc())));</span>
+<span class="nc" id="L101">        }</span>
+<span class="nc" id="L102">        return finalRes;</span>
+    }
+
+    /**
+     * Get the available slots.
+     *
+     * @param prefDate pref date
+     * @param numSlots number of slots
+     * @param lunchTime time of lunch
+     * @return a list of available slots
+     */
+    @GetMapping(path = &quot;/availableSlots/{prefDate}/{numSlots}/{lunchTime}&quot;)
+    public @ResponseBody
+    Iterable&lt;RoomSlotStat&gt; getAvailableSlots(@PathVariable Date prefDate,
+                                       @PathVariable Integer numSlots,
+                                       @PathVariable Time lunchTime) {
+<span class="nc" id="L118">        return roomScheduleRepository.availableSlots(prefDate, numSlots, lunchTime);</span>
+    }
+
+    /**
+     * Method for scheduling a lecture.
+
+
+     *  @param prefDate preferred Date
+     * @param numSlots number of slots
+     * @param numOfStudents number of students
+     * @param lectureId lecture id
+     * @param yearOfStudy year of study
+     * @return message
+     * @throws IOException ioException
+     * @throws ParseException parseException
+     */
+    @GetMapping(path = &quot;/scheduleLecture/{prefDate}/&quot;
+            + &quot;{numSlots}/{numOfStudents}/{lectureId}/{yearOfStudy}&quot;)
+    @SuppressWarnings(&quot;PMD&quot;)
+    public @ResponseBody
+    String scheduleNewLecture(@PathVariable Date prefDate,
+                                    @PathVariable Integer numSlots,
+                                    @PathVariable Integer numOfStudents,
+                              @PathVariable Integer lectureId,
+                              @PathVariable Integer yearOfStudy)
+        throws IOException, ParseException {
+<span class="nc" id="L144">        List&lt;RoomSchedule&gt; roomScheduleWithGivenLectureId = roomScheduleRepository</span>
+<span class="nc" id="L145">                .getRoomScheduleWithLectureId(lectureId);</span>
+        //it should not be possible to schedule a lecture that is already scheduled
+<span class="nc bnc" id="L147" title="All 2 branches missed.">        if (!roomScheduleWithGivenLectureId.isEmpty()) {</span>
+<span class="nc" id="L148">            throw new RuntimeException(&quot;The lecture with id &quot; + lectureId + &quot; has&quot; +</span>
+                    &quot; been already scheduled!&quot;);
+        }
+<span class="nc" id="L151">        Integer lunchHour = 7 + roomScheduleRepository.getLunchSlot();</span>
+<span class="nc" id="L152">        Time lunchTime = utcTime(&quot;&quot; + lunchHour + &quot;:45:00&quot;);</span>
+<span class="nc" id="L153">        int minPercentage = roomScheduleRepository.getMinPerc();</span>
+<span class="nc" id="L154">        int maxPercentage = roomScheduleRepository.getMaxPerc();</span>
+<span class="nc" id="L155">        List&lt;IdNamePair&gt; roomInfoWithRequiredCapacity =</span>
+<span class="nc" id="L156">                RoomScheduleCommunication.getRoomsIdsWithRequiredCapacity(numOfStudents,</span>
+<span class="nc" id="L157">                        minPercentage, maxPercentage);</span>
+<span class="nc" id="L158">        List&lt;SlotInfo&gt; dateIntPairs = RoomScheduleCommunication</span>
+<span class="nc" id="L159">                .getAvailableRoomsSlots(prefDate, numSlots, lunchTime);</span>
+
+<span class="nc" id="L161">        List&lt;Integer&gt; slotIdsToNotOverlapSameYear = roomScheduleRepository</span>
+<span class="nc" id="L162">                .getSlotIdsToNotOverlapSameYear(yearOfStudy);</span>
+
+<span class="nc" id="L164">        List&lt;NameDateInfo&gt; finalResult = findSuitable(roomInfoWithRequiredCapacity,</span>
+                dateIntPairs, slotIdsToNotOverlapSameYear);
+
+<span class="nc bnc" id="L167" title="All 2 branches missed.">        if (finalResult.size() == 0) { //no available slots for the input given</span>
+<span class="nc" id="L168">            return &quot;There are no available slots for the input given. Try again!&quot;;</span>
+        } else {
+<span class="nc" id="L170">            NameDateInfo result = finalResult.get(0);</span>
+<span class="nc" id="L171">            roomScheduleRepository.saveAndFlush(new RoomSchedule(</span>
+<span class="nc" id="L172">                    result.getRoomSlotId(), lectureId, yearOfStudy));</span>
+<span class="nc bnc" id="L173" title="All 2 branches missed.">            for (int i = 0; i &lt; numSlots; i++) {</span>
+<span class="nc" id="L174">                roomScheduleRepository.saveAndFlush(new</span>
+<span class="nc" id="L175">                        RoomSchedule(result.getRoomSlotId()</span>
+                        + (i + 1) * 20, lectureId, yearOfStudy));
+            }
+<span class="nc" id="L178">            RoomScheduleCommunication.makeRoomSlotsOccupied(result.getRoomSlotId(), numSlots);</span>
+<span class="nc" id="L179">            return &quot;Your lecture was successfully scheduled for: &quot; +</span>
+<span class="nc" id="L180">                    result.getDate().toString() +</span>
+<span class="nc" id="L181">                    &quot; in the room with name: &quot; + result.getRoomName();</span>
+        }
+    }
+
+    /**
+     * Method that finds an appropriate room slot for the lecture to be scheduled.
+     *
+     * @param roomInfoWithRequiredCapacity rooms with at least the required capacity
+     * @param dateIntPairs available room slots for the input given
+     * @param slotIdsToNotOverlapSameYear room slots ids for lectures of the same year
+     *                                    of study that would cause overlap
+     * @return empty list of list with one appropriate room slot
+     */
+    public List&lt;NameDateInfo&gt; findSuitable(List&lt;IdNamePair&gt; roomInfoWithRequiredCapacity,
+                                           List&lt;SlotInfo&gt; dateIntPairs,
+                                           List&lt;Integer&gt; slotIdsToNotOverlapSameYear) {
+<span class="nc" id="L197">        List&lt;NameDateInfo&gt; finalResult = new ArrayList&lt;&gt;();</span>
+        outer:
+<span class="nc bnc" id="L199" title="All 2 branches missed.">        for (IdNamePair i : roomInfoWithRequiredCapacity) {</span>
+<span class="nc bnc" id="L200" title="All 2 branches missed.">            for (SlotInfo pair : dateIntPairs) {</span>
+<span class="nc bnc" id="L201" title="All 2 branches missed.">                if (i.getId() == pair.getRoomId() &amp;&amp; !slotIdsToNotOverlapSameYear</span>
+<span class="nc bnc" id="L202" title="All 2 branches missed.">                        .contains(pair.roomSlotId)) {</span>
+<span class="nc" id="L203">                    finalResult.add(new NameDateInfo(pair.getDate(),</span>
+<span class="nc" id="L204">                            i.getName(), pair.getRoomSlotId()));</span>
+                    //once we found one room slot to schedule the lecture, we can
+                    //stop searching
+<span class="nc" id="L207">                    break outer;</span>
+                }
+<span class="nc" id="L209">            }</span>
+<span class="nc" id="L210">        }</span>
+<span class="nc" id="L211">        return finalResult;</span>
+    }
+
+    /**
+     * UTC Converter.
+
+     * @param s time as string
+     * @return UTC time
+     * @throws ParseException exception
+     */
+    public static Time utcTime(String s) throws ParseException {
+<span class="nc" id="L222">        final SimpleDateFormat sdf = new SimpleDateFormat(&quot;HH:mm:ss&quot;, Locale.getDefault());</span>
+<span class="nc" id="L223">        sdf.setTimeZone(TimeZone.getTimeZone(&quot;UTC&quot;));</span>
+<span class="nc" id="L224">        final java.util.Date dateObj = sdf.parse(s);</span>
+<span class="nc" id="L225">        Time result = Time.valueOf(dateObj.toInstant().toString().substring(11, 19));</span>
+<span class="nc" id="L226">        return result;</span>
+    }
+
+    /**
+     * Method for canceling a scheduled lecture.
+
+
+     * @param id id of the lecture to be cancelled
+     * @return message
+     * @throws IOException ioException
+     */
+    @DeleteMapping(path = &quot;/cancelLecture/{id}&quot;)
+    public @ResponseBody
+    String deleteLecture(@RequestHeader(authHeader) String token,
+                         @PathVariable int id) throws IOException {
+<span class="pc bpc" id="L241" title="1 of 2 branches missed.">        if (!Authorization.authorize(token, Role.Teacher)) {</span>
+<span class="nc" id="L242">            throw new RuntimeException(errorMessage);</span>
+        }
+
+<span class="fc" id="L245">        List&lt;IntPair&gt; values = roomScheduleRepository.getSlotIdAndRoomSlotId(id);</span>
+<span class="fc bfc" id="L246" title="All 2 branches covered.">        if (values.size() == 0) {</span>
+<span class="fc" id="L247">            return &quot;There is no scheduled lecture with the given id&quot;;</span>
+        } else {
+<span class="fc bfc" id="L249" title="All 2 branches covered.">            for (IntPair p : values) {</span>
+<span class="fc" id="L250">                roomScheduleRepository.deleteById(p.getRoomScheduleId());</span>
+<span class="fc" id="L251">                RoomScheduleCommunication.makeRoomSlotAvailable(p.getRoomSlotId());</span>
+<span class="fc" id="L252">            }</span>
+        }
+<span class="fc" id="L254">        return &quot;Canceled lecture&quot;;</span>
+    }
+
+
+    /**
+     * Retrieve all Rooms Schedules.
+     *
+     * @return all Rooms Schedules stored in the database
+     */
+    @GetMapping(path = &quot;/allroomsschedules&quot;)
+    public @ResponseBody
+    Iterable&lt;RoomSchedule&gt; getAllRoomsSchedules(@RequestHeader(authHeader) String token) {
+<span class="pc bpc" id="L266" title="1 of 2 branches missed.">        if (!Authorization.authorize(token, Role.Student)) {</span>
+<span class="nc" id="L267">            throw new RuntimeException(errorMessage);</span>
+        }
+
+<span class="fc" id="L270">        return roomScheduleRepository.findAll();</span>
+    }
+
+    /**
+     * Method for getting a Room Schedule.
+     *
+     * @param id id of the RoomSchedule that is to be retrieved
+     * @return RoomSchedule with id 'id'
+     */
+    @GetMapping(path = &quot;/roomschedule/{id}&quot;)
+    public @ResponseBody
+    RoomSchedule getRoomSchedule(@RequestHeader(authHeader) String token,
+                                 @PathVariable int id) {
+<span class="pc bpc" id="L283" title="1 of 2 branches missed.">        if (!Authorization.authorize(token, Role.Student)) {</span>
+<span class="nc" id="L284">            throw new RuntimeException(errorMessage);</span>
+        }
+
+<span class="fc" id="L287">        Optional&lt;RoomSchedule&gt; roomSchedule = roomScheduleRepository.findById(id);</span>
+<span class="pc bpc" id="L288" title="1 of 2 branches missed.">        if (roomSchedule.isPresent()) {</span>
+<span class="fc" id="L289">            return roomSchedule.get();</span>
+        } else {
+<span class="nc" id="L291">            throw new RuntimeException(&quot;Room Schedule not found for the id &quot; + id);</span>
+        }
+    }
+
+}
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>
