@@ -32,4 +32,21 @@ public class LectureBuilder {
     public Lecture build() {
         return new Lecture(course, date, minNoStudents, numberOfTimeslots);
     }
+
+
+    public Course getCourse() {
+        return course;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public int getNumberOfTimeslots() {
+        return numberOfTimeslots;
+    }
+
+    public int getMinNoStudents() {
+        return minNoStudents;
+    }
 }

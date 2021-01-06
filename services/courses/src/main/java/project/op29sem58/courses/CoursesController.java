@@ -30,6 +30,9 @@ public class CoursesController {
     @Autowired
     private LecturesRepo lecturesRepo;
 
+    //PMD nonsense
+    private final static int FIRST_YEAR = 1;
+
     final transient String authHeader = "Authorization";
     final transient ResponseEntity<String> internalError = new ResponseEntity<String>("Something " +
             "went wrong on our end, please try again later.",
@@ -113,7 +116,7 @@ public class CoursesController {
         builder.setDate(l.getDate());
         builder.setMinNoStudents(l.getMinNoStudents());
 
-        if (course.getYearOfStudy() == 1) {
+        if (course.getYearOfStudy() == FIRST_YEAR) {
             Director.constructFirstYear(builder);
         } else {
             Director.constructSecondYear(builder);
