@@ -31,7 +31,7 @@ public class CoursesController {
     private LecturesRepo lecturesRepo;
 
     //PMD nonsense
-    private final static int FIRST_YEAR = 1;
+    private static final int FIRST_YEAR = 1;
 
     final transient String authHeader = "Authorization";
     final transient ResponseEntity<String> internalError = new ResponseEntity<String>("Something " +
