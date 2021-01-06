@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseBody;
+import project.op29sem58.courses.buildpattern.Director;
+import project.op29sem58.courses.buildpattern.LectureBuilder;
 import project.op29sem58.courses.communication.authorization.Authorization;
 import project.op29sem58.courses.communication.authorization.Role;
 import project.op29sem58.courses.database.entities.Course;
@@ -92,7 +94,7 @@ public class CoursesController {
      * @return a string with information about the status of the request
      */
     @PostMapping(path = "/createLecture/{courseId}")
-    public ResponseEntity<Lecture> createCourse(@RequestHeader(authHeader) String token,
+    public ResponseEntity<Lecture> createLecture(@RequestHeader(authHeader) String token,
                                              @PathVariable int courseId,
                                              @RequestBody LectureInfo l) {
         if (!Authorization.authorize(token, Role.Teacher)) {
@@ -106,10 +108,18 @@ public class CoursesController {
         }
         Course course = courseOpt.get();
 
-        Lecture lecture = new Lecture(
-                course, l.getDate(), l.getNumberOfTimeslots(), l.getMinNoStudents()
-        );
+        LectureBuilder builder = new LectureBuilder();
+        builder.setCourse(course);
+        builder.setDate(l.getDate());
+        builder.setMinNoStudents(l.getMinNoStudents());
 
+        if (course.getYearOfStudy() == 1) {
+            Director.constructFirstYear(builder);
+        } else {
+            Director.constructSecondYear(builder);
+        }
+
+        Lecture lecture = builder.build();
         coursesRepo.saveAndFlush(course);
         lecturesRepo.saveAndFlush(lecture);
         return new ResponseEntity<>(lecture, HttpStatus.CREATED);
