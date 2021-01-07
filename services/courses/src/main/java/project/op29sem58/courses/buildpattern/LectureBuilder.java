@@ -6,10 +6,10 @@ import project.op29sem58.courses.database.entities.Lecture;
 
 
 public class LectureBuilder implements Builder {
-    private Course course;
-    private LocalDate date;
-    private int numberOfTimeslots;
-    private int minNoStudents;
+    private transient Course course;
+    private transient LocalDate date;
+    private transient int numberOfTimeslots;
+    private transient int minNoStudents;
 
     public LectureBuilder(){}
 
@@ -33,20 +33,4 @@ public class LectureBuilder implements Builder {
         return new Lecture(course, date, minNoStudents, numberOfTimeslots);
     }
 
-
-    public Course getCourse() {
-        return course;
-    }
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public int getNumberOfTimeslots() {
-        return numberOfTimeslots;
-    }
-
-    public int getMinNoStudents() {
-        return minNoStudents;
-    }
 }

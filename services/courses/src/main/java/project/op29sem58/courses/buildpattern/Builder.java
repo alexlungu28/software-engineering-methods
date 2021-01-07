@@ -15,5 +15,4 @@ public interface Builder {
     public void setNumberOfTimeslots(int numberOfTimeslots);
 
     Lecture build();
-
 }
