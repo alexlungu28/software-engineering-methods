@@ -5,7 +5,7 @@ import project.op29sem58.courses.database.entities.Course;
 import project.op29sem58.courses.database.entities.Lecture;
 
 
-public class LectureBuilder {
+public class LectureBuilder implements Builder {
     private Course course;
     private LocalDate date;
     private int numberOfTimeslots;

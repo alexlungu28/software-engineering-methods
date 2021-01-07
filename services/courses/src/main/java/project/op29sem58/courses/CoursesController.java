@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseBody;
+import project.op29sem58.courses.buildpattern.Builder;
 import project.op29sem58.courses.buildpattern.Director;
 import project.op29sem58.courses.buildpattern.LectureBuilder;
 import project.op29sem58.courses.communication.authorization.Authorization;
@@ -111,7 +112,7 @@ public class CoursesController {
         }
         Course course = courseOpt.get();
 
-        LectureBuilder builder = new LectureBuilder();
+        Builder builder = new LectureBuilder();
         builder.setCourse(course);
         builder.setDate(l.getDate());
         builder.setMinNoStudents(l.getMinNoStudents());
