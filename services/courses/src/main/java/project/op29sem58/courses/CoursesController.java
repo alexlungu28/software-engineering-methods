@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseBody;
+import project.op29sem58.courses.buildpattern.Builder;
+import project.op29sem58.courses.buildpattern.Director;
+import project.op29sem58.courses.buildpattern.LectureBuilder;
 import project.op29sem58.courses.communication.authorization.Authorization;
 import project.op29sem58.courses.communication.authorization.Role;
 import project.op29sem58.courses.database.entities.Course;
@@ -27,6 +30,10 @@ public class CoursesController {
     private CoursesRepo coursesRepo;
     @Autowired
     private LecturesRepo lecturesRepo;
+
+    //PMD nonsense
+    private static final int FIRST_YEAR = 1;
+    private static final int SECOND_YEAR = 2;
 
     final transient String authHeader = "Authorization";
     final transient ResponseEntity<String> internalError = new ResponseEntity<String>("Something " +
@@ -92,7 +99,7 @@ public class CoursesController {
      * @return a string with information about the status of the request
      */
     @PostMapping(path = "/createLecture/{courseId}")
-    public ResponseEntity<Lecture> createCourse(@RequestHeader(authHeader) String token,
+    public ResponseEntity<Lecture> createLecture(@RequestHeader(authHeader) String token,
                                              @PathVariable int courseId,
                                              @RequestBody LectureInfo l) {
         if (!Authorization.authorize(token, Role.Teacher)) {
@@ -106,10 +113,20 @@ public class CoursesController {
         }
         Course course = courseOpt.get();
 
-        Lecture lecture = new Lecture(
-                course, l.getDate(), l.getNumberOfTimeslots(), l.getMinNoStudents()
-        );
+        Builder builder = new LectureBuilder();
+        builder.setCourse(course);
+        builder.setDate(l.getDate());
+        builder.setNumberOfTimeslots(l.getNumberOfTimeslots());
 
+        if (course.getYearOfStudy() == FIRST_YEAR) {
+            Director.constructFirstYear(builder);
+        } else if (course.getYearOfStudy() == SECOND_YEAR) {
+            Director.constructSecondYear(builder);
+        } else {
+            builder.setMinNoStudents(l.getMinNoStudents());
+        }
+
+        Lecture lecture = builder.build();
         coursesRepo.saveAndFlush(course);
         lecturesRepo.saveAndFlush(lecture);
         return new ResponseEntity<>(lecture, HttpStatus.CREATED);
