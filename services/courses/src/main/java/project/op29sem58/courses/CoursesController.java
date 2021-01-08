@@ -33,6 +33,7 @@ public class CoursesController {
 
     //PMD nonsense
     private static final int FIRST_YEAR = 1;
+    private static final int SECOND_YEAR = 2;
 
     final transient String authHeader = "Authorization";
     final transient ResponseEntity<String> internalError = new ResponseEntity<String>("Something " +
@@ -115,12 +116,14 @@ public class CoursesController {
         Builder builder = new LectureBuilder();
         builder.setCourse(course);
         builder.setDate(l.getDate());
-        builder.setMinNoStudents(l.getMinNoStudents());
+        builder.setNumberOfTimeslots(l.getNumberOfTimeslots());
 
         if (course.getYearOfStudy() == FIRST_YEAR) {
             Director.constructFirstYear(builder);
-        } else {
+        } else if (course.getYearOfStudy() == SECOND_YEAR) {
             Director.constructSecondYear(builder);
+        } else {
+            builder.setMinNoStudents(l.getMinNoStudents());
         }
 
         Lecture lecture = builder.build();
