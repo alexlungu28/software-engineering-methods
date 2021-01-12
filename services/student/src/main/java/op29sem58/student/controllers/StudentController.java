@@ -4,20 +4,19 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import op29sem58.student.communication.ServerCommunication;
 import op29sem58.student.communication.authorization.Authorization;
 import op29sem58.student.communication.authorization.Role;
 import op29sem58.student.database.entities.RoomSchedule;
 import op29sem58.student.database.entities.Student;
-import op29sem58.student.database.entities.StudentEnrollment;
 import op29sem58.student.database.repos.StudentBookingRepo;
 import op29sem58.student.database.repos.StudentEnrollmentRepo;
 import op29sem58.student.database.repos.StudentRepo;
 import op29sem58.student.local.entities.Course;
 import op29sem58.student.local.entities.Lecture;
 import op29sem58.student.local.entities.LectureDetails;
+import op29sem58.student.local.entities.LectureManager;
 import op29sem58.student.local.entities.Pair;
 import op29sem58.student.local.entities.UserPreference;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +54,7 @@ public class StudentController {
 
     //This is our class to communicate with other microservices
     private transient ServerCommunication serverCommunication = new ServerCommunication();
-    
+
     /**
      * Initialize a default student set.
      */
@@ -116,42 +115,9 @@ public class StudentController {
     @GetMapping(path = "/allMyLectures")
     @SuppressWarnings("PMD") //DU anomaly
     public List<LectureDetails> getMyLectures(@RequestHeader(authHeader) String token) {
-        // We first create an empty ArrayList, We then get the student by studentID.
-        List<LectureDetails> campusLectures = new ArrayList<>();
         Student currentStudent = getStudentbyToken(token);
-
-        // Here we iterate through all the allocated rooms for the student.
-        // We then just add it to our lectureDetail list(This will be sorted by date).
-        for (RoomSchedule roomSchedule : this.studentBookings.findByStudents(currentStudent)) {
-            String courseName = getCourseName(roomSchedule.getLectureId());
-            LectureDetails tempDetails = new LectureDetails(
-                    roomSchedule.getLectureId(), courseName, roomSchedule.getRoomId(), true,
-                    roomSchedule.getStartTime(), roomSchedule.getEndTime());
-            campusLectures.add(tempDetails);
-        }
-        // We iterate through the list of lectures already sorted by date.
-        // For every lecture we check if the student is enrolled.
-        // If student is enrolled we check if we already had a lecture scheduled in a room
-        // for the student, if not we can add the lecture to a list of onlineLectures.
-        // we end by calling a helper function to merge the two lists.
-        List<LectureDetails> onlineLectures = new ArrayList<>();
-        for (Lecture lecture : this.lectureList) {
-            if (studentIsEnrolledFor(currentStudent, lecture)) {
-                Optional<LectureDetails> alreadyAssigned = campusLectures.stream()
-                        .filter(e -> e.getLectureId() == lecture.getId()).findFirst();
-                if (alreadyAssigned.isPresent()) {
-                    continue;
-                }
-                String courseName = getCourseName(lecture.getId());
-                RoomSchedule rs = lecture.getRoomSchedule();
-                LectureDetails tempDetails = new LectureDetails(lecture.getId(), courseName,
-                        0, false, rs.getStartTime(), rs.getEndTime());
-                onlineLectures.add(tempDetails);
-            }
-        }
-        merge(campusLectures, onlineLectures);
-
-        return campusLectures;
+        LectureManager lectureManager = new LectureManager(courseList, lectureList, studentEnrollments, studentBookings);
+        return lectureManager.getAllLectures(currentStudent);
     }
 
     /**
@@ -192,36 +158,6 @@ public class StudentController {
         return this.students.getOne(studentId);
     }
 
-    /**
-     * To merge two LectureDetails list into one, so that it stay's sorted.
-     *
-     * @param l1 first list.
-     * @param l2 second list to merge.
-     */
-    @SuppressWarnings("PMD") //DU anomaly
-    public static void merge(List<LectureDetails> l1, List<LectureDetails> l2) {
-        for (int i = 0, j = 0; j < l2.size(); i++) {
-            if (i == l1.size() ||
-                    l1.get(i).getStartTime().isAfter(l2.get(j).getStartTime())) {
-                l1.add(i, l2.get(j++));
-            }
-        }
-    }
-
-    /**
-     * inefficient code just to get the courseName, due to lack of time this is the way we do it.
-     *
-     * @param lectureId to find the courseName
-     * @return name of the course.
-     */
-    public String getCourseName(int lectureId) throws IllegalStateException {
-        for (Course c : this.courseList) {
-            if (c.courseHasLecture(lectureId)) {
-                return c.getName();
-            }
-        }
-        throw new IllegalStateException("Lecture must be linked with a course.");
-    }
 
     /**
      * Assigns all students up until the date given in the options.
@@ -266,7 +202,7 @@ public class StudentController {
             int assignedStudents = 0;
             final int allowedStudents = roomSchedule.getCoronaCapacity();
             for (Student student : students) {
-                if (this.studentIsEnrolledFor(student, lecture)) {
+                if (student.isEnrolledFor(courseList, lecture, studentEnrollments)) {
                     roomSchedule.addStudent(student);
                     student.setLastVisited(lecture.getRoomSchedule().getStartTime());
                     this.students.save(student);
@@ -290,29 +226,6 @@ public class StudentController {
     @SuppressWarnings("PMD") //DU anomaly
     private void initializeCourses(String token) {
         courseList = this.serverCommunication.getAllCourses(token);
-    }
-
-    /**
-     * This checks if the student is enrolled for the lecture, by iterating though the
-     * list of courseLectures and retrieving the courseID by the use of the lectureID.
-     * Then send a request to enrollments with the courseID and student.
-     * If student is enrolled a boolean true will be returned.
-     *
-     * @param student a Student to check if enrolled
-     * @param lecture a lecture to get the courseID
-     * @return a boolean if the student is enrolled.
-     */
-    private boolean studentIsEnrolledFor(Student student, Lecture lecture) {
-        Optional<Course> courseLecture = this.courseList.stream()
-                .filter(e -> e.courseHasLecture(lecture.getId()))
-                .findFirst();
-        if (courseLecture.isEmpty()) {
-            return false;
-        }
-        final List<StudentEnrollment> maybeStudentEnrollment =
-            this.studentEnrollments.findByCourseIdAndStudent(courseLecture.get()
-                    .getCourseId(), student);
-        return !maybeStudentEnrollment.isEmpty();
     }
 
 
