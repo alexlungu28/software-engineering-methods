@@ -2,6 +2,7 @@ package project.op29sem58.courses;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.util.EntityUtils;
@@ -48,6 +49,8 @@ public class CoursesController {
     transient String teacher = "Teacher";
 
     transient LocalDate date;
+
+    private transient Builder lectureBuilder;
 
     /**
      * Retrieve a list of all courses.
@@ -108,30 +111,17 @@ public class CoursesController {
         if (!Authorization.authorize(token, Role.Teacher)) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-        Optional<Course> courseOpt = coursesRepo
-                .findById(courseId);
+
+        Optional<Course> courseOpt = coursesRepo.findById(courseId);
 
         if (courseOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         Course course = courseOpt.get();
 
-        Builder builder = new LectureBuilder();
-        builder.setCourse(course);
-        builder.setDate(l.getDate());
-        builder.setNumberOfTimeslots(l.getNumberOfTimeslots());
-
-        if (course.getYearOfStudy() == FIRST_YEAR) {
-            Director.constructFirstYear(builder);
-        } else if (course.getYearOfStudy() == SECOND_YEAR) {
-            Director.constructSecondYear(builder);
-        } else {
-            builder.setMinNoStudents(l.getMinNoStudents());
-        }
-
-        Lecture lecture = builder.build();
-        coursesRepo.saveAndFlush(course);
-        lecturesRepo.saveAndFlush(lecture);
+        initializeBuilder(l, course);
+        Lecture lecture = setStudentsAndBuild(lectureBuilder, course);
+        saveLectureAndCourse(course, lecture);
         return new ResponseEntity<>(lecture, HttpStatus.CREATED);
     }
 
@@ -244,5 +234,23 @@ public class CoursesController {
 
     public void setLecturesRepo(LecturesRepo lecturesRepo) {
         this.lecturesRepo = lecturesRepo;
+    }
+
+    private Lecture setStudentsAndBuild(Builder builder, Course course) {
+        if (course.getYearOfStudy() == FIRST_YEAR) {
+            Director.constructFirstYear(builder);
+        } else if (course.getYearOfStudy() == SECOND_YEAR) {
+            Director.constructSecondYear(builder);
+        }
+        return builder.build();
+    }
+
+    private void initializeBuilder(LectureInfo lectureInfo, Course course) {
+        lectureBuilder = LectureBuilder.of(lectureInfo, course);
+    }
+
+    private void saveLectureAndCourse(Course course, Lecture lecture) {
+        coursesRepo.saveAndFlush(course);
+        lecturesRepo.saveAndFlush(lecture);
     }
 }
