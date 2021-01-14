@@ -1,10 +1,8 @@
 package roomscheduler.communication;
 
-import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -23,30 +21,28 @@ public class ServerCommunication {
     static CredentialsProvider provider = new BasicCredentialsProvider();
     static CloseableHttpClient client = HttpClientBuilder.create()
             .setDefaultCredentialsProvider(provider).build();
-    static Gson gson = new Gson();
-    static HttpPost post = new HttpPost();
 
     /**
      * Get the json of the object from the serverpath.
      *
-     * @param path : url path.
+     * @param req : serverpath.
      * @return json of given object.
      */
     @SuppressWarnings("PMD")
-    public static String getObjectJson(String port, String path) throws IOException {
-        CloseableHttpResponse response = sendGetRequest(port, path);
+    public static String getObjectJson(HttpGet req) throws IOException {
+        CloseableHttpResponse response = sendGetRequest(req);
         return EntityUtils.toString(response.getEntity());
     }
 
     /**
      * Sends a get request to the server to the specified path.
      *
-     * @param path : url path.
+     * @param req : serverpath.
      * @return the servers response
      */
-    public static CloseableHttpResponse sendGetRequest(String port, String path) {
+    public static CloseableHttpResponse sendGetRequest(HttpGet req) {
         try {
-            return client.execute(new HttpGet("http://localhost:" + port + "/" + path));
+            return client.execute(req);
         } catch (ClientProtocolException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -58,24 +54,21 @@ public class ServerCommunication {
     /**
      * Executes a post request to the serverpath with the json as entity.
      *
-     * @param path : url path.
-     * @param json : becomes the content of the Http request.
+     * @param req : URI.
+     * @param se : string entity.
      * @return responsestatuscode : returns the status code.
      * @throws UnsupportedEncodingException when something goes wrong during encoding.
      */
     @SuppressWarnings("PMD")
-    public static int executePostRequest(String port, String path,
-                     String json) throws UnsupportedEncodingException {
-        try {
-            post.setURI(new URI("http://localhost:" + port + "/" + path));
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
+    public static int executePostRequest(URI req,
+                                         StringEntity se) throws UnsupportedEncodingException {
+        HttpPost post = new HttpPost();
+        post.setURI(req);
         post.setHeader("Content-type", "application/json");
-        post.setEntity(new StringEntity(json));
+        post.setEntity(se);
         CloseableHttpResponse response = sendPostRequest(post);
         if (response == null) {
-            return executePostRequest(port, path, json);
+            return executePostRequest(req, se);
         }
         return response.getStatusLine().getStatusCode();
     }
@@ -102,16 +95,15 @@ public class ServerCommunication {
     /**
      * Sends a delete request to the server.
      *
-     * @param path : url path.
+     * @param req : serverpath.
      * @return : returns the status code.
      * @throws IOException : when something goes wrong with the IO operations.
      */
     @SuppressWarnings("PMD")
-    public static int sendDeleteRequest(String port, String path) throws IOException {
-        HttpDelete delete = new HttpDelete("http://localhost:" + port + "/" + path);
+    public static int sendDeleteRequest(HttpDelete req) throws IOException {
         try {
-            CloseableHttpResponse response = client.execute(delete);
-            delete.reset();
+            CloseableHttpResponse response = client.execute(req);
+            req.reset();
             return response.getStatusLine().getStatusCode();
         } catch (Exception e) {
             e.printStackTrace();
