@@ -20,8 +20,8 @@ public class Student {
     @Column(name = "net_id", nullable = false, length = 64)
     private String netId;
 
-    private transient LocalDateTime lastVisited;
-    private transient boolean wantsToGo;
+    private LocalDateTime lastVisited;
+    private boolean wantsToGo;
 
     public Student() {}
 
@@ -82,5 +82,9 @@ public class Student {
     
     public void setWantsToGo(boolean wantsToGo) {
         this.wantsToGo = wantsToGo;
+    }
+
+    public boolean getWantsToGo() {
+        return this.wantsToGo;
     }
 }
