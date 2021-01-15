@@ -1,1 +1,0 @@
-{"op29-sem58.services.room-scheduler.main":{"name":"op29-sem58.services.room-scheduler.main","packages":{"roomscheduler.communication":{"packageName":"roomscheduler.communication","isAll":false,"classes":["Lroomscheduler.communication.ServerCommunication"]}}}}
