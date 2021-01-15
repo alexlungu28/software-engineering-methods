@@ -1,19 +1,14 @@
 package op29sem58.student.database.entities;
 
-import op29sem58.student.database.repos.StudentEnrollmentRepo;
-import op29sem58.student.local.entities.Course;
-import op29sem58.student.local.entities.Lecture;
-import op29sem58.student.local.entities.LectureDetails;
-
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-
-import static op29sem58.student.local.entities.LectureDetails.merge;
+import op29sem58.student.database.repos.StudentEnrollmentRepo;
+import op29sem58.student.local.entities.Course;
+import op29sem58.student.local.entities.Lecture;
 
 /**
  * This is a Student class, we store the Net_ID, which also is the primary key.
@@ -54,7 +49,9 @@ public class Student {
      * @param lecture a lecture to get the courseID
      * @return a boolean if the student is enrolled.
      */
-    public boolean isEnrolledFor(List<Course> courses, Lecture lecture, StudentEnrollmentRepo studentEnrollmentRepo) {
+    public boolean isEnrolledFor(List<Course> courses,
+                                 Lecture lecture,
+                                 StudentEnrollmentRepo studentEnrollmentRepo) {
         Optional<Course> courseLecture = courses.stream()
                 .filter(e -> e.courseHasLecture(lecture.getId()))
                 .findFirst();

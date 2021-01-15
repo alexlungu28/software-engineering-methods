@@ -1,14 +1,12 @@
 package op29sem58.student.local.entities;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import op29sem58.student.database.entities.RoomSchedule;
 import op29sem58.student.database.entities.Student;
 import op29sem58.student.database.repos.StudentBookingRepo;
 import op29sem58.student.database.repos.StudentEnrollmentRepo;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 public class LectureManager {
     private List<Course> courses;
@@ -16,7 +14,17 @@ public class LectureManager {
     private StudentBookingRepo studentBookings;
     private StudentEnrollmentRepo studentEnrollments;
 
-    public LectureManager(List<Course> courses, List<Lecture> lectures, StudentEnrollmentRepo studentEnrollments,
+    /**
+     * Constructor for a LectureManager.
+     *
+     * @param courses A list so we know what courses exist.
+     * @param lectures a list of lectures that exist.
+     * @param studentEnrollments So we know what a student is enrolled to.
+     * @param studentBookings so we know what rooms are assigned to students.
+     */
+    public LectureManager(List<Course> courses,
+                          List<Lecture> lectures,
+                          StudentEnrollmentRepo studentEnrollments,
                           StudentBookingRepo studentBookings) {
         this.courses = courses;
         this.lectures = lectures;
@@ -28,6 +36,12 @@ public class LectureManager {
         return LectureDetails.merge(this.getCampusLectures(student), getOnlineLectures(student));
     }
 
+    /**
+     * This retrieves all the campus lectures a student has.
+     *
+     * @param student used to retrieve the student bookings.
+     * @return a list of all the lectures the student can attend on campus.
+     */
     public List<LectureDetails> getCampusLectures(Student student) {
         List<LectureDetails> campusLectures = new ArrayList<>();
         for (RoomSchedule roomSchedule : this.studentBookings.findByStudents(student)) {
@@ -40,6 +54,13 @@ public class LectureManager {
         return campusLectures;
     }
 
+    /**
+     * This retrieves all the online lecture a student has,
+     * it is dependent on the campusLectures for the student.
+     *
+     * @param student to get all his online lectures.
+     * @return a list of all online lectures for the student.
+     */
     public List<LectureDetails> getOnlineLectures(Student student) {
         // We iterate through the list of lectures already sorted by date.
         // For every lecture we check if the student is enrolled.

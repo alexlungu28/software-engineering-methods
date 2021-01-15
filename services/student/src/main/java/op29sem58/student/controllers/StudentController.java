@@ -116,7 +116,8 @@ public class StudentController {
     @SuppressWarnings("PMD") //DU anomaly
     public List<LectureDetails> getMyLectures(@RequestHeader(authHeader) String token) {
         Student currentStudent = getStudentbyToken(token);
-        LectureManager lectureManager = new LectureManager(courseList, lectureList, studentEnrollments, studentBookings);
+        LectureManager lectureManager =
+                new LectureManager(courseList, lectureList, studentEnrollments, studentBookings);
         return lectureManager.getAllLectures(currentStudent);
     }
 
