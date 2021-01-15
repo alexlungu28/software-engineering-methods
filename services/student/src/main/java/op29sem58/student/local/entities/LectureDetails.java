@@ -5,7 +5,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class LectureDetails {
     private int lectureId;
     private String courseName;
@@ -45,53 +49,5 @@ public class LectureDetails {
         merged.addAll(l2);
         Collections.sort(merged, Comparator.comparing(LectureDetails::getStartTime));
         return merged;
-    }
-
-    public int getLectureId() {
-        return lectureId;
-    }
-
-    public void setLectureId(int lectureId) {
-        this.lectureId = lectureId;
-    }
-
-    public String getCourseName() {
-        return courseName;
-    }
-
-    public void setCourseName(String courseName) {
-        this.courseName = courseName;
-    }
-
-    public boolean isOnCampus() {
-        return onCampus;
-    }
-
-    public void setOnCampus(boolean onCampus) {
-        this.onCampus = onCampus;
-    }
-
-    public int getRoomId() {
-        return roomId;
-    }
-
-    public void setRoomId(int roomId) {
-        this.roomId = roomId;
-    }
-
-    public LocalDateTime getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime;
-    }
-
-    public LocalDateTime getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
     }
 }

@@ -7,6 +7,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This it a database entry to keep track of the courses each student is enrolled to.
@@ -16,6 +18,8 @@ import javax.persistence.ManyToOne;
  * students as well of course.
  */
 @Entity(name = "StudentEnrollment")
+@Getter
+@Setter
 public class StudentEnrollment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -27,28 +31,4 @@ public class StudentEnrollment {
     @ManyToOne
     @JoinColumn(name = "student_net_id")
     private Student student;
-    
-    public int getId() {
-        return this.id;
-    }
-    
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getCourseId() {
-        return this.courseId;
-    }
-    
-    public void setCourseId(int courseId) {
-        this.courseId = courseId;
-    }
-
-    public Student getStudent() {
-        return this.student;
-    }
-    
-    public void setStudent(Student student) {
-        this.student = student;
-    }
 }

@@ -6,6 +6,8 @@ import java.util.Optional;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import lombok.Getter;
+import lombok.Setter;
 import op29sem58.student.database.repos.StudentEnrollmentRepo;
 import op29sem58.student.local.entities.Course;
 import op29sem58.student.local.entities.Lecture;
@@ -15,6 +17,8 @@ import op29sem58.student.local.entities.Lecture;
  * We also store the lastVisited date and if the person wants to go.
  */
 @Entity(name = "Student")
+@Getter
+@Setter
 public class Student {
     @Id
     @Column(name = "net_id", nullable = false, length = 64)
@@ -62,25 +66,5 @@ public class Student {
                 studentEnrollmentRepo.findByCourseIdAndStudent(courseLecture.get()
                         .getCourseId(), this);
         return !maybeStudentEnrollment.isEmpty();
-    }
-
-    public String getNetId() {
-        return this.netId;
-    }
-    
-    public void setNetId(String netId) {
-        this.netId = netId;
-    }
-
-    public LocalDateTime getLastVisited() {
-        return this.lastVisited;
-    }
-
-    public void setLastVisited(LocalDateTime date) {
-        this.lastVisited = date;
-    }
-    
-    public void setWantsToGo(boolean wantsToGo) {
-        this.wantsToGo = wantsToGo;
     }
 }
