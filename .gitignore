@@ -49,3 +49,6 @@ local.properties
 ## JDT-specific (Eclipse Java Development Tools)
 .classpath
 /.idea/
+
+# Avoid pushing the CodeMR reports
+/codemr
