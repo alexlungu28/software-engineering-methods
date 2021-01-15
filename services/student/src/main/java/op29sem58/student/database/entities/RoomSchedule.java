@@ -8,8 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Transient;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This is a RoomSchedule entity, the interesting part is that we store only the part
@@ -20,8 +18,6 @@ import lombok.Setter;
  * discarded afterwards, as we do not want to store, values across multiple databases.
  */
 @Entity(name = "RoomSchedule")
-@Getter
-@Setter
 public class RoomSchedule {
     @Id
     @Column(unique = true, nullable = false)
@@ -70,7 +66,63 @@ public class RoomSchedule {
         this.students = new HashSet<Student>();
     }
 
+    public int getId() {
+        return this.id;
+    }
+    
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getCoronaCapacity() {
+        return this.coronaCapacity;
+    }
+    
+    public void setCoronaCapacity(int coronaCapacity) {
+        this.coronaCapacity = coronaCapacity;
+    }
+
+    public Set<Student> getStudents() {
+        return this.students;
+    }
+    
+    public void setStudents(Set<Student> students) {
+        this.students = students;
+    }
+
     public void addStudent(Student student) {
         this.students.add(student);
+    }
+
+    public LocalDateTime getStartTime() {
+        return this.startTime;
+    }
+    
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return this.endTime;
+    }
+    
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
+    public int getLectureId() {
+        return this.lectureId;
+    }
+    
+    public void setLectureId(int lectureId) {
+        this.lectureId = lectureId;
+    }
+
+    public int getRoomId() {
+        return this.roomId;
+    }
+    
+    public void setRoomId(int roomId) {
+        this.roomId = roomId;
     }
 }

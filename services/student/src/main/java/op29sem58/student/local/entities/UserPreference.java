@@ -1,10 +1,5 @@
 package op29sem58.student.local.entities;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
 public class UserPreference {
     private String studentId;
     private boolean wantsToGo;
@@ -20,6 +15,22 @@ public class UserPreference {
      */
     public UserPreference(String studentId, boolean wantsToGo) {
         this.studentId = studentId;
+        this.wantsToGo = wantsToGo;
+    }
+
+    public String getStudentId() {
+        return studentId;
+    }
+
+    public void setStudentId(String studentId) {
+        this.studentId = studentId;
+    }
+
+    public boolean isWantsToGo() {
+        return wantsToGo;
+    }
+
+    public void setWantsToGo(boolean wantsToGo) {
         this.wantsToGo = wantsToGo;
     }
 }

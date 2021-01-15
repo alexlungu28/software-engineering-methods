@@ -1,15 +1,10 @@
 package op29sem58.student.local.entities;
 
-import lombok.Getter;
-import lombok.Setter;
-
 /**
  * This Class is created so that we can store the list we receive from the courses service,
  * which are only the courses with their lectures. This helps with assigning the students
  * as we can check if they are enrolled for the course.
  */
-@Getter
-@Setter
 public class Course {
     private int courseId;
     private String teacherNetId;
@@ -51,5 +46,53 @@ public class Course {
             }
         }
         return false;
+    }
+
+    public String getTeacherNetId() {
+        return teacherNetId;
+    }
+
+    public void setTeacherNetId(String teacherNetId) {
+        this.teacherNetId = teacherNetId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public int getYearOfStudy() {
+        return yearOfStudy;
+    }
+
+    public void setYearOfStudy(int yearOfStudy) {
+        this.yearOfStudy = yearOfStudy;
+    }
+
+    public int getCourseId() {
+        return courseId;
+    }
+
+    public void setCourseId(int courseId) {
+        this.courseId = courseId;
+    }
+
+    public int[] getLectureIds() {
+        return this.lectureIds;
+    }
+    
+    public void setLectureIds(int[] lectureIds) {
+        this.lectureIds = lectureIds;
     }
 }
