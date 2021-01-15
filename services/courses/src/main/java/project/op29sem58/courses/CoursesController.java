@@ -2,7 +2,10 @@ package project.op29sem58.courses;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,12 +42,15 @@ public class CoursesController {
     final transient ResponseEntity<String> internalError = new ResponseEntity<String>("Something " +
             "went wrong on our end, please try again later.",
             HttpStatus.INTERNAL_SERVER_ERROR);
+    private static final String ROOM_SCHEDULE_SERVICE_PORT = "8081";
 
     transient String errorMessage = "You do not have the privilege to perform this action.";
 
     transient String teacher = "Teacher";
 
     transient LocalDate date;
+
+    private transient Builder lectureBuilder;
 
     /**
      * Retrieve a list of all courses.
@@ -105,30 +111,17 @@ public class CoursesController {
         if (!Authorization.authorize(token, Role.Teacher)) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-        Optional<Course> courseOpt = coursesRepo
-                .findById(courseId);
+
+        Optional<Course> courseOpt = coursesRepo.findById(courseId);
 
         if (courseOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         Course course = courseOpt.get();
 
-        Builder builder = new LectureBuilder();
-        builder.setCourse(course);
-        builder.setDate(l.getDate());
-        builder.setNumberOfTimeslots(l.getNumberOfTimeslots());
-
-        if (course.getYearOfStudy() == FIRST_YEAR) {
-            Director.constructFirstYear(builder);
-        } else if (course.getYearOfStudy() == SECOND_YEAR) {
-            Director.constructSecondYear(builder);
-        } else {
-            builder.setMinNoStudents(l.getMinNoStudents());
-        }
-
-        Lecture lecture = builder.build();
-        coursesRepo.saveAndFlush(course);
-        lecturesRepo.saveAndFlush(lecture);
+        initializeBuilder(l, course);
+        Lecture lecture = setStudentsAndBuild(lectureBuilder, course);
+        saveLectureAndCourse(course, lecture);
         return new ResponseEntity<>(lecture, HttpStatus.CREATED);
     }
 
@@ -138,7 +131,8 @@ public class CoursesController {
      * @return A string with a message about the status of the request
      */
     @PostMapping(path = "/scheduleLecturesUntil")
-    public ResponseEntity<String> scheduleLecturesUntil(@RequestBody LocalDate date) {
+    public ResponseEntity<String> scheduleLecturesUntil(@RequestBody LocalDate date,
+                                                        @RequestHeader(authHeader) String token) {
         if (date.isBefore(LocalDate.now())) {
             return new ResponseEntity<String>("Please specify a date"
                     + " after the current date.", HttpStatus.BAD_REQUEST);
@@ -154,10 +148,7 @@ public class CoursesController {
         }
 
         for (Lecture l : lectures) {
-            String path = ServerCommunication.getRoomScheduleServiceUrl() + "/scheduleLecture/"
-                    + l.getDate() + "/" + l.getNumberOfTimeslots() + "/" + l.getMinNoStudents()
-                    + "/" + l.getId() + "/" + l.getCourse().getYearOfStudy();
-            String response = ServerCommunication.makeGetRequest(path);
+            String response = sendLecture(l, token);
             if (response == null) {
                 return internalError;
             }
@@ -174,7 +165,8 @@ public class CoursesController {
      * @return A string with info about the status of the request
      */
     @GetMapping(path = "/scheduleLecture/{lectureId}")
-    public ResponseEntity<String> scheduleLecture(@PathVariable int lectureId) {
+    public ResponseEntity<String> scheduleLecture(@PathVariable int lectureId,
+                                                  @RequestHeader(authHeader) String token) {
         Optional<Lecture> lecture = lecturesRepo.findById(lectureId);
         if (lecture.isEmpty()) {
             return new ResponseEntity<>("There is no lecture with this id, "
@@ -182,15 +174,12 @@ public class CoursesController {
         }
 
         Lecture l = lecture.get();
-        String path = ServerCommunication.getRoomScheduleServiceUrl() + "/scheduleLecture/"
-                + l.getDate() + "/" + l.getNumberOfTimeslots() + "/" + l.getMinNoStudents()
-                + "/" + l.getId() + "/" + l.getCourse().getYearOfStudy();
-        String response = ServerCommunication.makeGetRequest(path);
+        String response = sendLecture(l, token);
         if (response == null) {
             return internalError;
         }
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<String>(response, HttpStatus.OK);
     }
 
     /**
@@ -199,8 +188,8 @@ public class CoursesController {
      * @return A string with a message about the status of the request
      */
     @GetMapping(path = "/scheduleForTwoWeeks")
-    public ResponseEntity<String> scheduleForTwoWeeks() {
-        ResponseEntity<String> s = scheduleLecturesUntil(LocalDate.now().plusWeeks(2));
+    public ResponseEntity<String> scheduleForTwoWeeks(@RequestHeader(authHeader) String token) {
+        ResponseEntity<String> s = scheduleLecturesUntil(LocalDate.now().plusWeeks(2), token);
         ResponseEntity<String> correctReturn = new ResponseEntity<String>("Lectures until "
                 + LocalDate.now().plusWeeks(2).toString() + " are scheduled!", HttpStatus.OK);
 
@@ -212,6 +201,24 @@ public class CoursesController {
         return s;
     }
 
+    //Stop PMD complaining about the toReturn variable
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
+    private String sendLecture(Lecture l, String token) {
+        String path = "scheduleLecture/" + l.getDate() + "/" + l.getNumberOfTimeslots()
+                + "/" + l.getMinNoStudents() + "/" + l.getId() + "/"
+                + l.getCourse().getYearOfStudy();
+
+
+        String toReturn = null;
+        try (CloseableHttpResponse response = Authorization.sendGetRequest(
+                ROOM_SCHEDULE_SERVICE_PORT, path, token)) {
+            assert (response != null);
+            toReturn = EntityUtils.toString(response.getEntity());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return toReturn;
+    }
 
     public CoursesRepo getCoursesRepo() {
         return coursesRepo;
@@ -227,5 +234,23 @@ public class CoursesController {
 
     public void setLecturesRepo(LecturesRepo lecturesRepo) {
         this.lecturesRepo = lecturesRepo;
+    }
+
+    private Lecture setStudentsAndBuild(Builder builder, Course course) {
+        if (course.getYearOfStudy() == FIRST_YEAR) {
+            Director.constructFirstYear(builder);
+        } else if (course.getYearOfStudy() == SECOND_YEAR) {
+            Director.constructSecondYear(builder);
+        }
+        return builder.build();
+    }
+
+    private void initializeBuilder(LectureInfo lectureInfo, Course course) {
+        lectureBuilder = LectureBuilder.of(lectureInfo, course);
+    }
+
+    private void saveLectureAndCourse(Course course, Lecture lecture) {
+        coursesRepo.saveAndFlush(course);
+        lecturesRepo.saveAndFlush(lecture);
     }
 }
