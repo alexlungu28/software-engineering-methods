@@ -168,8 +168,6 @@ public class RoomController {
     }
 
 
-
-
     /**
      * Method for deleting a Room.
      *
