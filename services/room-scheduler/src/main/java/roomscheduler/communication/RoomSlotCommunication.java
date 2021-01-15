@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import org.apache.http.client.methods.HttpGet;
 import roomscheduler.entities.Rule;
 
 public class RoomSlotCommunication extends ServerCommunication {
@@ -16,9 +17,11 @@ public class RoomSlotCommunication extends ServerCommunication {
      * @throws IOException Placeholder.
      */
     public static Object getRoom(int id) throws IOException {
+        Gson gson = new Gson();
         String port = "8080"; //this is the port of the room-service
         String path = "/room/" + id;
-        JsonObject jsonObject = gson.fromJson(getObjectJson(port, path), JsonObject.class);
+        HttpGet req = new HttpGet("http://localhost:" + port + "/" + path);
+        JsonObject jsonObject = gson.fromJson(getObjectJson(req), JsonObject.class);
         if (jsonObject.get("status") == null) {
             return "ok";
         } else {
@@ -29,9 +32,11 @@ public class RoomSlotCommunication extends ServerCommunication {
     /** Placeholder.
      */
     public static Long numberOfRooms() throws IOException {
+        Gson gson = new Gson();
         String port = "8080"; //this is the port of the room-service
         String path = "/countRooms";
-        Long count = gson.fromJson(getObjectJson(port, path), Long.class);
+        HttpGet req = new HttpGet("http://localhost:" + port + "/" + path);
+        Long count = gson.fromJson(getObjectJson(req), Long.class);
         return count;
     }
 
@@ -40,7 +45,8 @@ public class RoomSlotCommunication extends ServerCommunication {
     public static List<Rule> getRules() throws IOException {
         String port = "8081";
         String path = "/allRules";
-        return stringToArray(getObjectJson(port, path), Rule[].class);
+        HttpGet req = new HttpGet("http://localhost:" + port + "/" + path);
+        return stringToArray(getObjectJson(req), Rule[].class);
     }
 
     public static <T> List<T> stringToArray(String s, Class<T[]> clazz) {

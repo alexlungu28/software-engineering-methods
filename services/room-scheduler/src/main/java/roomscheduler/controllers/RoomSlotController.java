@@ -26,8 +26,6 @@ import roomscheduler.entities.RoomSlot;
 import roomscheduler.entities.Rule;
 import roomscheduler.repositories.RoomSlotRepository;
 
-
-
 /**
  * Controller for RoomSlot.
  * With methods for general and id-specific retrieval
@@ -42,6 +40,9 @@ public class RoomSlotController {
 
     transient String errorMessage = "You do not have the privilege to perform this action.";
 
+    public RoomSlotController() {
+    }
+
     public RoomSlotRepository getRoomSlotRepository() {
         return roomSlotRepository;
     }
@@ -49,6 +50,25 @@ public class RoomSlotController {
     public void setRoomSlotRepository(RoomSlotRepository roomSlotRepository) {
         this.roomSlotRepository = roomSlotRepository;
     }
+
+    private transient Long numberOfRooms;
+    private transient List<Rule> allRules;
+    private transient HashMap<String, Integer> rules = new HashMap<>();
+
+    /**
+     * Method for setting number of Rooms and putting the rules in a hashmap.
+     *
+     * @throws IOException ioException
+     */
+    public void makeRules() throws IOException {
+        numberOfRooms = RoomSlotCommunication.numberOfRooms();
+        allRules = RoomSlotCommunication.getRules();
+        rules = new HashMap<>();
+        for (Rule r : allRules) {
+            rules.put(r.getName(), Integer.parseInt(r.getValue()));
+        }
+    }
+
 
     /**
      * Method for adding a new room slot.
@@ -103,13 +123,8 @@ public class RoomSlotController {
         if (!Authorization.authorize(token, Role.Admin)) {
             throw new RuntimeException(errorMessage);
         }
-    
-        Long numberOfRooms = RoomSlotCommunication.numberOfRooms();
-        List<Rule> allRules = RoomSlotCommunication.getRules();
-        HashMap<String, Integer> rules = new HashMap<>();
-        for (Rule r : allRules) {
-            rules.put(r.getName(), Integer.parseInt(r.getValue()));
-        }
+        makeRules();
+        System.out.println(rules.get("lunch slot"));
         int breakSlot = rules.get("lunch slot");
         int timeBetweenSlotsInHours = (rules.get("slot duration") +
                 rules.get("break time")) / 60;

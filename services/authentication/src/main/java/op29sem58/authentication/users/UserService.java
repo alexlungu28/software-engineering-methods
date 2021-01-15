@@ -33,6 +33,11 @@ public class UserService {
         return Optional.of(user);
     }
 
+    private void saveNewUser(User user, User temp) {
+        temp.setRole(user.getRole());
+        userRepository.save(temp);
+    }
+
     /**
      * This method updates the user.
      *
@@ -41,13 +46,13 @@ public class UserService {
      * @return result of operation
      */
     public String modifyUser(User user) {
-        if (!userRepository.existsById(user.getNetid())) {
+        String netid = user.getNetid();
+        if (!userRepository.existsById(netid)) {
             return "User does not exist";
         }
-        User temp = userRepository.findById(user.getNetid())
+        User temp = userRepository.findById(netid)
                 .orElse(null);
-        temp.setRole(user.getRole());
-        userRepository.save(temp);
+        saveNewUser(user, temp);
         return "User Updated";
     }
 }
