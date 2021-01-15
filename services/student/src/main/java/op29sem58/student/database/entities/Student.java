@@ -85,6 +85,6 @@ public class Student {
     }
 
     public boolean getWantsToGo() {
-        return wantsToGo;
+        return this.wantsToGo;
     }
 }

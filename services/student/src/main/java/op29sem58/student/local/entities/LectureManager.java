@@ -9,10 +9,10 @@ import op29sem58.student.database.repos.StudentBookingRepo;
 import op29sem58.student.database.repos.StudentEnrollmentRepo;
 
 public class LectureManager {
-    private List<Course> courses;
-    private List<Lecture> lectures;
-    private StudentBookingRepo studentBookings;
-    private StudentEnrollmentRepo studentEnrollments;
+    private transient List<Course> courses;
+    private transient List<Lecture> lectures;
+    private transient StudentBookingRepo studentBookings;
+    private transient StudentEnrollmentRepo studentEnrollments;
 
     /**
      * Constructor for a LectureManager.
@@ -61,6 +61,7 @@ public class LectureManager {
      * @param student to get all his online lectures.
      * @return a list of all online lectures for the student.
      */
+    @SuppressWarnings("PMD") // DU anamoly for campusLectures
     public List<LectureDetails> getOnlineLectures(Student student) {
         // We iterate through the list of lectures already sorted by date.
         // For every lecture we check if the student is enrolled.
