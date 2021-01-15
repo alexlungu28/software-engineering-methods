@@ -83,4 +83,8 @@ public class Student {
     public void setWantsToGo(boolean wantsToGo) {
         this.wantsToGo = wantsToGo;
     }
+
+    public boolean getWantsToGo() {
+        return wantsToGo;
+    }
 }

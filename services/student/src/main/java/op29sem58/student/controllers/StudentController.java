@@ -101,6 +101,9 @@ public class StudentController {
         boolean wantsToGo = userPreference.isWantsToGo();
         Student student = students.findById(i).orElse(new Student());
         student.setWantsToGo(wantsToGo);
+
+        this.students.save(student);
+        this.students.flush();
         return ResponseEntity.ok().build();
     }
 
