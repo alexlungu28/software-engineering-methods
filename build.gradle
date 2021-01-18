@@ -1,8 +1,19 @@
-allprojects {
+buildscript{
+    dependencies {
+        classpath 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.5.1'
+    }
+
+	repositories {
+		mavenCentral()
+	}
+}
+
+subprojects {
 	apply plugin: 'java'
 	apply plugin: 'checkstyle'
 	apply plugin: 'jacoco'
 	apply plugin: 'pmd'
+	apply plugin: 'info.solidsoft.pitest'
 
 	jacoco {
 		toolVersion = "0.8.6"
@@ -76,4 +87,13 @@ allprojects {
 		incrementalAnalysis = true
 		sourceSets = []
 	}
+
+	pitest {
+        junit5PluginVersion = '0.12'
+        threads = 4
+        targetClasses = ["op29sem58.*"]
+        if (project.name in ['module-with-no-test-name']) {
+            failWhenNoMutations = false
+        }
+    }
 }
