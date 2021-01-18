@@ -91,7 +91,7 @@ subprojects {
 	pitest {
         junit5PluginVersion = '0.12'
         threads = 4
-        targetClasses = ["op29sem58.*"]
+        targetClasses = ["op29sem58.*", "roomscheduler.*", "project.*"]
         if (project.name in ['module-with-no-test-name']) {
             failWhenNoMutations = false
         }
