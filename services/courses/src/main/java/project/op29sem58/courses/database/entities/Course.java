@@ -34,7 +34,9 @@ public class Course {
     )
     private List<Lecture> lectures;
 
-    public Course(){}
+    public Course() {
+        this.lectures = new ArrayList<Lecture>();
+    }
 
     /**
      * Constructor for the course entity.

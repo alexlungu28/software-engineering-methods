@@ -44,7 +44,7 @@ public class LectureBuilder implements Builder {
     }
 
     public Lecture build() {
-        return new Lecture(course, date, minNoStudents, numberOfTimeslots);
+        return new Lecture(course, date, numberOfTimeslots, minNoStudents);
     }
 
     public static LectureBuilder of(LectureInfo lectureInfo, Course course) {
