@@ -107,7 +107,7 @@ class RoomSchedulerTest {
         listDateIntPairs.add(si2);
         listslots.add(2);
 
-        NameDateInfo expected = new NameDateInfo(date, "test6", 0);
+        NameDateInfo expected = new NameDateInfo(date, "test56", 0);
         List<NameDateInfo> expectedList = new ArrayList<>();
         expectedList.add(expected);
         assertEquals(RoomScheduler.findSuitable(listNamePair,
