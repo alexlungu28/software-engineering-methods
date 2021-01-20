@@ -1,8 +1,8 @@
 package op29sem58.student.communication.authorization;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 
 public class RoleTest {
 
