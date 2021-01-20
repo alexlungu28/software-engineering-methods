@@ -7,7 +7,6 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	compile 'joda-time:joda-time:2.10.8'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	implementation 'org.apache.httpcomponents:httpclient'
 	implementation 'commons-logging:commons-logging'
 	annotationProcessor 'org.projectlombok:lombok'
 }
