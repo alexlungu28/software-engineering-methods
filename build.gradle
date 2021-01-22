@@ -1,19 +1,25 @@
+plugins {
+	id 'info.solidsoft.pitest' version '1.5.2'
+}
+
 allprojects {
 	apply plugin: 'java'
 	apply plugin: 'checkstyle'
 	apply plugin: 'jacoco'
 	apply plugin: 'pmd'
+	apply plugin: 'info.solidsoft.pitest'
 
 	jacoco {
 		toolVersion = "0.8.6"
 	}
 
 	dependencies {
+		implementation 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.5.2'
 		implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.4.1'
 		implementation 'org.springframework.boot:spring-boot-starter-thymeleaf:2.4.1'
 		implementation 'org.springframework.boot:spring-boot-starter-web:2.4.1'
-		implementation 'org.apache.httpcomponents:httpclient'
-		implementation 'com.google.code.gson:gson'
+		implementation 'org.apache.httpcomponents:httpclient:4.5.13'
+		implementation 'com.google.code.gson:gson:2.8.6'
 		implementation 'io.jsonwebtoken:jjwt:0.9.1'
 		implementation 'javax.xml.bind:jaxb-api:2.3.1'
 		implementation 'org.hibernate:hibernate-core:5.4.26.Final'
@@ -76,4 +82,9 @@ allprojects {
 		incrementalAnalysis = true
 		sourceSets = []
 	}
+
+	pitest {
+        junit5PluginVersion = '0.12'
+		targetClasses = ["op29sem58.*", "roomscheduler.*", "project.op29sem58.*"]
+    }
 }
